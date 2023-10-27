@@ -1,0 +1,106 @@
+
+<app-cabecalho-pagina [param]="parametros"></app-cabecalho-pagina>
+
+<section class="content">
+
+  <div class="container-fluid">
+
+    <div class="card">
+
+      <div class="card-header">
+
+        <div class="row">
+
+          <div class="col-sm-1">
+
+            <button
+              type="button"
+              class = "btn btn-block bg-gradient-primary"
+
+              [routerLink]="parametros.rota_criar">Novo</button>
+
+          </div>
+
+          <div class="col-sm-7">
+
+
+          </div>
+
+          <div class="col-sm-4">
+
+            <input
+              type="text"
+              class="form-control"
+              id="buscar"
+              placeholder="O que você procura ?">
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="card-body p-0">
+
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th *ngFor="let da of campos; let i = index">
+                {{ campos[i] }}
+              </th>
+            </tr>
+          </thead>
+
+          <tbody *ngIf="lista.length > 0, else semRegistros">
+
+            <tr *ngFor="let dado of lista;
+
+            let i = index"
+            (mouseover)="indexTarefa = i"
+            [@trigger-destaque]="indexTarefa === i ? 'fim' : 'inicio'"
+
+            >
+
+              <td>{{ dado.id }}.</td>
+              <td>{{ dado.nome }}</td>
+              <td>{{ dado.tipo }}</td>
+              <td>{{ dado.quantidade }}</td>
+              <td>{{ dado.total }}</td>
+              <td>{{ dado.data }}</td>
+              <td>
+                <!--
+                <app-excluir [dado]="dado" [param]="parametros"></app-excluir>
+-->
+
+              </td>
+
+              <td>
+
+                <a href="#" routerLink="{{ parametros.rota_editar }}/{{ dado.id }}">Editar</a>
+
+
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<ng-template #semRegistros>
+
+  <tbody>
+
+    <tr><td colspan="3" align="center">Ainda não há registros cadastrados!</td></tr>
+
+  </tbody>
+
+</ng-template>

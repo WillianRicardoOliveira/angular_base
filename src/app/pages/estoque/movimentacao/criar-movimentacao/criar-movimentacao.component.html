@@ -1,0 +1,50 @@
+<app-cabecalho-pagina [param]="parametros"></app-cabecalho-pagina>
+
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Novo movimentacao</h3>
+          </div>
+
+          <form [formGroup]="formulario">
+
+            <div class="card-body">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Nome</label>
+
+                <input type="text" class="form-control"
+                id="nome"
+                formControlName="nome"
+                placeholder="Informe o seu nome completo">
+
+
+                <app-formulario-validacao [formulario]="formulario"></app-formulario-validacao>
+
+
+
+              </div>
+            </div>
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary"
+
+              [disabled]="!formulario.valid"
+
+              (click)="criar()"
+              >Submit</button>
+              <button type="submit" class="btn btn-primary"
+
+              (click)="cancelar()"
+
+              >Cancelar</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,31 @@
+<header class="app-header">
+    
+    <mat-toolbar>   
+
+        <img src="../../../../assets/imagens/logo.png" alt="Logo da aplicação Jornada">
+
+        <span class="spacer"></span>
+        
+        <div class="links-toobar">
+            <button mat-button>Sobre</button>
+            
+            
+            <ng-container *ngIf="user$ | async as PessoaUsuario, else login">
+                <a routerLink="/perfil">
+                Perfil    <!--<img src="../../../../assets/icones/user.png" alt="Ícone da pessoa usuário">-->
+                </a>
+                <button mat-stroked-button 
+                (click)="logout()">Sair</button>
+            </ng-container>
+            <ng-template #login>
+                <button
+                    routerLink="/cadastro"
+                    mat-raised-button
+                    color="primary">Cadastre-se</button>
+                <button routerLink="/login" mat-stroked-button>Login</button>
+            </ng-template>
+
+        </div>
+    </mat-toolbar>
+
+</header>

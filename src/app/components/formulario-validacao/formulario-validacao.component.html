@@ -1,0 +1,17 @@
+<div *ngIf="formulario.get('nome')?.errors?.['required'] && formulario.get('nome')?.touched">
+  Validacao 1
+</div>
+
+
+
+<div *ngIf="formulario.get('nome')?.errors?.['minlength'] && formulario.get('nome')?.touched">
+  Validacao 2
+</div>
+
+
+<div *ngIf="formulario.get('usuario')?.errors?.['required'] && formulario.get('usuario')?.touched">
+  Validacao 2
+</div>
+<div *ngIf="formulario.get('senha')?.errors?.['required'] && formulario.get('senha')?.touched">
+  Validacao 2
+</div>

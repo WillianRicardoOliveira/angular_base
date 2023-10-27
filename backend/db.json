@@ -1,0 +1,79 @@
+{
+  "usuario": [
+    {
+      "id": 1,
+      "nome": "Administrador"
+    }
+  ],
+  "produto": [
+    {
+      "id": 1,
+      "nome": "Skol 350 ml"
+    },
+    {
+      "id": 2,
+      "nome": "Brahma 350 ml"
+    },
+    {
+      "id": 3,
+      "nome": "Heineken 350 ml"
+    }
+  ],
+  "fornecedor": [
+    {
+      "id": 1,
+      "nome": "Ambev"
+    }
+  ],
+  "movimentacao": [
+   
+        {
+          "id": 2,
+          "nome": "Skol 350 ml",
+          "tipo": "Saída",
+          "quantidade": 5,
+          "total": 5,
+          "data": "17/10/2023"
+        },
+        {
+          "id": 1,
+          "nome": "Skol 350 ml",
+          "tipo": "Entrada",
+          "quantidade": 10,
+          "total": 10,
+          "data": "16/10/2023"
+        }  
+
+  ],
+
+  "conteudo": [
+    {
+      "id": 1,
+      "destino": "Desenvolvimento",
+      "imagem": "assets/imagens/Veneza.png",
+      "preco": 125
+    }
+  ],
+  "estados": [
+    {
+      "id": 1,
+      "nome": "Paraná",
+      "sigla": "PR"
+    },
+    {
+      "id": 1,
+      "nome": "Rio de Janeiro",
+      "sigla": "RS"
+    }
+  ],
+  "depoimento": [
+    {
+      "id": 1,
+      "imagem": "../../../../assets/imagens/avatar3.png",
+      "texto": "Estou muito feliz em desenvolver o meu site",
+      "autor": "Willian Ricardo Oliveira"
+    }
+  ]
+
+
+}

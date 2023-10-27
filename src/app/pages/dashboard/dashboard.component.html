@@ -1,0 +1,40 @@
+
+<app-cabecalho-pagina
+[param]="param"
+></app-cabecalho-pagina>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+            <div class="col-lg-3 col-6">
+
+              <app-informacao></app-informacao>
+
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+                <app-sucesso></app-sucesso>
+
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+
+              <app-aviso [dados]="informacoes"></app-aviso>
+
+
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+
+              <app-perigo></app-perigo>
+
+            </div>
+            <!-- ./col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- Main row -->
+</section>
+<!-- /.content -->
