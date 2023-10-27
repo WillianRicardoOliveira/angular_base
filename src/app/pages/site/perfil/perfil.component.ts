@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CadastroService } from '@services/site/cadastro/cadastro.service';
-import { TokenService } from '@services/token/token.service';
 import { UserService } from '@services/user/user.service';
 
 @Component({
@@ -53,13 +52,17 @@ export class PerfilComponent implements OnInit {
         cpf: this.cadastro.cpf,
         telefone: this.cadastro.telefone,
 
-        cep: this.cadastro.endereco.cep,
-        logradouro: this.cadastro.endereco.logradouro,
-        complemento: this.cadastro.endereco.complemento,
-        bairro: this.cadastro.endereco.bairro,
-        localidade: this.cadastro.endereco.localidade,
-        uf: this.cadastro.endereco.uf,
-        numero: this.cadastro.endereco.numero
+
+    })
+
+    this.form.get('endereco').patchValue({
+      cep: this.cadastro.endereco.cep,
+      logradouro: this.cadastro.endereco.logradouro,
+      complemento: this.cadastro.endereco.complemento,
+      bairro: this.cadastro.endereco.bairro,
+      localidade: this.cadastro.endereco.localidade,
+      uf: this.cadastro.endereco.uf,
+      numero: this.cadastro.endereco.numero
     })
   }
 
@@ -94,13 +97,15 @@ export class PerfilComponent implements OnInit {
 
   deslogar() {
     this.userService.logout()
-    this.router.navigate(["/login"])
+    this.router.navigate(["/"])
   }
 
   buscaDadosEndereco() {
-    this.cadastroService.buscaDadosEndereco(this.form?.value.cep).subscribe(endereco => {
-      this.form = this.cadastroService.getCadastro()
-      this.form?.patchValue({
+    this.form = this.cadastroService.getCadastro()
+
+    this.cadastroService.buscaDadosEndereco(this.form?.value.endereco.cep).subscribe(endereco => {
+      
+      this.form.get('endereco').patchValue({
           cep: endereco.cep,
           logradouro: endereco.logradouro,
           complemento: endereco.complemento,

@@ -21,6 +21,7 @@ export class CadastroService {
   }
 
   cadastrar(pessoaUsuario: PessoaUsuario){
+    console.log("CADASTRO PESSOA :: ", pessoaUsuario)
     return this.service.cadastrar("pessoa", pessoaUsuario)
   }
 

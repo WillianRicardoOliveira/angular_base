@@ -1,5 +1,6 @@
 import { PessoaUsuario } from '@/interfaces/interfaces';
 import { Component } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BaseService } from '@services/base/base.service';
 import { CadastroService } from '@services/site/cadastro/cadastro.service';
@@ -13,6 +14,8 @@ export class CadastroComponent {
 
   perfilComponent = false
 
+  form: FormGroup | null
+
   constructor(
     private service: CadastroService,    
     private baseService: BaseService,
@@ -23,10 +26,11 @@ export class CadastroComponent {
     const formCadastro = this.service.getCadastro()
     if(formCadastro?.valid) {
       const novoCadastro = formCadastro.getRawValue() as PessoaUsuario
+
+
+    // console.log("CADASTRO DE PESSOA :: ", novoCadastro)
      
-     console.log("CADASTRO DE PESSOA :: ", novoCadastro)
-     
-      this.baseService.cadastrar("pessoa", novoCadastro)
+      this.service.cadastrar(novoCadastro)
       .subscribe({
         next: (value) => {
           this.router.navigate(["/login"])
@@ -36,6 +40,22 @@ export class CadastroComponent {
         }
       })
     }  
+  }
+
+  buscaDadosEndereco() {
+    this.form = this.service.getCadastro()
+
+    this.service.buscaDadosEndereco(this.form?.value.endereco.cep).subscribe(endereco => {
+      
+      this.form.get('endereco').patchValue({
+          cep: endereco.cep,
+          logradouro: endereco.logradouro,
+          complemento: endereco.complemento,
+          bairro: endereco.bairro,
+          localidade: endereco.localidade,
+          uf: endereco.uf
+      })
+    })
   }
 
 }

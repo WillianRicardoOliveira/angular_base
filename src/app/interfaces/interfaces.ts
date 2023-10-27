@@ -24,7 +24,7 @@ export interface PessoaUsuario {
     telefone: string;
     endereco: Endereco,
     usuario: Usuario
-    aceiteTermo: boolean,
+    aceitarTermos: boolean,
     tipoPessoa: string
 }
   
