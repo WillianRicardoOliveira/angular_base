@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 
 import {AppRoutingModule} from '@/app-routing.module';
@@ -106,6 +106,7 @@ import { AutenticacaoInterceptor } from './interceptors/autenticacao.interceptor
 import { LoginComponent } from './pages/site/login/login.component';
 import { CadastroComponent } from './pages/site/cadastro/cadastro.component';
 import { FormBasePerfilComponent } from './components/site/form-base-perfil/form-base-perfil.component';
+import { interval, take } from 'rxjs';
 
 
 registerLocaleData(localeEn, 'en-EN');
@@ -233,10 +234,14 @@ registerLocaleData(localeEn, 'en-EN');
         MatCheckboxModule 
 
     ],
-    providers: [{
+    providers: [
+        {
         provide: HTTP_INTERCEPTORS,
+        multi: true,
+        //useClass: () => {AutenticacaoInterceptor}
+
         useClass: AutenticacaoInterceptor,
-        multi: true
+        
     }],
     bootstrap: [AppComponent]
 })
