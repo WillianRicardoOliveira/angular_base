@@ -2,6 +2,7 @@ import { PessoaUsuario } from '@/interfaces/interfaces';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { BaseService } from '@services/base/base.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +21,8 @@ export class CadastroService {
     this.cadastroForm = form
   }
 
-  cadastrar(pessoaUsuario: PessoaUsuario){
-    console.log("CADASTRO PESSOA :: ", pessoaUsuario)
+  cadastrar(pessoaUsuario: PessoaUsuario): Observable<PessoaUsuario> {
+    console.log("SERVICE CADASTRO PESSOA :: ", pessoaUsuario)
     return this.service.cadastrar("pessoa", pessoaUsuario)
   }
 

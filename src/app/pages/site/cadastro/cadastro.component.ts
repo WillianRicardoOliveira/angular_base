@@ -4,6 +4,7 @@ import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BaseService } from '@services/base/base.service';
 import { CadastroService } from '@services/site/cadastro/cadastro.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-cadastro',
@@ -18,17 +19,17 @@ export class CadastroComponent {
 
   constructor(
     private service: CadastroService,    
-    private baseService: BaseService,
     private router: Router
     ) {}
 
   cadastrar() {
     const formCadastro = this.service.getCadastro()
+   
     if(formCadastro?.valid) {
+
       const novoCadastro = formCadastro.getRawValue() as PessoaUsuario
-
-
-    // console.log("CADASTRO DE PESSOA :: ", novoCadastro)
+ 
+      console.log("CADASTRO COMPONENT :: ", novoCadastro.usuario)
      
       this.service.cadastrar(novoCadastro)
       .subscribe({

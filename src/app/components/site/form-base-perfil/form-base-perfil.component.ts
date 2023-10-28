@@ -59,6 +59,8 @@ export class FormBasePerfilComponent implements OnInit {
       this.cadastroForm.get("aceitarTermos").setValidators([Validators.requiredTrue])
     }
     this.cadastroForm.get("aceitarTermos").updateValueAndValidity()
+
+    
     this.service.setCadastro(this.cadastroForm)
   }
 

@@ -15,27 +15,26 @@ export interface Depoimento {
     autor: string;
 }
 
-export interface PessoaUsuario {
-    id: number,
+export interface PessoaUsuario {    
     nome: string;
     nascimento: string;
-    genero: string,
+    genero: string;
     cpf: string;
     telefone: string;
-    endereco: Endereco,
-    usuario: Usuario
-    aceitarTermos: boolean,
-    tipoPessoa: string
+    endereco: Endereco;
+    usuario: Usuario;
+    aceitarTermos: boolean;
+    tipoPessoa: string;
 }
   
 export interface Endereco {
-    cep: string,
-    logradouro: string,
-    complemento: string    
-    bairro: string,    
-    localidade: string,
-    uf: string,
-    numero: string
+    cep: string;
+    logradouro: string;
+    complemento: string;
+    bairro: string;
+    localidade: string;
+    uf: string;
+    numero: string;
 }
 /*
 export interface Estado {
@@ -45,6 +44,6 @@ export interface Estado {
 }
 */
 export interface Usuario {
-    email: string,
-    senha: string
+    email: string;
+    senha: string;
 }

@@ -29,8 +29,8 @@ export class PerfilComponent implements OnInit {
   
   ngOnInit(): void {
     this.userService.retornarUser().subscribe(pessoa => {
-      this.id = pessoa.id
-      this.cadastroService.detalhar(pessoa.id).subscribe(cadastro => {
+      this.id = 1//pessoa.id
+      this.cadastroService.detalhar(this.id).subscribe(cadastro => {
         this.cadastro = cadastro
         this.nome = cadastro.nome
         this.carregarFormulario()
