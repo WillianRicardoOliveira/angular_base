@@ -10,8 +10,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "update": "ng update --force @angular/cli @angular/core",
-    "postinstall": "ngcc"
+    "update": "ng update --force @angular/cli @angular/core"
+    
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [

@@ -17,11 +17,20 @@
         </section>
         <mat-card-content>
           <div class="grid-container">
+            
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Nome</mat-label>
-              <input matInput formControlName="nome" placeholder="Nome">
-              <mat-error *ngIf="cadastroForm.get('nome')?.errors">Nome é obrigatório</mat-error>
-            </mat-form-field>
+              <input
+                  matInput
+                  formControlName="nome"
+                  placeholder="nome">
+                  
+                  <mat-error *ngIf="cadastroForm.get('nome')?.errors">Nome é obrigatório</mat-error>
+                  
+          </mat-form-field>
+            
+
+
             <div class="grid-item">
               <mat-form-field appearance="outline">
                 <mat-label>Data de Nascimento</mat-label>

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-input-text',
@@ -6,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./input-text.component.scss']
 })
 export class InputTextComponent {
+
+  @Input() label: string = ""
+  @Input() formControlName: string = ""
+  @Input() placeholder: string = ""
 
 }

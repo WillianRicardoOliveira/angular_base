@@ -23,7 +23,7 @@ export class CadastroService {
 
   cadastrar(pessoaUsuario: PessoaUsuario): Observable<PessoaUsuario> {
     console.log("SERVICE CADASTRO PESSOA :: ", pessoaUsuario)
-    return this.service.cadastrar("pessoa", pessoaUsuario)
+    return this.service.cadastrar("pessoa/cadastrar", pessoaUsuario)
   }
 
   atualizar(pessoaUsuario: any){

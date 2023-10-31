@@ -29,29 +29,30 @@ export class FormBasePerfilComponent implements OnInit {
 
   ngOnInit() {
     this.cadastroForm = this.formBuilder.group({
-      nome: [null, Validators.required],
-      nascimento: [null, [Validators.required]],
-      genero: ['outro'],
-      cpf: [null, [Validators.required]],
-      telefone: [null, Validators.required],
+      nome: ["Willian Ricardo Oliveira", Validators.required],
+      nascimento: ["12/02/1990", [Validators.required]],
+      genero: ['Outro'],
+      cpf: ["064.883.839-06", [Validators.required]],
+      telefone: ["(41)98875-5471", Validators.required],
 
       endereco: this.formBuilder.group({
-        cep: [null, Validators.required],
-        logradouro: [null, Validators.required],
-        complemento: [null],
-        bairro: [null, Validators.required],
+        cep: ["82720000", Validators.required],
+        logradouro: ["Estrada Guilherme Weigert", Validators.required],
+        complemento: ["AP 14 BL 42"],
+        bairro: ["Santa Cândida", Validators.required],
         //estado: this.estadoControl,
-        localidade: [null, Validators.required],
-        uf: [null, Validators.required],
-        numero: [null, Validators.required]
+        localidade: ["Curitiba", Validators.required],
+        uf: ["PR", Validators.required],
+        numero: ["2245", Validators.required]
       }),
       usuario: this.formBuilder.group({
-        email: [null, [Validators.required, Validators.email]],
-        senha: [null, [Validators.required, Validators.minLength(3)]],
-        confirmarEmail: [null, [Validators.required, Validators.email, FormValidations.equalTo('usuario.email')]],
-        confirmarSenha: [null, [Validators.required, Validators.minLength(3), FormValidations.equalTo('usuario.senha')]]
+        email: ["willian.vancouver@gmail.com", [Validators.required, Validators.email]],
+        senha: ["123456", [Validators.required, Validators.minLength(3)]],
+        confirmarEmail: ["willian.vancouver@gmail.com", [Validators.required, Validators.email, FormValidations.equalTo('usuario.email')]],
+        confirmarSenha: ["123456", [Validators.required, Validators.minLength(3), FormValidations.equalTo('usuario.senha')]]
       }),
-      aceitarTermos: [null, [Validators.requiredTrue]]
+      aceitarTermos: [true, [Validators.requiredTrue]],
+      tipoPessoa: ["CLIENTE"]
     });
     if(this.perfilComponent){
       this.cadastroForm.get("aceitarTermos").setValidators(null)
