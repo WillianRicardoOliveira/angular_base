@@ -15,7 +15,8 @@
             
         
 
-            <button mat-stroked-button color="primary" [routerLink]="rota.criar">
+            <button mat-stroked-button color="primary"
+             (click)="botaoAdicionar()">
               <mat-icon>add</mat-icon>Adicionar
             </button>
           </div>
@@ -48,10 +49,10 @@
             <tr *ngFor="let dado of lista; let i = index" (mouseover)="indexTarefa = i" [@trigger-destaque]="indexTarefa === i ? 'fim' : 'inicio'">
               <td *ngFor="let key of objectKeys(dado)">{{ dado[key] }}</td>
               <td>
-                <a href="#" routerLink="{{ rota.editar }}/{{ dado.id }}">
+                <a (click)="botaoEditar(dado.id)">
                   <mat-icon>edit</mat-icon>
                 </a>
-                <a (click)="excluir(dado.id)">
+                <a (click)="botaoExcluir(dado.id)">
                   <mat-icon>delete</mat-icon>
                 </a>
               </td>

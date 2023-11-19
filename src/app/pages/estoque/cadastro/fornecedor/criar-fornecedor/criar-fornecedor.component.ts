@@ -1,6 +1,6 @@
+import { Fornecedor } from '@/interfaces/interfaces';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { BaseService } from '@services/base/base.service';
 
 @Component({
@@ -16,49 +16,78 @@ export class CriarFornecedorComponent implements OnInit {
 
   isLista = true
 
-  param = {
-    end_point : "fornecedor",
-    redireciona_salvar: "listar-fornecedor",
-    redireciona_cancelar: "listar-fornecedor"
-  }
+  isFormulario = false
+
+  endPoint = "fornecedor"
+  
+  lista: Fornecedor[] = []
+
+  coluna = ["Código", "CNPJ", "Nome", "Telefone"]
 
   constructor(
     private service: BaseService,
-    private route: ActivatedRoute,
     private formBuilder: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id')
+    this.service.listar(this.endPoint).subscribe((lista: any) => {
+      this.lista = lista.content
+    })
+  }
+
+  carregarFormulario(id?: number) {
+    this.isLista = false
+    this.isFormulario = true
     if(id != null) {
-        this.service.detalhar(this.param.end_point, parseInt(id!)).subscribe((dados) => {
+      this.service.detalhar(this.endPoint, id).subscribe((dados) => {
         this.formulario = this.campos(dados)
       })
     } else {
-      this.formulario = this.campos("")
-    }   
+      this.formulario = this.campos()
+    } 
   }
 
-  campos(dados: any) {
+  campos(dados?: Fornecedor) {
     return this.formBuilder.group({
-      id: [(dados != "" ? dados.id : "")],
-      cnpj: [(dados != "" ? dados.cnpj : ""), Validators.compose([Validators.required])],
-      nome: [(dados != "" ? dados.nome : ""), Validators.compose([
+      id: [(dados != null ? dados.id : "")],
+      cnpj: [(dados != null ? dados.cnpj : ""), Validators.compose([Validators.required])],
+      nome: [(dados != null ? dados.nome : ""), Validators.compose([
         Validators.required,
         Validators.pattern(/(.|\s)*\S(.|\s)*/),
         Validators.minLength(3)
       ])],
-      telefone: [(dados != "" ? dados.telefone : ""), Validators.compose([Validators.required])],
-      descricao: [(dados != "" ? dados.descricao : "")]
+      telefone: [(dados != null ? dados.telefone : ""), Validators.compose([Validators.required])],
+      descricao: [(dados != null ? dados.descricao : "")]
     })   
   }
       
   salvar() {
-    this.service.salvar(this.param.end_point, this.param.redireciona_salvar, this.formulario)
+    this.service.salvar(this.endPoint, this.formulario)
+    this.isFormulario = false
+    this.isLista = true
+
+    // ATUALIZAR A LISTA
+
   }
 
   cancelar() {
-    this.service.cancelar(this.param.redireciona_cancelar)
+    this.isFormulario = false
+    this.isLista = true    
+  }
+
+  botaoAdicionar() {
+    this.carregarFormulario()
+  }
+
+  botaoEditar(id: number) {
+    this.carregarFormulario(id)
+  }
+
+  botaoExcluir(id: number) {
+    this.service.inativar(this.endPoint, id)
+
+    // ATUALIZAR A LISTA
+
   }
 
 }

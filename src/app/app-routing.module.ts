@@ -13,7 +13,6 @@ import {RecoverPasswordComponent} from '@modules/recover-password/recover-passwo
 import {MainMenuComponent} from '@pages/main-menu/main-menu.component';
 import {SubMenuComponent} from '@pages/main-menu/sub-menu/sub-menu.component';
 
-import { ListarFornecedorComponent } from '@pages/estoque/cadastro/fornecedor/listar-fornecedor/listar-fornecedor.component';
 import { CriarFornecedorComponent } from '@pages/estoque/cadastro/fornecedor/criar-fornecedor/criar-fornecedor.component';
 import { EditarProdutoComponent } from '@pages/estoque/cadastro/produto/editar-produto/editar-produto.component';
 import { CriarProdutoComponent } from '@pages/estoque/cadastro/produto/criar-produto/criar-produto.component';
@@ -58,7 +57,7 @@ const routes: Routes = [
 
             /* MODULO ESTOQUE */
 
-            { path: 'listar-fornecedor', component: ListarFornecedorComponent },
+           
             { path: 'criar-fornecedor', component: CriarFornecedorComponent },
             { path: 'criar-fornecedor/:id', component: CriarFornecedorComponent },
 

@@ -55,24 +55,26 @@ export class BaseService {
     return this.http.get<any>(`${this.api}/${endPoint}/${id}`)
   }
 
-  salvar(endPoint: string, redireciona: string, formulario: FormGroup) {
+  salvar(endPoint: string, formulario: FormGroup) {
     if(formulario.valid) {
       if(formulario.value.id != "") {
         this.atualizar(endPoint, formulario.value).subscribe(() => {
-          this.router.navigate([redireciona])
           this.toastr.success('Atualizado com successo');
         })
       } else {
         this.cadastrar(endPoint, formulario.value).subscribe(() => {
-          this.router.navigate([redireciona])
           this.toastr.success('Salvo com successo');
         })
       }
     }
   }
 
-  cancelar(redireciona: string) {
-    this.router.navigate([redireciona])
+  inativar(endPoint: string, id: number) {
+    this.excluir(endPoint, id).subscribe(
+      () => {
+        this.toastr.success('Inativado com successo');
+      }
+    )    
   }
 
 }

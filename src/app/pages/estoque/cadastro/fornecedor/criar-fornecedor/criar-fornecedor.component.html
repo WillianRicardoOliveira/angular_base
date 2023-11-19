@@ -1,6 +1,14 @@
 <app-cabecalho-pagina [pagina]="pagina"></app-cabecalho-pagina>
 
-<mat-card class="card formulario">
+<app-grid *ngIf="isLista"
+    [lista]="lista"
+    [coluna]="coluna"
+    (adicionar)="botaoAdicionar()"
+    (editar)="botaoEditar($event)"
+    (excluir)="botaoExcluir($event)">
+</app-grid>
+
+<mat-card class="card formulario" *ngIf="isFormulario && formulario">
   <mat-card-header class="card-header">
     <mat-card-title class="card-title">
       <h2>Cadastro de fornecedor</h2>
@@ -12,7 +20,7 @@
     </mat-card-actions>
   </mat-card-header>
   <mat-card-content class="card-body">
-    <form [formGroup]="formulario" *ngIf="formulario">
+    <form [formGroup]="formulario">
       <div class="grid-container">
         <div class="grid-item">
           <mat-form-field appearance="outline">
@@ -39,7 +47,7 @@
       </div>
     </form>
   </mat-card-content>
-  <mat-card-actions class="card-footer" *ngIf="formulario">
+  <mat-card-actions class="card-footer">
     <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
       Salvar
     </button>      

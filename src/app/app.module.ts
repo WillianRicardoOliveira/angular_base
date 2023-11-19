@@ -52,7 +52,6 @@ import { CriarProdutoComponent } from './pages/estoque/cadastro/produto/criar-pr
 import { EditarProdutoComponent } from './pages/estoque/cadastro/produto/editar-produto/editar-produto.component';
 import { ListarProdutoComponent } from './pages/estoque/cadastro/produto/listar-produto/listar-produto.component';
 import { CriarFornecedorComponent } from './pages/estoque/cadastro/fornecedor/criar-fornecedor/criar-fornecedor.component';
-import { ListarFornecedorComponent } from './pages/estoque/cadastro/fornecedor/listar-fornecedor/listar-fornecedor.component';
 import { CriarMovimentacaoComponent } from './pages/estoque/movimentacao/criar-movimentacao/criar-movimentacao.component';
 import { EditarMovimentacaoComponent } from './pages/estoque/movimentacao/editar-movimentacao/editar-movimentacao.component';
 import { ListarMovimentacaoComponent } from './pages/estoque/movimentacao/listar-movimentacao/listar-movimentacao.component';
@@ -151,7 +150,7 @@ registerLocaleData(localeEn, 'en-EN');
         EditarProdutoComponent,
         ListarProdutoComponent,
         CriarFornecedorComponent,
-        ListarFornecedorComponent,
+        
         CriarMovimentacaoComponent,
         EditarMovimentacaoComponent,
         ListarMovimentacaoComponent,

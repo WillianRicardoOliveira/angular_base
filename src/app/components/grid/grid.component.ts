@@ -1,5 +1,5 @@
 import { triggerDestaque } from '@/animations';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseService } from '@services/base/base.service';
 import { ToastrService } from 'ngx-toastr';
@@ -18,7 +18,11 @@ export class GridComponent implements OnInit {
 
   @Input() coluna: any
 
-  @Input() rota: any
+  @Output() adicionar: EventEmitter<any> = new EventEmitter<any>()
+
+  @Output() editar: EventEmitter<any> = new EventEmitter<any>()
+
+  @Output() excluir: EventEmitter<any> = new EventEmitter<any>()
 
   objectKeys = Object.keys
 
@@ -32,15 +36,18 @@ export class GridComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  excluir(id: number) {
-    this.service.excluir(this.rota.gateway, id).subscribe(
-      (retorno) => {
-        // Lógica para lidar com o valor emitido
-        this.router.navigate([this.rota.listar])
-        this.toastr.success('Inativado com successo');
-      },
-      (erro) => {}
-    )    
+ 
+
+  botaoAdicionar() {
+    this.adicionar.emit()
+  }
+
+  botaoEditar(id: number) {
+    this.editar.emit(id)
+  }
+
+  botaoExcluir(id: number) {
+    this.excluir.emit(id)
   }
 
 }
