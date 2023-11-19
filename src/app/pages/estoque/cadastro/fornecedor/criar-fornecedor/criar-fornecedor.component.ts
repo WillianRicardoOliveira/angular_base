@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { BaseService } from '@services/base/base.service';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-criar-fornecedor',
@@ -13,41 +12,53 @@ export class CriarFornecedorComponent implements OnInit {
 
   formulario!: FormGroup
 
-  parametros = {
-    rota_criar: "",
-    rota_editar: "",
-    rota_listar: "/listar-fornecedor",
-    gateway: "fornecedor"
+  pagina: string = "Fornecedor"
+
+  isLista = true
+
+  param = {
+    end_point : "fornecedor",
+    redireciona_salvar: "listar-fornecedor",
+    redireciona_cancelar: "listar-fornecedor"
   }
 
   constructor(
     private service: BaseService,
-    private router: Router,
-    private formBuilder: FormBuilder,
-    private toastr: ToastrService
+    private route: ActivatedRoute,
+    private formBuilder: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.formulario = this.formBuilder.group({
-      nome: ['', Validators.compose([
+    const id = this.route.snapshot.paramMap.get('id')
+    if(id != null) {
+        this.service.detalhar(this.param.end_point, parseInt(id!)).subscribe((dados) => {
+        this.formulario = this.campos(dados)
+      })
+    } else {
+      this.formulario = this.campos("")
+    }   
+  }
+
+  campos(dados: any) {
+    return this.formBuilder.group({
+      id: [(dados != "" ? dados.id : "")],
+      cnpj: [(dados != "" ? dados.cnpj : ""), Validators.compose([Validators.required])],
+      nome: [(dados != "" ? dados.nome : ""), Validators.compose([
         Validators.required,
         Validators.pattern(/(.|\s)*\S(.|\s)*/),
         Validators.minLength(3)
-      ])]
-    })
+      ])],
+      telefone: [(dados != "" ? dados.telefone : ""), Validators.compose([Validators.required])],
+      descricao: [(dados != "" ? dados.descricao : "")]
+    })   
   }
-
-  criar() {
-    if(this.formulario.valid) {  
-      this.service.cadastrar(this.parametros.gateway, this.formulario.value).subscribe(() => {
-        this.router.navigate([this.parametros.rota_listar])
-        this.toastr.success('Salvo com successo');
-      })
-    }
+      
+  salvar() {
+    this.service.salvar(this.param.end_point, this.param.redireciona_salvar, this.formulario)
   }
 
   cancelar() {
-    this.router.navigate([this.parametros.rota_listar])
+    this.service.cancelar(this.param.redireciona_cancelar)
   }
 
 }

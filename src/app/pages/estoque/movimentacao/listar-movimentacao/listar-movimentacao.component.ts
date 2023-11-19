@@ -1,6 +1,7 @@
+import { Movimentacao } from '@/interfaces/interfaces';
 import { Component, OnInit } from '@angular/core';
 import { BaseService } from '@services/base/base.service';
-import { Movimentacao } from '../movimentacao';
+
 
 @Component({
   selector: 'app-listar-movimentacao',
@@ -11,7 +12,7 @@ export class ListarMovimentacaoComponent implements OnInit {
 
   lista: Movimentacao[] = []
 
-  campos: any = ["Id", "Nome",
+  coluna: any = ["Id", "Nome",
     
     "Tipo",
     "Quantidade",
@@ -19,20 +20,18 @@ export class ListarMovimentacaoComponent implements OnInit {
     "Data"
   ]
 
-  parametros = {
-    rota_criar: "/criar-movimentacao",
-    rota_editar: "/editar-movimentacao",
-    rota_listar: "/listar-movimentacao",
-    gateway: "movimentacao",
-
-
-
+  rota = {
+    cadastrar: "/criar-movimentacao",
+    listar: "/editar-movimentacao",
+    atualizar: "/listar-movimentacao",
+    excluir: "",
+    detalhar: ""
   }
 
   constructor(private service: BaseService) {}
 
   ngOnInit(): void {
-    this.service.listar(this.parametros.gateway).subscribe((lista: any) => {
+    this.service.listar("movimentacao").subscribe((lista: any) => {
       this.lista = lista
     })
   }

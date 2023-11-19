@@ -20,6 +20,8 @@ export class EditarProdutoComponent implements OnInit {
     gateway: "produto"
   }
 
+  pagina: string = "Produto"
+
   constructor(
     private service: BaseService,
     private router: Router,

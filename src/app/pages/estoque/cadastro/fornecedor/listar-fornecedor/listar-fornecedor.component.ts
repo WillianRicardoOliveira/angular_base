@@ -1,5 +1,5 @@
+import { Fornecedor } from '@/interfaces/interfaces';
 import { Component, OnInit } from '@angular/core';
-import { Fornecedor } from '../fornecedor';
 import { BaseService } from '@services/base/base.service';
 
 @Component({
@@ -11,18 +11,24 @@ export class ListarFornecedorComponent implements OnInit {
 
   lista: Fornecedor[] = []
 
-  parametros = {
-    rota_criar: "/criar-fornecedor",
-    rota_editar: "/editar-fornecedor",
-    rota_listar: "/listar-fornecedor",
+  coluna: any = ["Código", "CNPJ", "Nome", "Telefone"]
+
+  rota = {
+    criar: "/criar-fornecedor",
+    editar: "/criar-fornecedor",
+    listar: "/listar-fornecedor",
     gateway: "fornecedor"
   }
+
+
+
+  pagina: string = "Fornecedor"
 
   constructor(private service: BaseService) {}
 
   ngOnInit(): void {
-    this.service.listar(this.parametros.gateway).subscribe((lista: any) => {
-      this.lista = lista
+    this.service.listar("fornecedor").subscribe((lista: any) => {
+      this.lista = lista.content
     })
   }
 

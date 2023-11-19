@@ -7,6 +7,6 @@ import { Component, Input } from '@angular/core';
 })
 export class CabecalhoPaginaComponent {
 
-  @Input() param: any
+  @Input() pagina: string = ""
 
 }

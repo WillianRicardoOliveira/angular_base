@@ -14,11 +14,12 @@
 
 @import 'ngx-toastr/toastr';
 
+/*
 body {
     width: 100vw;
     height: 100vh;
 }
-
+*/
 ::-webkit-scrollbar {
     width: 0px;
     background: transparent;
@@ -56,5 +57,58 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     margin-bottom: 40px;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+
+.formulario {
+  width: 70%;
+  margin-left: 10%;
+  mat-card-header {
+    justify-content: center;
+    mat-card-title {
+      text-align: center;
+      font-size: 32px;
+      font-weight: 400;
+      margin-top: 10px;
+    }
+    mat-card-actions {
+      display: flex;
+      button {
+        margin: 0 8px;
+        margin-left: -12px;
+      }
+    }
+  }
+  mat-divider {
+      margin: 0 16px;
+      border-top-color: #79747E;
+      margin-top: 24px;
+  }
+  mat-card-actions {
+    display: flex;
+    justify-content: center;
+    button {
+      margin: 0 8px;
+      img {
+        vertical-align: middle;
+      }
+    }
+  }
+  .grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 16px;
+    margin-bottom: 48px;
+    margin-top: 32px;
+    .grid-item {
+      display: flex;
+      flex-direction: column;
+      grid-gap: 8px;
+      .radio-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 16px;
+      }
+    }
+  }
+}

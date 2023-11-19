@@ -1,9 +1,11 @@
 <pf-dropdown hide-arrow class="user-menu">
     <div slot="button">
         <a class="nav-link">
+            <!--[src]="user.picture"
+                fallback-src="assets/img/default-profile.png"-->
             <pf-image
-                [src]="user.picture"
-                fallback-src="assets/img/default-profile.png"
+                
+                
                 class="user-image-small"
                 width="25"
                 height="25"
@@ -14,9 +16,12 @@
     </div>
     <div slot="menu">
         <li class="user-header bg-primary">
+            
+            <!--[src]="user.picture"
+                fallback-src="assets/img/default-profile.png"-->
             <pf-image
-                [src]="user.picture"
-                fallback-src="assets/img/default-profile.png"
+                
+                
                 class="user-image-big"
                 alt="User Image"
                 width="90"
@@ -25,10 +30,10 @@
             ></pf-image>
 
             <p>
-                <span>{{ user.email }}</span>
+                <span><!--{{ user.email }}--></span>
                 <small>
                     <span class="mr-2">Member since</span>
-                    <span>{{ formatDate(user.createdAt) }}</span>
+                    <span><!--{{ formatDate(user.createdAt) }}--></span>
                 </small>
             </p>
         </li>

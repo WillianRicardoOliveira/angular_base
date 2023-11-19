@@ -1,4 +1,46 @@
 
+export interface Fornecedor {
+    id?: number,
+    cnpj: string,
+    nome: string,
+    telefone: string,
+    descricao: string,
+    ativo?: boolean
+}
+
+
+
+
+
+
+
+
+export interface Produto {
+    id?: number,
+    nome: string
+}
+  
+
+
+export interface Movimentacao {
+    id?: number,
+    nome: string
+  }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export interface Conteudo {
 
     id: number,

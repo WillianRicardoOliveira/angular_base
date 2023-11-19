@@ -1,7 +1,8 @@
 <!-- Brand Logo -->
 <a [routerLink]="['/']" class="brand-link">
+    <!--src="assets/img/logo.png"-->
     <pf-image
-        src="assets/img/logo.png"
+        
         alt="AdminLTE Logo"
         class="brand-image"
         height="33"
@@ -9,7 +10,7 @@
         rounded
         style="opacity: 0.8"
     ></pf-image>
-    <span class="brand-text font-weight-light">AdminLTE 3</span>
+    <span class="brand-text font-weight-light">Futuro</span>
 </a>
 
 <!-- Sidebar -->
@@ -17,9 +18,11 @@
     <!-- Sidebar user (optional) -->
     <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
+            <!--[src]="user.picture"
+                fallback-src="assets/img/default-profile.png"-->
             <pf-image
-                [src]="user.picture"
-                fallback-src="assets/img/default-profile.png"
+                
+                
                 class="img-circle"
                 alt="User Image"
                 width="34"
@@ -29,7 +32,7 @@
         </div>
         <div class="info">
             <a [routerLink]="['/profile']" class="d-block">
-                {{ user.email }}
+                <!--{{ user.email }}-->
             </a>
         </div>
     </div>

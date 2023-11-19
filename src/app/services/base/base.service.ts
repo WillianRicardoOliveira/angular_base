@@ -1,7 +1,10 @@
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { UserService } from '@services/user/user.service';
 import { environment } from 'environments/environment';
+import { ToastrService } from 'ngx-toastr';
 import { Observable, tap } from 'rxjs';
 
 interface AuthResponse {
@@ -17,7 +20,9 @@ export class BaseService {
   
   constructor(
     private http: HttpClient,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router,
+    private toastr: ToastrService
     ) {}
 
   login(endPoint: string, dados: any): Observable<HttpResponse<AuthResponse>> {
@@ -39,7 +44,7 @@ export class BaseService {
   }
 
   atualizar(endPoint: string, dados: any): Observable<any> {
-    return this.http.put<any>(`${this.api}/${endPoint}/${dados.id}`, dados)
+    return this.http.put<any>(`${this.api}/${endPoint}`, dados)
   }
 
   excluir(endPoint: string, id: number): Observable<any> {
@@ -48,6 +53,26 @@ export class BaseService {
 
   detalhar(endPoint: string, id: number): Observable<any> {
     return this.http.get<any>(`${this.api}/${endPoint}/${id}`)
+  }
+
+  salvar(endPoint: string, redireciona: string, formulario: FormGroup) {
+    if(formulario.valid) {
+      if(formulario.value.id != "") {
+        this.atualizar(endPoint, formulario.value).subscribe(() => {
+          this.router.navigate([redireciona])
+          this.toastr.success('Atualizado com successo');
+        })
+      } else {
+        this.cadastrar(endPoint, formulario.value).subscribe(() => {
+          this.router.navigate([redireciona])
+          this.toastr.success('Salvo com successo');
+        })
+      }
+    }
+  }
+
+  cancelar(redireciona: string) {
+    this.router.navigate([redireciona])
   }
 
 }

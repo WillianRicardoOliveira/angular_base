@@ -13,13 +13,14 @@ export class ProfileComponent {
 
     formulario!: FormGroup
 
-    parametros = {
+    rota = {
       rota_criar: "",
       rota_editar: "",
       rota_listar: "/listar-fornecedor",
       gateway: "fornecedor"
     }
-
+    pagina: string = "Profile"
+    
     constructor(
         private service: BaseService,
         private router: Router,
@@ -47,15 +48,15 @@ export class ProfileComponent {
     
       criar() {
         if(this.formulario.valid) {  
-          this.service.cadastrar(this.parametros.gateway, this.formulario.value).subscribe(() => {
-            this.router.navigate([this.parametros.rota_listar])
+          this.service.cadastrar(this.rota.gateway, this.formulario.value).subscribe(() => {
+            this.router.navigate([this.rota.rota_listar])
             this.toastr.success('Salvo com successo');
           })
         }
       }
     
       cancelar() {
-        this.router.navigate([this.parametros.rota_listar])
+        this.router.navigate([this.rota.rota_listar])
       }
 
 }

@@ -15,7 +15,6 @@ import {SubMenuComponent} from '@pages/main-menu/sub-menu/sub-menu.component';
 
 import { ListarFornecedorComponent } from '@pages/estoque/cadastro/fornecedor/listar-fornecedor/listar-fornecedor.component';
 import { CriarFornecedorComponent } from '@pages/estoque/cadastro/fornecedor/criar-fornecedor/criar-fornecedor.component';
-import { EditarFornecedorComponent } from '@pages/estoque/cadastro/fornecedor/editar-fornecedor/editar-fornecedor.component';
 import { EditarProdutoComponent } from '@pages/estoque/cadastro/produto/editar-produto/editar-produto.component';
 import { CriarProdutoComponent } from '@pages/estoque/cadastro/produto/criar-produto/criar-produto.component';
 import { ListarProdutoComponent } from '@pages/estoque/cadastro/produto/listar-produto/listar-produto.component';
@@ -58,11 +57,16 @@ const routes: Routes = [
 
 
             /* MODULO ESTOQUE */
-            { path: 'dashboard-estoque', component: DashboardEstoqueComponent },
 
             { path: 'listar-fornecedor', component: ListarFornecedorComponent },
             { path: 'criar-fornecedor', component: CriarFornecedorComponent },
-            { path: 'editar-fornecedor/:id', component: EditarFornecedorComponent },
+            { path: 'criar-fornecedor/:id', component: CriarFornecedorComponent },
+
+
+
+
+            { path: 'dashboard-estoque', component: DashboardEstoqueComponent },
+
 
             { path: 'listar-produto', component: ListarProdutoComponent },
             { path: 'criar-produto', component: CriarProdutoComponent },

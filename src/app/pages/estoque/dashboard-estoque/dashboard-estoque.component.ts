@@ -13,13 +13,8 @@ export class DashboardEstoqueComponent implements OnInit {
     rota: "/lista-usuario"
   }
 
-  param = {
-
-    titulo: "Dashboard",
-    pagina: "Dashboard"
-
-  }
-
+  pagina: string = "Dashboard"
+ 
   constructor() {}
   
   ngOnInit(): void {

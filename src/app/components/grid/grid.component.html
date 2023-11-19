@@ -1,5 +1,4 @@
 
-<app-cabecalho-pagina [param]="parametros"></app-cabecalho-pagina>
 
 <section class="content">
 
@@ -12,19 +11,16 @@
         <div class="row">
 
           <div class="col-sm-1">
+            
+            
+        
 
-            <button
-              type="button"
-              class = "btn btn-block bg-gradient-primary"
-
-              [routerLink]="parametros.rota_criar">Novo</button>
-
+            <button mat-stroked-button color="primary" [routerLink]="rota.criar">
+              <mat-icon>add</mat-icon>Adicionar
+            </button>
           </div>
 
-          <div class="col-sm-7">
-
-
-          </div>
+          <div class="col-sm-7"></div>
 
           <div class="col-sm-4">
 
@@ -41,52 +37,27 @@
       </div>
 
       <div class="card-body p-0">
-
         <table class="table table-striped">
           <thead>
             <tr>
-              <th *ngFor="let da of campos; let i = index">
-                {{ campos[i] }}
-              </th>
+              <th *ngFor="let item of coluna | keyvalue">{{ item.value }}</th>
+              <th>Ações</th>
             </tr>
           </thead>
-
           <tbody *ngIf="lista.length > 0, else semRegistros">
-
-            <tr *ngFor="let dado of lista;
-
-            let i = index"
-            (mouseover)="indexTarefa = i"
-            [@trigger-destaque]="indexTarefa === i ? 'fim' : 'inicio'"
-
-            >
-
-              <td>{{ dado.id }}.</td>
-              <td>{{ dado.nome }}</td>
-              <td>{{ dado.tipo }}</td>
-              <td>{{ dado.quantidade }}</td>
-              <td>{{ dado.total }}</td>
-              <td>{{ dado.data }}</td>
+            <tr *ngFor="let dado of lista; let i = index" (mouseover)="indexTarefa = i" [@trigger-destaque]="indexTarefa === i ? 'fim' : 'inicio'">
+              <td *ngFor="let key of objectKeys(dado)">{{ dado[key] }}</td>
               <td>
-                <!--
-                <app-excluir [dado]="dado" [param]="parametros"></app-excluir>
--->
-
+                <a href="#" routerLink="{{ rota.editar }}/{{ dado.id }}">
+                  <mat-icon>edit</mat-icon>
+                </a>
+                <a (click)="excluir(dado.id)">
+                  <mat-icon>delete</mat-icon>
+                </a>
               </td>
-
-              <td>
-
-                <a href="#" routerLink="{{ parametros.rota_editar }}/{{ dado.id }}">Editar</a>
-
-
-              </td>
-
             </tr>
-
           </tbody>
-
         </table>
-
       </div>
 
     </div>

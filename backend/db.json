@@ -50,7 +50,7 @@
     {
       "id": 1,
       "destino": "Desenvolvimento",
-      "imagem": "assets/imagens/Veneza.png",
+      "imagem": "assets/img/Veneza.png",
       "preco": 125
     }
   ],
@@ -69,7 +69,7 @@
   "depoimento": [
     {
       "id": 1,
-      "imagem": "../../../../assets/imagens/avatar3.png",
+      "imagem": "../../../../assets/img/avatar3.png",
       "texto": "Estou muito feliz em desenvolver o meu site",
       "autor": "Willian Ricardo Oliveira"
     }

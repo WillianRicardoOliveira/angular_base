@@ -20,6 +20,8 @@ export class CriarMovimentacaoComponent implements OnInit {
     gateway: "movimentacao"
   }
 
+  pagina = "Movimentação"
+
   constructor(
     private service: BaseService,
     private router: Router,
