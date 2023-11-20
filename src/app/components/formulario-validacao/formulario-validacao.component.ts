@@ -11,6 +11,8 @@ export class FormularioValidacaoComponent implements OnInit {
 
   @Input() formulario!: FormGroup
 
+  @Input() campo: string
+
   constructor(
 
     private service: BaseService

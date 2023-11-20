@@ -25,18 +25,27 @@
         <div class="grid-item">
           <mat-form-field appearance="outline">
             <mat-label>CNPJ</mat-label>
-                <input matInput formControlName="cnpj">
+            <input matInput formControlName="cnpj">
           </mat-form-field>
+          <div class="valide" *ngIf="formulario.get('cnpj')?.errors?.['required'] && formulario.get('cnpj')?.touched">
+            Este campo é obrigatório
+          </div>               
           <mat-form-field appearance="outline">
             <mat-label>Nome</mat-label>
             <input matInput formControlName="nome">
           </mat-form-field>
+          <div class="valide" *ngIf="formulario.get('nome')?.errors?.['required'] && formulario.get('nome')?.touched">
+            Este campo é obrigatório
+          </div>
         </div>
         <div class="grid-item">
           <mat-form-field appearance="outline">
             <mat-label>Telefone</mat-label>
-            <input matInput formControlName="telefone">
+            <input type="tel" matInput formControlName="telefone">
           </mat-form-field>
+          <div class="valide" *ngIf="formulario.get('telefone')?.errors?.['required'] && formulario.get('telefone')?.touched">
+            Este campo é obrigatório
+          </div>
         </div>
         <div class="grid-item">
           <mat-form-field appearance="outline">
