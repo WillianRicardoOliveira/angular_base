@@ -25,34 +25,32 @@
         <div class="grid-item">
           <mat-form-field appearance="outline">
             <mat-label>CNPJ</mat-label>
-            <input matInput formControlName="cnpj">
+            <input matInput formControlName="cnpj" mask="00.000.000/0000-00">
           </mat-form-field>
           <div class="valide" *ngIf="formulario.get('cnpj')?.errors?.['required'] && formulario.get('cnpj')?.touched">
             Este campo é obrigatório
           </div>               
-          <mat-form-field appearance="outline">
-            <mat-label>Nome</mat-label>
-            <input matInput formControlName="nome">
-          </mat-form-field>
-          <div class="valide" *ngIf="formulario.get('nome')?.errors?.['required'] && formulario.get('nome')?.touched">
-            Este campo é obrigatório
-          </div>
         </div>
         <div class="grid-item">
           <mat-form-field appearance="outline">
             <mat-label>Telefone</mat-label>
-            <input type="tel" matInput formControlName="telefone">
+            <input type="text" matInput formControlName="telefone" mask="(00) 00000-0000">
           </mat-form-field>
           <div class="valide" *ngIf="formulario.get('telefone')?.errors?.['required'] && formulario.get('telefone')?.touched">
             Este campo é obrigatório
           </div>
         </div>
-        <div class="grid-item">
-          <mat-form-field appearance="outline">
-            <mat-label>Descrição</mat-label>
-            <textarea matInput formControlName="descricao"></textarea>
-          </mat-form-field>
+        <mat-form-field appearance="outline" fxflex="40" class="full-width">
+          <mat-label>Nome</mat-label>
+          <input matInput formControlName="nome" maxlength="100">
+        </mat-form-field>
+        <div class="valide" *ngIf="formulario.get('nome')?.errors?.['required'] && formulario.get('nome')?.touched">
+          Este campo é obrigatório
         </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descrição</mat-label>
+          <textarea matInput formControlName="descricao" maxlength="250"></textarea>
+        </mat-form-field>
       </div>
     </form>
   </mat-card-content>

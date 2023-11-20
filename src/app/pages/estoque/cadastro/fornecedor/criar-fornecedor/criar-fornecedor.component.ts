@@ -54,10 +54,11 @@ export class CriarFornecedorComponent implements OnInit {
       nome: [(dados != null ? dados.nome : ""), Validators.compose([
         Validators.required,
         Validators.pattern(/(.|\s)*\S(.|\s)*/),
-        Validators.minLength(3)
+        Validators.minLength(3),
+        Validators.maxLength(100)
       ])],
       telefone: [(dados != null ? dados.telefone : ""), Validators.compose([Validators.required])],
-      descricao: [(dados != null ? dados.descricao : "")]
+      descricao: [(dados != null ? dados.descricao : ""), Validators.compose([Validators.maxLength(250)])]
     })   
   }
       

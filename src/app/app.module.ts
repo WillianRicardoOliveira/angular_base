@@ -58,6 +58,7 @@ import { ListarMovimentacaoComponent } from './pages/estoque/movimentacao/listar
 import { DashboardEstoqueComponent } from './pages/estoque/dashboard-estoque/dashboard-estoque.component';
 import { InputTextComponent } from './components/formulario/input-text/input-text.component';
 
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask'
 
 /* Angular Material */
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -204,6 +205,13 @@ registerLocaleData(localeEn, 'en-EN');
             positionClass: 'toast-top-right',
             preventDuplicates: true
         }),
+        NgxMaskDirective, /* https://github.com/JsDaddy/ngx-mask */
+        NgxMaskPipe,
+        //.forRoot(
+        //{
+        //    dropSpecialCharacters: true
+        //}
+        //),
 
 
 
@@ -239,7 +247,9 @@ registerLocaleData(localeEn, 'en-EN');
 
         useClass: AutenticacaoInterceptor,
         
-    }],
+    },
+    provideNgxMask()
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {}

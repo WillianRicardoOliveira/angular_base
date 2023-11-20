@@ -100,15 +100,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     grid-gap: 16px;
     margin-bottom: 48px;
     margin-top: 32px;
+    .full-width {
+      grid-column: 1 / span 2;
+    }
     .grid-item {
       display: flex;
       flex-direction: column;
       grid-gap: 8px;
-      .radio-group {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 16px;
-      }
     }
     .valide {
       color: red;
