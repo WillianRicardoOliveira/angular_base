@@ -1,7 +1,6 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UserService } from '@services/user/user.service';
 import { environment } from 'environments/environment';
 import { ToastrService } from 'ngx-toastr';
@@ -21,7 +20,6 @@ export class BaseService {
   constructor(
     private http: HttpClient,
     private userService: UserService,
-    private router: Router,
     private toastr: ToastrService
     ) {}
 

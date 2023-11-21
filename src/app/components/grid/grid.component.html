@@ -29,8 +29,9 @@
               type="text"
               class="form-control"
               id="buscar"
-              placeholder="O que você procura ?">
-
+              placeholder="O que você procura ?"
+              autofocus>
+              
           </div>
 
         </div>
@@ -41,6 +42,7 @@
         <table class="table table-striped">
           <thead>
             <tr>
+              <th>Código</th>
               <th *ngFor="let item of coluna | keyvalue">{{ item.value }}</th>
               <th>Ações</th>
             </tr>
@@ -71,7 +73,9 @@
 
   <tbody>
 
-    <tr><td colspan="3" align="center">Ainda não há registros cadastrados!</td></tr>
+    <tr><td [attr.colspan]="coluna.length+2" align="center">
+            
+      Ainda não há registros cadastrados!</td></tr>
 
   </tbody>
 

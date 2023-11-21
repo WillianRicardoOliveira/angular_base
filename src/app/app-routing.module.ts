@@ -35,6 +35,9 @@ import { CadastroComponent } from '@pages/site/cadastro/cadastro.component';
 const routes: Routes = [
     {
         path: '',
+        //redirectTo: "MainComponent",
+        //pathMatch: "full"
+
         component: MainComponent,
         //component: HomeSiteComponent,
         //canActivate: [AuthGuard],

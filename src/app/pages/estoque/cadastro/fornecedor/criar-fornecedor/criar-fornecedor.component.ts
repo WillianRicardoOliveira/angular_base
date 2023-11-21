@@ -22,7 +22,7 @@ export class CriarFornecedorComponent implements OnInit {
   
   lista: Fornecedor[] = []
 
-  coluna = ["Código", "CNPJ", "Nome", "Telefone"]
+  coluna = ["CNPJ", "Nome", "Telefone"]
 
   constructor(
     private service: BaseService,
@@ -66,9 +66,6 @@ export class CriarFornecedorComponent implements OnInit {
     this.service.salvar(this.endPoint, this.formulario)
     this.isFormulario = false
     this.isLista = true
-
-    // ATUALIZAR A LISTA
-
   }
 
   cancelar() {
@@ -86,9 +83,6 @@ export class CriarFornecedorComponent implements OnInit {
 
   botaoExcluir(id: number) {
     this.service.inativar(this.endPoint, id)
-
-    // ATUALIZAR A LISTA
-
   }
 
 }

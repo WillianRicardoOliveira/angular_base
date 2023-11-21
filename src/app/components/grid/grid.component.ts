@@ -1,8 +1,5 @@
 import { triggerDestaque } from '@/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
-import { BaseService } from '@services/base/base.service';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-grid',
@@ -28,15 +25,9 @@ export class GridComponent implements OnInit {
 
   indexTarefa = -1
 
-  constructor(
-    private service: BaseService,
-    private router: Router,
-    private toastr: ToastrService
-    ) {}
+  constructor() {}
 
   ngOnInit(): void {}
-
- 
 
   botaoAdicionar() {
     this.adicionar.emit()
