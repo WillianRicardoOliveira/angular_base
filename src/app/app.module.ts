@@ -76,7 +76,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatRadioModule  } from '@angular/material/radio' 
 import { MatDividerModule } from '@angular/material/divider'
 import { MatCheckboxModule } from '@angular/material/checkbox'
-
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 import { ContainerComponent } from './components/site/container/container.component';
@@ -236,7 +236,8 @@ registerLocaleData(localeEn, 'en-EN');
         MatAutocompleteModule,
         MatRadioModule,
         MatDividerModule,
-        MatCheckboxModule 
+        MatCheckboxModule, 
+        MatTooltipModule
 
     ],
     providers: [

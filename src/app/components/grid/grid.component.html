@@ -51,12 +51,13 @@
             <tr *ngFor="let dado of lista; let i = index" (mouseover)="indexTarefa = i" [@trigger-destaque]="indexTarefa === i ? 'fim' : 'inicio'">
               <td *ngFor="let key of objectKeys(dado)">{{ dado[key] }}</td>
               <td>
-                <a (click)="botaoEditar(dado.id)">
+                <button class="btn btn-tool" (click)="botaoEditar(dado.id)" matTooltip="Editar">
                   <mat-icon>edit</mat-icon>
-                </a>
-                <a (click)="botaoExcluir(dado.id)">
+                </button>
+                &nbsp;&nbsp;
+                <button class="btn btn-tool" (click)="botaoExcluir(dado.id)" matTooltip="Excluir">
                   <mat-icon>delete</mat-icon>
-                </a>
+                </button>
               </td>
             </tr>
           </tbody>
