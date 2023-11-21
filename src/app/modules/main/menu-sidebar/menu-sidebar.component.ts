@@ -60,7 +60,7 @@ export const MENU = [
             {
                 name: 'Fornecedor',
                 iconClasses: 'fas fa-file',
-                path: ['/listar-fornecedor']
+                path: ['/fornecedor']
             },
             {
                 name: 'Produto',

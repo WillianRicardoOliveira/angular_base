@@ -2,13 +2,12 @@ import { Fornecedor } from '@/interfaces/interfaces';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BaseService } from '@services/base/base.service';
-
 @Component({
-  selector: 'app-criar-fornecedor',
-  templateUrl: './criar-fornecedor.component.html',
-  styleUrls: ['./criar-fornecedor.component.scss']
+  selector: 'app-fornecedor',
+  templateUrl: './fornecedor.component.html',
+  styleUrls: ['./fornecedor.component.scss']
 })
-export class CriarFornecedorComponent implements OnInit {
+export class FornecedorComponent implements OnInit {
 
   formulario!: FormGroup
 

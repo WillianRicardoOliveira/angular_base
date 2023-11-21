@@ -51,7 +51,6 @@ import { PerigoComponent } from './components/dashboard/perigo/perigo.component'
 import { CriarProdutoComponent } from './pages/estoque/cadastro/produto/criar-produto/criar-produto.component';
 import { EditarProdutoComponent } from './pages/estoque/cadastro/produto/editar-produto/editar-produto.component';
 import { ListarProdutoComponent } from './pages/estoque/cadastro/produto/listar-produto/listar-produto.component';
-import { CriarFornecedorComponent } from './pages/estoque/cadastro/fornecedor/criar-fornecedor/criar-fornecedor.component';
 import { CriarMovimentacaoComponent } from './pages/estoque/movimentacao/criar-movimentacao/criar-movimentacao.component';
 import { EditarMovimentacaoComponent } from './pages/estoque/movimentacao/editar-movimentacao/editar-movimentacao.component';
 import { ListarMovimentacaoComponent } from './pages/estoque/movimentacao/listar-movimentacao/listar-movimentacao.component';
@@ -108,6 +107,11 @@ import { FormBasePerfilComponent } from './components/site/form-base-perfil/form
 import { interval, take } from 'rxjs';
 
 
+
+/* ESTOQUE */
+import { FornecedorComponent } from './pages/estoque/fornecedor/fornecedor.component';
+
+
 registerLocaleData(localeEn, 'en-EN');
 
 @NgModule({
@@ -146,11 +150,19 @@ registerLocaleData(localeEn, 'en-EN');
         PerigoComponent,
 
        
-        /* MODULO DE ETOQUE */
+        /* ESTOQUE */
+        FornecedorComponent,
+
+
+
+
+
+
+
         CriarProdutoComponent,
         EditarProdutoComponent,
         ListarProdutoComponent,
-        CriarFornecedorComponent,
+        
         
         CriarMovimentacaoComponent,
         EditarMovimentacaoComponent,
@@ -186,6 +198,7 @@ registerLocaleData(localeEn, 'en-EN');
         
         PerfilComponent,
         FormBasePerfilComponent,
+        
         
                  
 
