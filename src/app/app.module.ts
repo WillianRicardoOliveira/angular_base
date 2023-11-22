@@ -110,6 +110,7 @@ import { interval, take } from 'rxjs';
 
 /* ESTOQUE */
 import { FornecedorComponent } from './pages/estoque/fornecedor/fornecedor.component';
+import { ProdutoComponent } from './pages/estoque/produto/produto.component';
 
 
 registerLocaleData(localeEn, 'en-EN');
@@ -152,6 +153,7 @@ registerLocaleData(localeEn, 'en-EN');
        
         /* ESTOQUE */
         FornecedorComponent,
+        ProdutoComponent,
 
 
 
@@ -170,8 +172,8 @@ registerLocaleData(localeEn, 'en-EN');
         DashboardEstoqueComponent,
         
         InputTextComponent,
-                  BannerComponent,
-                  ContainerComponent,
+        BannerComponent,
+        ContainerComponent,
                   
         /* Site */
         LoginComponent,
@@ -198,6 +200,7 @@ registerLocaleData(localeEn, 'en-EN');
         
         PerfilComponent,
         FormBasePerfilComponent,
+       
         
         
                  

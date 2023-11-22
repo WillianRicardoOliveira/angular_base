@@ -65,7 +65,7 @@ export const MENU = [
             {
                 name: 'Produto',
                 iconClasses: 'fas fa-file',
-                path: ['/listar-produto']
+                path: ['/produto']
 
             },
             {

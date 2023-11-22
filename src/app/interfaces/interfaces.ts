@@ -15,11 +15,10 @@ export interface Fornecedor {
 
 
 
-export interface Produto {
-    id?: number,
-    nome: string
-}
-  
+
+
+
+
 
 
 export interface Movimentacao {
