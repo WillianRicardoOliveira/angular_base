@@ -4,11 +4,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BaseService } from '@services/base/base.service';
 
 @Component({
-  selector: 'app-fornecedor',
-  templateUrl: './fornecedor.component.html',
-  styleUrls: ['./fornecedor.component.scss']
+  selector: 'app-compra',
+  templateUrl: './compra.component.html',
+  styleUrls: ['./compra.component.scss']
 })
-export class FornecedorComponent implements OnInit {
+export class CompraComponent implements OnInit {
 
   formulario!: FormGroup
 

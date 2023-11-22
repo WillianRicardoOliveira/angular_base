@@ -110,6 +110,7 @@ import { interval, take } from 'rxjs';
 
 /* ESTOQUE */
 import { FornecedorComponent } from './pages/estoque/fornecedor/fornecedor.component';
+import { CompraComponent } from './pages/estoque/compra/compra.component';
 
 
 registerLocaleData(localeEn, 'en-EN');
@@ -198,6 +199,7 @@ registerLocaleData(localeEn, 'en-EN');
         
         PerfilComponent,
         FormBasePerfilComponent,
+        CompraComponent,
         
         
                  

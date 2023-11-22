@@ -8,25 +8,47 @@ export interface Fornecedor {
     ativo?: boolean
 }
 
-
-
-
-
-
-
-
 export interface Produto {
     id?: number,
-    nome: string
+    nome: string,
+    descricao:string,
+    quantidade?: number,
+    minimo: number,
+    maximo: number,
+    ativo?: boolean
 }
-  
 
+export interface Compra {
+    id?: number,
+    descricao: string,
+    status?: string,
+    data: string,
+    ativo?: boolean
+}
+
+export interface compra_item {
+    id?: number,
+    id_compra: number,
+    id_fornecedor: number,
+    id_produto: number,
+    quantidade: number,
+    valor: number,
+    total: number,
+    controle: number,
+    ativo?: boolean
+}  
 
 export interface Movimentacao {
     id?: number,
-    nome: string
+    tipo_movimentacao: string
+    id_compra: number,
+    id_cliente: number,
+    id_produto: number,
+    quantidade: number,
+    total: number,
+    data: string,
+    ativo?: boolean
   }
-  
 
 
 
