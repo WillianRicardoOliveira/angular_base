@@ -22,7 +22,7 @@ export interface Compra {
     id?: number,
     descricao: string,
     status?: string,
-    data: string,
+    data?: string,
     ativo?: boolean
 }
 

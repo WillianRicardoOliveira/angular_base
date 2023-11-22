@@ -55,24 +55,26 @@ export const MENU = [
                 name: 'Usuários',
                 iconClasses: 'fas fa-file',
                 path: ['/lista-usuario']
-
             },
             {
-                name: 'Fornecedor',
+                name: 'Fornecedores',
                 iconClasses: 'fas fa-file',
                 path: ['/fornecedor']
             },
             {
-                name: 'Produto',
+                name: 'Produtos',
                 iconClasses: 'fas fa-file',
-                path: ['/listar-produto']
-
+                path: ['/produto']
+            },
+            {
+                name: 'Compras',
+                iconClasses: 'fas fa-file',
+                path: ['/compra']
             },
             {
                 name: 'Movimentacao',
                 iconClasses: 'fas fa-file',
                 path: ['/listar-movimentacao']
-
             }
         ]
     }

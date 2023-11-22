@@ -1,28 +1,28 @@
-import { Compra } from '@/interfaces/interfaces';
+import { Produto } from '@/interfaces/interfaces';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BaseService } from '@services/base/base.service';
 
 @Component({
-  selector: 'app-compra',
-  templateUrl: './compra.component.html',
-  styleUrls: ['./compra.component.scss']
+  selector: 'app-produto',
+  templateUrl: './produto.component.html',
+  styleUrls: ['./produto.component.scss']
 })
-export class CompraComponent implements OnInit {
+export class ProdutoComponent implements OnInit {
 
   formulario!: FormGroup
 
-  pagina: string = "Compra"
+  pagina: string = "Produto"
 
   isLista = true
 
   isFormulario = false
 
-  endPoint = "compra"
+  endPoint = "produto"
   
-  lista: Compra[] = []
+  lista: Produto[] = []
 
-  coluna = ["Descrição", "Status"]
+  coluna = ["Nome", "Descricao", "Quantidade", "Minimo", "Maximo"]
 
   constructor(
     private service: BaseService,
@@ -47,13 +47,18 @@ export class CompraComponent implements OnInit {
     } 
   }
 
-  campos(dados?: Compra) {
+  campos(dados?: Produto) {
     return this.formBuilder.group({
       id: [(dados != null ? dados.id : "")],
-      descricao: [(dados != null ? dados.descricao : ""), Validators.compose([
+      nome: [(dados != null ? dados.nome : ""), Validators.compose([
         Validators.required,
-        Validators.maxLength(250)
-      ])]
+        Validators.pattern(/(.|\s)*\S(.|\s)*/),
+        Validators.minLength(3),
+        Validators.maxLength(100)
+      ])],
+      descricao: [(dados != null ? dados.descricao : ""), Validators.compose([Validators.maxLength(250)])],
+      minimo: [(dados != null ? dados.minimo : ""), Validators.compose([Validators.required])],
+      maximo: [(dados != null ? dados.maximo : ""), Validators.compose([Validators.required])]    
     })   
   }
       

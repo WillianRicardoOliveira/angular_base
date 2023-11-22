@@ -33,6 +33,8 @@ import { CadastroComponent } from '@pages/site/cadastro/cadastro.component';
 
 /* ESTOQUE */
 import { FornecedorComponent } from '@pages/estoque/fornecedor/fornecedor.component';
+import { ProdutoComponent } from '@pages/estoque/produto/produto.component';
+import { CompraComponent } from '@pages/estoque/compra/compra.component';
 
 
 const routes: Routes = [
@@ -63,7 +65,8 @@ const routes: Routes = [
 
             /* ESTOQUE */
             { path: 'fornecedor', component: FornecedorComponent },
-
+            { path: 'produto', component: ProdutoComponent },
+            { path: 'compra', component: CompraComponent },
 
 
 

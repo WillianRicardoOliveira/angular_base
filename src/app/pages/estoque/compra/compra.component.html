@@ -1,1 +1,46 @@
-<p>compra works!</p>
+<app-cabecalho-pagina [pagina]="pagina"></app-cabecalho-pagina>
+
+<app-grid *ngIf="isLista"
+    [lista]="lista"
+    [coluna]="coluna"
+    (adicionar)="botaoAdicionar()"
+    (editar)="botaoEditar($event)"
+    (excluir)="botaoExcluir($event)">
+</app-grid>
+
+<mat-card class="card formulario" *ngIf="isFormulario && formulario">
+  <mat-card-header class="card-header">
+    <mat-card-title class="card-title">
+      <h2>Cadastro de compra</h2>
+    </mat-card-title>    
+    <mat-card-actions class="card-tools">  
+      <button type="button" class="btn btn-tool" title="Ajuda">
+        <mat-icon>help</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card-header>
+  <mat-card-content class="card-body">
+    <form [formGroup]="formulario">
+      <div class="grid-container">
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descrição</mat-label>
+            <textarea matInput formControlName="descricao" maxlength="250"></textarea>
+        </mat-form-field>
+        <div class="grid-item">
+            <div class="valide" *ngIf="formulario.get('descricao')?.errors?.['required'] && formulario.get('descricao')?.touched">
+                Este campo é obrigatório
+            </div> 
+        </div>
+      </div>
+    </form>
+  </mat-card-content>
+  <mat-card-actions class="card-footer">
+    <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
+      Salvar
+    </button>      
+    <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
+      Cancelar
+    </button>
+  </mat-card-actions>
+</mat-card>
+<mat-divider></mat-divider>
