@@ -1,4 +1,5 @@
-import { HttpClient, HttpResponse } from '@angular/common/http';
+
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UserService } from '@services/user/user.service';
@@ -37,8 +38,21 @@ export class BaseService {
     return this.http.post<any>(`${this.api}/${endPoint}`, dados)
   }
 
-  listar(endPoint: string): Observable<any[]> {
-    return this.http.get<any>(`${this.api}/${endPoint}`)
+  listar(endPoint: string, page?: number, size?: number, sort?: string, filtro?: string): Observable<any[]> {
+    let params = new HttpParams()
+    if(page) {
+      params = params.set("page", page)
+    }
+    if(size) {
+      params = params.set("size", size)
+    }
+    if(sort) {
+      params = params.set("sort", sort)
+    }
+    if(filtro) {
+      params = params.set("filtro", filtro)
+    }
+    return this.http.get<any>(`${this.api}/${endPoint}`, { params })
   }
 
   atualizar(endPoint: string, dados: any): Observable<any> {

@@ -1,83 +1,72 @@
-
-
 <section class="content">
-
-  <div class="container-fluid">
-
-    <div class="card">
-
-      <div class="card-header">
-
-        <div class="row">
-
-          <div class="col-sm-1">
-            
-            
-        
-
-            <button mat-stroked-button color="primary"
-             (click)="botaoAdicionar()">
-              <mat-icon>add</mat-icon>Adicionar
-            </button>
-          </div>
-
-          <div class="col-sm-7"></div>
-
-          <div class="col-sm-4">
-
-            <input
-              type="text"
-              class="form-control"
-              id="buscar"
-              placeholder="O que você procura ?"
-              autofocus>
-              
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="card-body p-0">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th *ngFor="let item of coluna | keyvalue">{{ item.value }}</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody *ngIf="lista.length > 0, else semRegistros">
-            <tr *ngFor="let dado of lista; let i = index" (mouseover)="indexTarefa = i" [@trigger-destaque]="indexTarefa === i ? 'fim' : 'inicio'">
-              <td *ngFor="let key of objectKeys(dado)">{{ dado[key] }}</td>
-              <td>
-                <button class="btn btn-tool" (click)="botaoEditar(dado.id)" matTooltip="Editar">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                &nbsp;&nbsp;
-                <button class="btn btn-tool" (click)="botaoExcluir(dado.id)" matTooltip="Excluir">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-    </div>
-
-  </div>
-
+  <mat-card class="card">
+    <mat-card-header class="card-header">
+      <mat-card-title class="card-title">
+        <button mat-stroked-button color="primary"
+          (click)="botaoAdicionar()">
+          <mat-icon>add</mat-icon>Adicionar</button>
+      </mat-card-title>    
+      <mat-card-actions class="card-tools search">
+        <input
+          type="search"
+          class="form-control"
+          placeholder="O que você procura ?"
+          autofocus
+          [(ngModel)]="filtro"
+          (keyup)="pesquisar()">
+      </mat-card-actions>
+    </mat-card-header>
+    <mat-card-content class="card-body">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th *ngFor="let item of coluna | keyvalue">{{ item.value }}</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="lista.length > 0, else semRegistros">
+          <tr *ngFor="let dado of lista; let i = index" (mouseover)="indexTarefa = i" [@trigger-destaque]="indexTarefa === i ? 'fim' : 'inicio'">
+            <td *ngFor="let key of objectKeys(dado)">{{ dado[key] }}</td>
+            <td>
+              <button class="btn btn-tool" (click)="botaoChamar(dado.id)" matTooltip="Mostrar" *ngIf="b_chamar">
+                <mat-icon>
+                  list_alt_add
+                </mat-icon>
+              </button>
+              &nbsp;&nbsp;
+              <button class="btn btn-tool" (click)="botaoVisualizar(dado.id)" matTooltip="Visualizar" *ngIf="b_visualizar">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              &nbsp;&nbsp;
+              <button class="btn btn-tool" (click)="botaoEditar(dado.id)" matTooltip="Editar" *ngIf="b_editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              &nbsp;&nbsp;
+              <button class="btn btn-tool" (click)="botaoExcluir(dado.id)" matTooltip="Excluir" *ngIf="b_excluir">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      &nbsp;&nbsp;
+    </mat-card-content>
+    <mat-card-actions class="card-footer centraliza-paginator">      
+      <mat-paginator class="cor-paginator"
+        [length]="totalRegistros"
+        (page)="quantidadePorPagina($event)"
+        [pageSizeOptions]="[5, 10]"></mat-paginator>
+    </mat-card-actions>
+  </mat-card>
 </section>
 
 <ng-template #semRegistros>
-
   <tbody>
-
-    <tr><td [attr.colspan]="coluna.length+2" align="center">
-            
-      Ainda não há registros cadastrados!</td></tr>
-
+    <tr>
+      <td [attr.colspan]="coluna.length+2" align="center">
+        Ainda não há registros cadastrados!
+      </td>
+    </tr>
   </tbody>
-
 </ng-template>
