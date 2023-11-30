@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {NgModule, LOCALE_ID } from '@angular/core';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 
 import {AppRoutingModule} from '@/app-routing.module';
@@ -10,7 +10,7 @@ import {HeaderComponent} from '@modules/main/header/header.component';
 import {FooterComponent} from '@modules/main/footer/footer.component';
 import {MenuSidebarComponent} from '@modules/main/menu-sidebar/menu-sidebar.component';
 import {BlankComponent} from '@pages/blank/blank.component';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ProfileComponent} from '@pages/profile/profile.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RegisterComponent} from '@modules/register/register.component';
@@ -20,7 +20,9 @@ import {MessagesComponent} from '@modules/main/header/messages/messages.componen
 import {NotificationsComponent} from '@modules/main/header/notifications/notifications.component';
 
 import {CommonModule, registerLocaleData} from '@angular/common';
-import localeEn from '@angular/common/locales/en';
+
+import localePt from '@angular/common/locales/pt';
+
 import {UserComponent} from '@modules/main/header/user/user.component';
 import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
 import {RecoverPasswordComponent} from '@modules/recover-password/recover-password.component';
@@ -44,13 +46,10 @@ import { InformacaoComponent } from './components/dashboard/informacao/informaca
 import { SucessoComponent } from './components/dashboard/sucesso/sucesso.component';
 import { AvisoComponent } from './components/dashboard/aviso/aviso.component';
 import { PerigoComponent } from './components/dashboard/perigo/perigo.component';
-
+import { CurrencyPipe } from '@angular/common';
 
 
 /* MODULO DE ETOQUE */
-import { CriarProdutoComponent } from './pages/estoque/cadastro/produto/criar-produto/criar-produto.component';
-import { EditarProdutoComponent } from './pages/estoque/cadastro/produto/editar-produto/editar-produto.component';
-import { ListarProdutoComponent } from './pages/estoque/cadastro/produto/listar-produto/listar-produto.component';
 import { CriarMovimentacaoComponent } from './pages/estoque/movimentacao/criar-movimentacao/criar-movimentacao.component';
 import { EditarMovimentacaoComponent } from './pages/estoque/movimentacao/editar-movimentacao/editar-movimentacao.component';
 import { ListarMovimentacaoComponent } from './pages/estoque/movimentacao/listar-movimentacao/listar-movimentacao.component';
@@ -76,6 +75,8 @@ import { MatRadioModule  } from '@angular/material/radio'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatPaginatorModule } from '@angular/material/paginator';
+
 
 
 import { ContainerComponent } from './components/site/container/container.component';
@@ -91,7 +92,6 @@ import { FormBuscaComponent } from './components/site/form-busca/form-busca.comp
 import { ModalComponent } from './components/site/modal/modal.component';
 import { BotaoControleComponent } from './components/site/botao-controle/botao-controle.component';
 
-import { DropdownUfComponent } from './components/dropdown-uf/dropdown-uf.component';
 import { DepoimentoSiteComponent } from './pages/site/depoimento-site/depoimento-site.component';
 import { ConteudoSiteComponent } from './pages/site/conteudo-site/conteudo-site.component';
 import { SeletorPassageiroComponent } from './components/site/seletor-passageiro/seletor-passageiro/seletor-passageiro.component';
@@ -112,8 +112,10 @@ import { interval, take } from 'rxjs';
 import { FornecedorComponent } from './pages/estoque/fornecedor/fornecedor.component';
 import { ProdutoComponent } from './pages/estoque/produto/produto.component';
 import { CompraComponent } from './pages/estoque/compra/compra.component';
+import { CompraItemComponent } from './pages/estoque/compra/compra-item/compra-item.component';
+import { DropdownComponent } from './components/dropdown/dropdown.component';
 
-registerLocaleData(localeEn, 'en-EN');
+registerLocaleData(localePt);
 
 @NgModule({
     declarations: [
@@ -155,16 +157,11 @@ registerLocaleData(localeEn, 'en-EN');
         FornecedorComponent,
         ProdutoComponent,
         CompraComponent,
+        CompraItemComponent,
 
 
 
 
-
-
-
-        CriarProdutoComponent,
-        EditarProdutoComponent,
-        ListarProdutoComponent,
         
         
         CriarMovimentacaoComponent,
@@ -193,14 +190,16 @@ registerLocaleData(localeEn, 'en-EN');
         ModalComponent,
         BotaoControleComponent,
        
-        DropdownUfComponent,
+     
         DepoimentoSiteComponent,
         ConteudoSiteComponent,
         SeletorPassageiroComponent,
         
         
         PerfilComponent,
-        FormBasePerfilComponent
+        FormBasePerfilComponent,
+        DropdownComponent
+        
 
 
     ],
@@ -231,6 +230,7 @@ registerLocaleData(localeEn, 'en-EN');
         // WillianOliveira
         HttpClientModule,
         ReactiveFormsModule,
+        FormsModule,
        // MatFormFieldModule,
        // MatInputModule
 
@@ -250,10 +250,16 @@ registerLocaleData(localeEn, 'en-EN');
         MatRadioModule,
         MatDividerModule,
         MatCheckboxModule, 
-        MatTooltipModule
+        MatTooltipModule,
+        MatPaginatorModule,
+
+
+        
+        CurrencyPipe
+        
 
     ],
-    providers: [
+    providers: [ { provide: LOCALE_ID, useValue: 'pt-BR' },
         {
         provide: HTTP_INTERCEPTORS,
         multi: true,

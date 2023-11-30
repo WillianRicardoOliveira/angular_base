@@ -27,7 +27,14 @@
         </thead>
         <tbody *ngIf="lista.length > 0, else semRegistros">
           <tr *ngFor="let dado of lista; let i = index" (mouseover)="indexTarefa = i" [@trigger-destaque]="indexTarefa === i ? 'fim' : 'inicio'">
-            <td *ngFor="let key of objectKeys(dado)">{{ dado[key] }}</td>
+            <td *ngFor="let key of objectKeys(dado)">
+                <div *ngIf="deveFormatarComoMoeda(key)">
+                  {{ dado[key] | currency:'BRL':'symbol':'1.2-2' }}                                 
+                </div>
+                <div *ngIf="!deveFormatarComoMoeda(key)">
+                  {{ dado[key] }}
+                </div>
+            </td>
             <td>
               <button class="btn btn-tool" (click)="botaoChamar(dado.id)" matTooltip="Mostrar" *ngIf="b_chamar">
                 <mat-icon>

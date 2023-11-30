@@ -18,6 +18,8 @@ export class GridComponent implements OnInit {
 
   objectKeys = Object.keys
 
+  @Input() formatarComoMoeda: any
+
   @Input() totalRegistros: number
 
   @Input() lista: any
@@ -92,6 +94,18 @@ export class GridComponent implements OnInit {
 
   quantidadePorPagina(e: PageEvent) {
     this.p_paginacao.emit({"page": e.pageIndex, "size": e.pageSize})
+  }
+
+  deveFormatarComoMoeda(campo: any): boolean {
+    let formatar = false
+    if(this.formatarComoMoeda != null) {
+      this.formatarComoMoeda.forEach((formata: any) => {
+        if(formata == campo) {
+          formatar = true
+        }
+      });
+    }
+    return formatar;
   }
 
 }
