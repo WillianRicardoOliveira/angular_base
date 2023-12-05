@@ -12,13 +12,13 @@ export const triggerDestaque = trigger('trigger-destaque', [
   })),
   transition('inicio => fim', [
     // https://easings.net/pt-br
-    animate('200ms ease-out',
+    animate('100ms ease-out',
       style({
 
         transform: 'scale(1.02)'
       })
     ),
-    animate(200)
+    animate(100)
   ])
 
 ])

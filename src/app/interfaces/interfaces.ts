@@ -26,15 +26,14 @@ export interface Compra {
     ativo?: boolean
 }
 
-export interface compra_item {
+export interface CompraItem {
     id?: number,
-    id_compra: number,
-    id_fornecedor: number,
-    id_produto: number,
+    compra: number,
+    fornecedor: Fornecedor,
+    produto: Produto,
     quantidade: number,
-    valor: number,
-    total: number,
-    controle: number,
+    valor: String,
+    total: String,
     ativo?: boolean
 }  
 

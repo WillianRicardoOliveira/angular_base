@@ -1,0 +1,78 @@
+<app-cabecalho-pagina [pagina]="pagina"></app-cabecalho-pagina>
+
+<app-grid *ngIf="isLista"
+    [lista]="lista"
+    [coluna]="coluna"
+    [formatarComoMoeda]="formatarComoMoeda"
+    (adicionar)="botaoAdicionar()"
+    (editar)="botaoEditar($event)"
+    (excluir)="botaoExcluir($event)">
+</app-grid>
+
+<mat-card class="card formulario" *ngIf="isFormulario && formulario">
+  <mat-card-header class="card-header">
+    <mat-card-title class="card-title">
+      <h2>Cadastro de item</h2>
+    </mat-card-title>
+    <mat-card-actions class="card-tools">  
+      <button type="button" class="btn btn-tool" title="Ajuda">
+        <mat-icon>help</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card-header>
+  <mat-card-content class="card-body">
+    <form [formGroup]="formulario">
+      <div class="grid-container">
+        <div class="grid-item">
+          
+          <app-dropdown
+            class="full-width"
+            label="Fornecedor"
+            endPoint="fornecedor"
+            [dado]="formulario.get('fornecedor').value"
+            [control]="fornecedorControl"></app-dropdown>
+          <div class="valide" *ngIf="formulario.get('fornecedor')?.errors?.['required'] && formulario.get('fornecedor')?.touched">
+            Este campo é obrigatório
+          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Valor</mat-label>
+            <input type="text" matInput formControlName="valor" mask="0,00 || 000,00 || 0.000,00">
+          </mat-form-field>
+          <div class="valide" *ngIf="formulario.get('valor')?.errors?.['required'] && formulario.get('valor')?.touched">
+            Este campo é obrigatório
+          </div>
+          <div class="valide" *ngIf="formulario.get('valor')?.errors?.['mask'] && formulario.get('valor')?.touched">
+            Formato inválido
+          </div>
+        </div>        
+        <div class="grid-item">
+          <app-dropdown 
+            class="full-width"
+            label="Produto"
+            endPoint="produto"
+            [dado]="formulario.get('produto').value"
+            [control]="produtoControl"></app-dropdown>
+          <div class="valide" *ngIf="formulario.get('produto')?.errors?.['required'] && formulario.get('produto')?.touched">
+            Este campo é obrigatório
+          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Quantidade</mat-label>
+            <input type="text" matInput formControlName="quantidade" mask="0 || 00 || 000">
+          </mat-form-field>
+          <div class="valide" *ngIf="formulario.get('quantidade')?.errors?.['required'] && formulario.get('quantidade')?.touched">
+            Este campo é obrigatório
+          </div>
+        </div>
+      </div>
+    </form>
+  </mat-card-content>
+  <mat-card-actions class="card-footer">
+    <button type="submit" mat-stroked-button color="primary" (click)="salvar()" >
+      Salvar
+    </button>      
+    <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
+      Cancelar
+    </button>
+  </mat-card-actions>
+</mat-card>
+<mat-divider></mat-divider>

@@ -1,31 +1,39 @@
-import { Compra } from '@/interfaces/interfaces';
+import { CompraItem, Fornecedor, Produto } from '@/interfaces/interfaces';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BaseService } from '@services/base/base.service';
 
 @Component({
-  selector: 'app-compra',
-  templateUrl: './compra.component.html',
-  styleUrls: ['./compra.component.scss']
+  selector: 'app-compra-item',
+  templateUrl: './compra-item.component.html',
+  styleUrls: ['./compra-item.component.scss']
 })
-export class CompraComponent implements OnInit {
+export class CompraItemComponent implements OnInit {
 
   formulario!: FormGroup
 
-  pagina: string = "Compra"
+  pagina: string = "Intens da compra"
 
   isLista = true
 
   isFormulario = false
 
-  endPoint = "compra"
+  endPoint = "compraItem"
   
-  lista: Compra[] = []
+  lista: CompraItem[] = []
 
-  coluna = ["Descrição", "Status"]
+  coluna = ["Fornecedor", "Produto", "Quantidade", "Valor", "Total"]
 
   totalRegistros: number
+
+  compra: number
+
+  formatarComoMoeda = ["valor", "total"]
+
+  fornecedorControl = new FormControl<Fornecedor | null>(null, Validators.required);
+
+  produtoControl = new FormControl<Produto | null>(null, Validators.required);
 
   constructor(
     private service: BaseService,
@@ -56,13 +64,14 @@ export class CompraComponent implements OnInit {
     } 
   }
 
-  campos(dados?: Compra) {
+  campos(dados?: CompraItem) {
     return this.formBuilder.group({
       id: [(dados != null ? dados.id : "")],
-      descricao: [(dados != null ? dados.descricao : ""), Validators.compose([
-        Validators.required,
-        Validators.maxLength(250)
-      ])]
+      compra: [this.compra, Validators.compose([Validators.required])],
+      fornecedor: [(dados != null ? dados.fornecedor : ""), Validators.compose([Validators.required])],
+      produto: [(dados != null ? dados.produto : ""), Validators.compose([Validators.required])],
+      quantidade: [(dados != null ? dados.quantidade : ""), Validators.compose([Validators.required])],
+      valor: [(dados != null ? dados.valor : ""), Validators.compose([ Validators.required])],
     })   
   }
       
@@ -93,9 +102,7 @@ export class CompraComponent implements OnInit {
 
   pesquisar(filtro: string) { }
 
-  botaoChamar(id: number) {
-    this.router.navigate(["/compra-item/" + id])
-  }
+  botaoChamar(id: number) {}  
 
   quantidadePorPagina(parametros: {"page", "size"}) {
     this.carregarLista(parametros.page, parametros.size)

@@ -1,6 +1,6 @@
 
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { BaseService } from '@services/base/base.service';
 import { Observable, map, startWith } from 'rxjs';
@@ -19,6 +19,8 @@ export class DropdownComponent implements OnInit {
   
   @Output() id: EventEmitter<any> = new EventEmitter<any>()
   
+  @Input() dado: any
+
   dados: any[] = [];
 
   filteredOptions$?: Observable<any[]>;
@@ -29,6 +31,7 @@ export class DropdownComponent implements OnInit {
     this.service.listar(this.endPoint).subscribe((lista: any) => {
         this.dados = lista.content
     })
+    this.control.setValue(this.dado);
     this.filteredOptions$ = this.control.valueChanges.pipe(
       startWith(''),
       map(value => this.filtrar(value))
@@ -46,10 +49,6 @@ export class DropdownComponent implements OnInit {
 
   displayFn(dado: any): string {
     return dado && dado.nome ? dado.nome : ""
-  }
-
-  onOpcaoSelecionada(event: MatAutocompleteSelectedEvent): void {
-    this.id.emit({"nome": this.endPoint, "id": event.option.value.id})
   }
 
 }
