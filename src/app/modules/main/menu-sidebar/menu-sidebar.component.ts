@@ -74,7 +74,7 @@ export const MENU = [
             {
                 name: 'Movimentacao',
                 iconClasses: 'fas fa-file',
-                path: ['/listar-movimentacao']
+                path: ['/movimentacao']
             }
         ]
     }

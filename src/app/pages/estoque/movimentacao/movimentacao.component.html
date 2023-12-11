@@ -1,0 +1,13 @@
+<app-cabecalho-pagina [pagina]="pagina"></app-cabecalho-pagina>
+
+<app-grid *ngIf="isLista"
+    [totalRegistros]="totalRegistros"
+    [lista]="lista"
+    [coluna]="coluna"
+    (pesquisa)="pesquisar($event)"
+    (adicionar)="botaoAdicionar()"
+    (editar)="botaoEditar($event)"
+    (excluir)="botaoExcluir($event)"
+    (visualizar)="botaoVisualizar($event)"
+    (p_paginacao)="quantidadePorPagina($event)">,
+</app-grid>

@@ -50,9 +50,6 @@ import { CurrencyPipe } from '@angular/common';
 
 
 /* MODULO DE ETOQUE */
-import { CriarMovimentacaoComponent } from './pages/estoque/movimentacao/criar-movimentacao/criar-movimentacao.component';
-import { EditarMovimentacaoComponent } from './pages/estoque/movimentacao/editar-movimentacao/editar-movimentacao.component';
-import { ListarMovimentacaoComponent } from './pages/estoque/movimentacao/listar-movimentacao/listar-movimentacao.component';
 import { DashboardEstoqueComponent } from './pages/estoque/dashboard-estoque/dashboard-estoque.component';
 import { InputTextComponent } from './components/formulario/input-text/input-text.component';
 
@@ -113,6 +110,7 @@ import { FornecedorComponent } from './pages/estoque/fornecedor/fornecedor.compo
 import { ProdutoComponent } from './pages/estoque/produto/produto.component';
 import { CompraComponent } from './pages/estoque/compra/compra.component';
 import { CompraItemComponent } from './pages/estoque/compra/compra-item/compra-item.component';
+import { MovimentacaoComponent } from './pages/estoque/movimentacao/movimentacao.component';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
 
 registerLocaleData(localePt);
@@ -158,15 +156,14 @@ registerLocaleData(localePt);
         ProdutoComponent,
         CompraComponent,
         CompraItemComponent,
+        MovimentacaoComponent,
+        DropdownComponent,
 
 
 
 
         
         
-        CriarMovimentacaoComponent,
-        EditarMovimentacaoComponent,
-        ListarMovimentacaoComponent,
         DashboardEstoqueComponent,
         
         InputTextComponent,
@@ -198,7 +195,7 @@ registerLocaleData(localePt);
         
         PerfilComponent,
         FormBasePerfilComponent,
-        DropdownComponent
+       
         
 
 

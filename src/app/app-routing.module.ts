@@ -13,9 +13,6 @@ import {RecoverPasswordComponent} from '@modules/recover-password/recover-passwo
 import {MainMenuComponent} from '@pages/main-menu/main-menu.component';
 import {SubMenuComponent} from '@pages/main-menu/sub-menu/sub-menu.component';
 
-import { EditarMovimentacaoComponent } from '@pages/estoque/movimentacao/editar-movimentacao/editar-movimentacao.component';
-import { CriarMovimentacaoComponent } from '@pages/estoque/movimentacao/criar-movimentacao/criar-movimentacao.component';
-import { ListarMovimentacaoComponent } from '@pages/estoque/movimentacao/listar-movimentacao/listar-movimentacao.component';
 import { DashboardEstoqueComponent } from '@pages/estoque/dashboard-estoque/dashboard-estoque.component';
 
 import { HomeSiteComponent } from '@pages/site/home-site/home-site.component';
@@ -33,6 +30,7 @@ import { FornecedorComponent } from '@pages/estoque/fornecedor/fornecedor.compon
 import { ProdutoComponent } from '@pages/estoque/produto/produto.component';
 import { CompraComponent } from '@pages/estoque/compra/compra.component';
 import { CompraItemComponent } from '@pages/estoque/compra/compra-item/compra-item.component';
+import { MovimentacaoComponent } from '@pages/estoque/movimentacao/movimentacao.component';
 
 
 const routes: Routes = [
@@ -66,7 +64,7 @@ const routes: Routes = [
             { path: 'produto', component: ProdutoComponent },
             { path: 'compra', component: CompraComponent },
             { path: 'compra-item/:id', component: CompraItemComponent },
-
+            { path: 'movimentacao', component: MovimentacaoComponent },
 
 
 
@@ -76,10 +74,6 @@ const routes: Routes = [
 
 
   
-            { path: 'listar-movimentacao', component: ListarMovimentacaoComponent },
-            { path: 'criar-movimentacao', component: CriarMovimentacaoComponent },
-            { path: 'editar-movimentacao/:id', component: EditarMovimentacaoComponent },
-
 
 
 

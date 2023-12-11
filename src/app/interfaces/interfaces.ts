@@ -40,14 +40,14 @@ export interface CompraItem {
 export interface Movimentacao {
     id?: number,
     tipo_movimentacao: string
-    id_compra: number,
-    id_cliente: number,
-    id_produto: number,
+    compra: Compra,
+    produto: Produto,
     quantidade: number,
-    total: number,
-    data: string,
+    total?: number,
+    data?: string,
     ativo?: boolean
   }
+  
 
 
 
