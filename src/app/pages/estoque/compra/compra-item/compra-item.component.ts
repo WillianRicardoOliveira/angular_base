@@ -1,7 +1,7 @@
 import { CompraItem, Fornecedor, Produto } from '@/interfaces/interfaces';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BaseService } from '@services/base/base.service';
 
 @Component({
@@ -13,13 +13,13 @@ export class CompraItemComponent implements OnInit {
 
   formulario!: FormGroup
 
-  pagina: string = "Intens da compra"
+  pagina: string = "Intens da compra";
 
-  isLista = true
+  isLista = true;
 
-  isFormulario = false
+  isFormulario = false;
 
-  endPoint = "compraItem"
+  endPoint = "compraItem";
   
   lista: CompraItem[] = []
 
@@ -27,8 +27,7 @@ export class CompraItemComponent implements OnInit {
 
   totalRegistros: number
 
-  compra: number
-
+  compra: string
   formatarComoMoeda = ["valor", "total"]
 
   fornecedorControl = new FormControl<Fornecedor | null>(null, Validators.required);
@@ -38,10 +37,12 @@ export class CompraItemComponent implements OnInit {
   constructor(
     private service: BaseService,
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.compra = this.route.snapshot.paramMap.get('id')
     this.carregarLista()
   }
 
@@ -65,7 +66,7 @@ export class CompraItemComponent implements OnInit {
   }
 
   campos(dados?: CompraItem) {
-    return this.formBuilder.group({
+    return this.formBuilder.group({   
       id: [(dados != null ? dados.id : "")],
       compra: [this.compra, Validators.compose([Validators.required])],
       fornecedor: [(dados != null ? dados.fornecedor : ""), Validators.compose([Validators.required])],
@@ -76,6 +77,7 @@ export class CompraItemComponent implements OnInit {
   }
       
   salvar() {
+    console.log("teste", this.formulario.value)
     this.service.salvar(this.endPoint, this.formulario)
     this.isFormulario = false
     this.isLista = true

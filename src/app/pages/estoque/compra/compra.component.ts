@@ -70,6 +70,9 @@ export class CompraComponent implements OnInit {
     this.service.salvar(this.endPoint, this.formulario)
     this.isFormulario = false
     this.isLista = true
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false
+    this.router.onSameUrlNavigation = "reload"
+    this.router.navigate([this.router.url])
   }
 
   cancelar() {
@@ -101,6 +104,7 @@ export class CompraComponent implements OnInit {
     this.carregarLista(parametros.page, parametros.size)
     this.router.routeReuseStrategy.shouldReuseRoute = () => false
     this.router.onSameUrlNavigation = "reload"
+    this.router.navigate([this.router.url])
   }
 
 }

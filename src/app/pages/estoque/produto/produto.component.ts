@@ -1,6 +1,7 @@
 import { Produto } from '@/interfaces/interfaces';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { BaseService } from '@services/base/base.service';
 
 @Component({
@@ -26,7 +27,8 @@ export class ProdutoComponent implements OnInit {
 
   constructor(
     private service: BaseService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -66,6 +68,9 @@ export class ProdutoComponent implements OnInit {
     this.service.salvar(this.endPoint, this.formulario)
     this.isFormulario = false
     this.isLista = true
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false
+    this.router.onSameUrlNavigation = "reload"
+    this.router.navigate([this.router.url])
   }
 
   cancelar() {
