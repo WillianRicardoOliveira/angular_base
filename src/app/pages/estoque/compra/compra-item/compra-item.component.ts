@@ -1,73 +1,26 @@
 import { CompraItem, Fornecedor, Produto } from '@/interfaces/interfaces';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { BaseService } from '@services/base/base.service';
+import { Component } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
+import { Base } from '@components/grid/base/base';
 
 @Component({
   selector: 'app-compra-item',
   templateUrl: './compra-item.component.html',
   styleUrls: ['./compra-item.component.scss']
 })
-export class CompraItemComponent implements OnInit {
+export class CompraItemComponent extends Base {
 
-  formulario!: FormGroup
-
-  pagina: string = "Intens da compra"
-
-  isLista = true
-
-  isFormulario = false
-
-  endPoint = "compraItem"
-  
-  lista: CompraItem[] = []
-
+  pagina: string = "Intens da compra";
+  endPoint = "compraItem";
   coluna = ["Fornecedor", "Produto", "Quantidade", "Valor", "Total"]
-
-  totalRegistros: number
-
-  compra: number
-
   formatarComoMoeda = ["valor", "total"]
-
   fornecedorControl = new FormControl<Fornecedor | null>(null, Validators.required);
-
   produtoControl = new FormControl<Produto | null>(null, Validators.required);
 
-  constructor(
-    private service: BaseService,
-    private formBuilder: FormBuilder,
-    private router: Router
-  ) {}
-
-  ngOnInit(): void {
-    this.carregarLista()
-  }
-
-  carregarLista(page?: number, size?: number, sort?: string, filtro?: string) {
-    this.service.listar(this.endPoint, page, size, sort, filtro).subscribe((lista: any) => {
-      this.lista = lista.content
-      this.totalRegistros = lista.totalElements
-    })
-  }
-
-  carregarFormulario(id?: number) {
-    this.isLista = false
-    this.isFormulario = true
-    if(id != null) {
-      this.service.detalhar(this.endPoint, id).subscribe((dados) => {
-        this.formulario = this.campos(dados)
-      })
-    } else {
-      this.formulario = this.campos()
-    } 
-  }
-
   campos(dados?: CompraItem) {
-    return this.formBuilder.group({
+    return this.builder.group({   
       id: [(dados != null ? dados.id : "")],
-      compra: [this.compra, Validators.compose([Validators.required])],
+      compra: [this.id, Validators.compose([Validators.required])],
       fornecedor: [(dados != null ? dados.fornecedor : ""), Validators.compose([Validators.required])],
       produto: [(dados != null ? dados.produto : ""), Validators.compose([Validators.required])],
       quantidade: [(dados != null ? dados.quantidade : ""), Validators.compose([Validators.required])],
@@ -75,42 +28,4 @@ export class CompraItemComponent implements OnInit {
     })   
   }
       
-  salvar() {
-
-    console.log(this.formulario.value)
-
-    this.service.salvar(this.endPoint, this.formulario)
-    this.isFormulario = false
-    this.isLista = true
-  }
-
-  cancelar() {
-    this.isFormulario = false
-    this.isLista = true    
-  }
-
-  botaoAdicionar() {
-    this.carregarFormulario()
-  }
-
-  botaoEditar(id: number) {
-    this.carregarFormulario(id)
-  }
-
-  botaoExcluir(id: number) {
-    this.service.inativar(this.endPoint, id)
-  }
-
-  botaoVisualizar(id: number) { }
-
-  pesquisar(filtro: string) { }
-
-  botaoChamar(id: number) {}  
-
-  quantidadePorPagina(parametros: {"page", "size"}) {
-    this.carregarLista(parametros.page, parametros.size)
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false
-    this.router.onSameUrlNavigation = "reload"
-  }
-
 }

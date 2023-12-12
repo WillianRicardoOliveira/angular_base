@@ -73,7 +73,7 @@ import { MatDividerModule } from '@angular/material/divider'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule } from '@angular/material/paginator';
-
+import { MatSelectModule } from '@angular/material/select'
 
 
 import { ContainerComponent } from './components/site/container/container.component';
@@ -112,6 +112,7 @@ import { CompraComponent } from './pages/estoque/compra/compra.component';
 import { CompraItemComponent } from './pages/estoque/compra/compra-item/compra-item.component';
 import { MovimentacaoComponent } from './pages/estoque/movimentacao/movimentacao.component';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
+import { SelectTipoMovimentacaoComponent } from './components/select-tipo-movimentacao/select-tipo-movimentacao.component';
 
 registerLocaleData(localePt);
 
@@ -158,7 +159,7 @@ registerLocaleData(localePt);
         CompraItemComponent,
         MovimentacaoComponent,
         DropdownComponent,
-
+        
 
 
 
@@ -195,6 +196,7 @@ registerLocaleData(localePt);
         
         PerfilComponent,
         FormBasePerfilComponent,
+        SelectTipoMovimentacaoComponent,
        
         
 
@@ -249,7 +251,7 @@ registerLocaleData(localePt);
         MatCheckboxModule, 
         MatTooltipModule,
         MatPaginatorModule,
-
+        MatSelectModule,
 
         
         CurrencyPipe
