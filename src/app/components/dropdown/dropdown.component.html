@@ -7,10 +7,9 @@
         ngDefaultControl
         [matAutocomplete]="auto">
     <mat-icon matSuffix>search</mat-icon>
-    <mat-autocomplete [displayWith]="displayFn" autoActiveFirstOption #auto="matAutocomplete">
+    <mat-autocomplete [displayWith]="displayFn" autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="onAutocompleteChange($event)">
     <mat-option *ngFor="let dado of filteredOptions$ | async" [value]="dado">
         {{ dado.nome }}
     </mat-option>
     </mat-autocomplete>
 </mat-form-field>
-  
