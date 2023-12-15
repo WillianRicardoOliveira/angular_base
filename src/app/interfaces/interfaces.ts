@@ -39,7 +39,7 @@ export interface CompraItem {
 
 export interface Movimentacao {
     id?: number,
-    tipoMovimentacao: string
+    tipoMovimentacao: TipoMovimentacao
     compra: number,
     produto: Produto,
     quantidade: number,
@@ -49,8 +49,8 @@ export interface Movimentacao {
 }
   
 export interface TipoMovimentacao {
-    value: string;
-    viewValue: string;
+    id?: number,
+    nome: string
 }
 
 

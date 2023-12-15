@@ -40,7 +40,6 @@ import {SidebarSearchComponent} from './components/sidebar-search/sidebar-search
 import { GridComponent } from './components/grid/grid.component';
 
 import { FormularioValidacaoComponent } from './components/formulario-validacao/formulario-validacao.component';
-import { EditarComponent } from './components/editar/editar.component';
 import { CabecalhoPaginaComponent } from './components/cabecalho-pagina/cabecalho-pagina.component';
 import { InformacaoComponent } from './components/dashboard/informacao/informacao.component';
 import { SucessoComponent } from './components/dashboard/sucesso/sucesso.component';
@@ -111,8 +110,10 @@ import { ProdutoComponent } from './pages/estoque/produto/produto.component';
 import { CompraComponent } from './pages/estoque/compra/compra.component';
 import { CompraItemComponent } from './pages/estoque/compra/compra-item/compra-item.component';
 import { MovimentacaoComponent } from './pages/estoque/movimentacao/movimentacao.component';
+
+/* COMPONENTE */
 import { DropdownComponent } from './components/dropdown/dropdown.component';
-import { SelectTipoMovimentacaoComponent } from './components/select-tipo-movimentacao/select-tipo-movimentacao.component';
+import { SelectComponent } from './components/select/select.component';
 
 registerLocaleData(localePt);
 
@@ -144,7 +145,6 @@ registerLocaleData(localePt);
         GridComponent,
 
         FormularioValidacaoComponent,
-        EditarComponent,
         CabecalhoPaginaComponent,
         InformacaoComponent,
         SucessoComponent,
@@ -158,8 +158,10 @@ registerLocaleData(localePt);
         CompraComponent,
         CompraItemComponent,
         MovimentacaoComponent,
+
+        /* COMPONENTE */
         DropdownComponent,
-        
+        SelectComponent,
 
 
 
@@ -196,7 +198,8 @@ registerLocaleData(localePt);
         
         PerfilComponent,
         FormBasePerfilComponent,
-        SelectTipoMovimentacaoComponent,
+        
+        
        
         
 

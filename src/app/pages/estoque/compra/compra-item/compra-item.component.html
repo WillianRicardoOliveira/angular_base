@@ -23,14 +23,13 @@
   <mat-card-content class="card-body">
     <form [formGroup]="formulario">
       <div class="grid-container">
-        <div class="grid-item">
-          
+        <div class="grid-item">          
           <app-dropdown
-            class="full-width"
-            label="Fornecedor"
-            endPoint="fornecedor"
-            [dado]="formulario.get('fornecedor').value"
-            [control]="fornecedorControl"></app-dropdown>
+          [control]="fornecedorControl"
+          (objeto)="fornecedorChange()"
+          class="full-width"
+          label="Fornecedor"
+          point="fornecedor"></app-dropdown>
           <div class="valide" *ngIf="formulario.get('fornecedor')?.errors?.['required'] && formulario.get('fornecedor')?.touched">
             Este campo é obrigatório
           </div>
@@ -47,11 +46,11 @@
         </div>        
         <div class="grid-item">
           <app-dropdown 
-            class="full-width"
-            label="Produto"
-            endPoint="produto"
-            [dado]="formulario.get('produto').value"
-            [control]="produtoControl"></app-dropdown>
+          [control]="produtoControl"
+          (objeto)="produtoChange()"
+          class="full-width"
+          label="Produto"
+          point="produto"></app-dropdown>
           <div class="valide" *ngIf="formulario.get('produto')?.errors?.['required'] && formulario.get('produto')?.touched">
             Este campo é obrigatório
           </div>

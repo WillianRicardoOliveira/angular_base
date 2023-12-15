@@ -1,6 +1,6 @@
-import { Movimentacao, Produto, TipoMovimentacao } from '@/interfaces/interfaces';
+import { Movimentacao } from '@/interfaces/interfaces';
 import { Component } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { Base } from '@components/grid/base/base';
 
 @Component({
@@ -13,16 +13,17 @@ export class MovimentacaoComponent extends Base {
   pagina: string = "Movimentação"
   endPoint = "movimentacao"
   coluna = ["Tipo", "Produto", "Quantidade", "Total", "Data"]
-  compra: number
-  tipoMovimentacaoControl = new FormControl<TipoMovimentacao | null>(null, Validators.required);
-  produtoControl = new FormControl<Produto | null>(null, Validators.required);
-
+  
   campos(dados?: Movimentacao) {
+    if(dados != null){
+      this.tipoMovimentacaoControl.setValue(dados.tipoMovimentacao)
+      this.produtoControl.setValue(dados.produto)
+    }
     return this.builder.group({
-      tipoMovimentacao: ["", Validators.compose([Validators.required])],
-      compra: [this.compra, Validators.compose([Validators.required])],
-      produto: ["", Validators.compose([Validators.required])],
-      quantidade: ["", Validators.compose([Validators.required])],
+      id: [(dados != null ? dados.id : "")],
+      tipoMovimentacao: [(dados != null ? dados.tipoMovimentacao : ""), Validators.compose([Validators.required])],
+      produto: [(dados != null ? dados.produto : "")],
+      quantidade: [(dados != null ? dados.quantidade : ""), Validators.compose([Validators.required])],
     })   
   }
 

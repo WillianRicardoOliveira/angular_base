@@ -14,10 +14,12 @@ export class CompraItemComponent extends Base {
   endPoint = "compraItem";
   coluna = ["Fornecedor", "Produto", "Quantidade", "Valor", "Total"]
   formatarComoMoeda = ["valor", "total"]
-  fornecedorControl = new FormControl<Fornecedor | null>(null, Validators.required);
-  produtoControl = new FormControl<Produto | null>(null, Validators.required);
 
   campos(dados?: CompraItem) {
+    if(dados != null){
+      this.fornecedorControl.setValue(dados.fornecedor)
+      this.produtoControl.setValue(dados.produto)
+    }
     return this.builder.group({   
       id: [(dados != null ? dados.id : "")],
       compra: [this.id, Validators.compose([Validators.required])],
