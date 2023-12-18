@@ -3,6 +3,7 @@
 <app-grid *ngIf="isLista"    
     [b_excluir]="false"
     [b_editar]="false"
+    
     [totalRegistros]="totalRegistros"
     [lista]="lista"
     [coluna]="coluna"
@@ -11,7 +12,8 @@
     (editar)="botaoEditar($event)"
     (excluir)="botaoExcluir($event)"
     (visualizar)="botaoVisualizar($event)"
-    (p_paginacao)="quantidadePorPagina($event)">,
+    (chamar)="botaoChamar($event)"
+    (p_paginacao)="quantidadePorPagina($event)">
 </app-grid>
 
 <mat-card class="card formulario" *ngIf="isFormulario && formulario">
