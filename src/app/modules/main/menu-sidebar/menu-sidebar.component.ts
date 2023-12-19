@@ -35,12 +35,7 @@ export const MENU = [
     {
         name: 'Dashboard',
         iconClasses: 'fas fa-tachometer-alt',
-        path: ['/dashboard-estoque']
-    },
-    {
-        name: 'Blank',
-        iconClasses: 'fas fa-file',
-        path: ['/blank']
+        path: ['/dashboard']
     },
     {
         name: 'Main Menu',
