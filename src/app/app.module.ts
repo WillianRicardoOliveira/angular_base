@@ -47,6 +47,7 @@ import { AvisoComponent } from './components/dashboard/aviso/aviso.component';
 import { PerigoComponent } from './components/dashboard/perigo/perigo.component';
 import { CurrencyPipe } from '@angular/common';
 
+import { NgChartsModule } from 'ng2-charts';
 
 /* MODULO DE ETOQUE */
 import { DashboardEstoqueComponent } from './pages/estoque/dashboard-estoque/dashboard-estoque.component';
@@ -114,6 +115,8 @@ import { MovimentacaoComponent } from './pages/estoque/movimentacao/movimentacao
 /* COMPONENTE */
 import { DropdownComponent } from './components/dropdown/dropdown.component';
 import { SelectComponent } from './components/select/select.component';
+import { BarchartComponent } from './components/barchart/barchart.component';
+import { PiechartComponent } from './components/piechart/piechart.component';
 
 registerLocaleData(localePt);
 
@@ -198,6 +201,8 @@ registerLocaleData(localePt);
         
         PerfilComponent,
         FormBasePerfilComponent,
+        BarchartComponent,
+        PiechartComponent,
         
         
        
@@ -257,7 +262,10 @@ registerLocaleData(localePt);
         MatSelectModule,
 
         
-        CurrencyPipe
+        CurrencyPipe,
+
+        // Graficos
+        NgChartsModule // https://www.npmjs.com/package/ng2-charts/v/4.1.1
         
 
     ],
