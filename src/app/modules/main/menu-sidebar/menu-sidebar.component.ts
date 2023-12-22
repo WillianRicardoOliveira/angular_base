@@ -42,16 +42,6 @@ export const MENU = [
         iconClasses: 'fas fa-folder',
         children: [
             {
-                name: 'Sub Menu',
-                iconClasses: 'far fa-address-book',
-                path: ['/sub-menu-1']
-            },
-            {
-                name: 'Usuários',
-                iconClasses: 'fas fa-file',
-                path: ['/lista-usuario']
-            },
-            {
                 name: 'Fornecedores',
                 iconClasses: 'fas fa-file',
                 path: ['/fornecedor']

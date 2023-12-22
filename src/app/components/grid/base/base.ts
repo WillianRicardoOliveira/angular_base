@@ -3,6 +3,7 @@ import { Directive, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BaseService } from "@services/base/base.service";
+import { ToastrService } from "ngx-toastr";
 
 @Directive({
   selector: 'app-base-grid'
@@ -26,13 +27,14 @@ export class Base implements OnInit {
     private service: BaseService,
     private formBuilder: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastr: ToastrService
   ) {
     this.builder = formBuilder
   }
 
   /*
-   * Todo :
+   * Todo : PASSAR O ID SE EXISTIR
    */
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id')
@@ -40,7 +42,7 @@ export class Base implements OnInit {
   }
 
   /*
-   * Todo :
+   * Todo : Colocar o NEXT
    */
   carregarLista(page?: number, size?: number, sort?: string, filtro?: string) {
     this.service.listar(this.endPoint, page, size, sort, filtro).subscribe((lista: any) => {
@@ -51,9 +53,10 @@ export class Base implements OnInit {
   }
 
   /*
-   * Todo :
+   * Todo : Colocar o NEXT
    */
   carregarFormulario(id?: number) {
+    this.resetForm()
     this.isLista = false
     this.isFormulario = true
     if(id != null) {
@@ -76,10 +79,18 @@ export class Base implements OnInit {
    * Todo :
    */
   salvar() {
-    this.service.salvar(this.endPoint, this.formulario)
-    this.carregarLista()
-    this.isFormulario = false
-    this.isLista = true
+    this.service.salvar(this.endPoint, this.formulario).subscribe({
+      next: (value) => {
+        this.isFormulario = false
+        this.isLista = true
+        this.carregarLista()
+        this.resetForm()
+        this.toastr.success('Salvo com successo');
+      },
+      error: (err) => {
+        this.toastr.error('Não foi possível salvar');
+      }
+    })    
   }
 
   /*
@@ -88,6 +99,7 @@ export class Base implements OnInit {
   cancelar() {
     this.isFormulario = false
     this.isLista = true
+    this.resetForm()
   }
 
   /*
@@ -108,7 +120,15 @@ export class Base implements OnInit {
    * Todo :
    */
   botaoExcluir(id: number) {
-    this.service.inativar(this.endPoint, id)
+    this.service.inativar(this.endPoint, id).subscribe({
+      next: (value) => {        
+        this.carregarLista()        
+        this.toastr.info('Removido com successo');
+      },
+      error: (err) => {
+        this.toastr.error('Não foi possível remover');
+      }
+    })
   }
 
   /*
@@ -119,9 +139,13 @@ export class Base implements OnInit {
   }
 
   /*
-   * Todo :
+   * Todo : Carregra se tiver 3 letras ou apagar as letras
    */
   pesquisar(filtro: string) {
+
+    console.log("filtro ::: ", filtro)
+
+    this.carregarLista(null, null, null, filtro)
 
   }
 
@@ -145,6 +169,15 @@ export class Base implements OnInit {
   atualizaGrid() {
     this.router.routeReuseStrategy.shouldReuseRoute = () => false
     this.router.onSameUrlNavigation = "reload"
+  }
+
+  resetForm() {
+    if(this.formulario) {
+      this.formulario.reset()
+      this.tipoMovimentacaoControl.reset()
+      this.fornecedorControl.reset()
+      this.produtoControl.reset()
+    }
   }
 
   /*

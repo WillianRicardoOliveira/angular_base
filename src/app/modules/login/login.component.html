@@ -8,14 +8,11 @@
         <form [formGroup]="loginForm" (ngSubmit)="loginByAuth()">
             <div class="input-group mb-3">
                 <input
-                    formControlName="usuario"
-                    type="text"
+                    formControlName="email"
+                    type="email"
                     class="form-control"
                     placeholder="Email"
                 />
-                <app-formulario-validacao [formulario]="loginForm"></app-formulario-validacao>
-
-
                 <div class="input-group-append">
                     <div class="input-group-text">
                         <span class="fas fa-envelope"></span>
@@ -24,12 +21,11 @@
             </div>
             <div class="input-group mb-3">
                 <input
-                    formControlName="senha"
+                    formControlName="password"
                     type="password"
                     class="form-control"
                     placeholder="Password"
                 />
-                <app-formulario-validacao [formulario]="loginForm"></app-formulario-validacao>
                 <div class="input-group-append">
                     <div class="input-group-text">
                         <span class="fas fa-lock"></span>
@@ -49,9 +45,8 @@
                         [type]="'submit'"
                         [block]="true"
                         [loading]="isAuthLoading"
-                       
+                        [disabled]="isFacebookLoading || isGoogleLoading"
                     >
-                    <!-- [disabled]="isFacebookLoading || isGoogleLoading"-->
                         Sign In
                     </pf-button>
                 </div>

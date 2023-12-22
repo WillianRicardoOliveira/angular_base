@@ -4,13 +4,20 @@
             ><i class="fas fa-bars"></i
         ></a>
     </li>
+    <!--
     <li class="nav-item d-none d-sm-inline-block">
         <a [routerLink]="['/']" class="nav-link">Home</a>
     </li>
     <li class="nav-item d-none d-sm-inline-block">
         <a [routerLink]="['/blank']" class="nav-link">Contact</a>
     </li>
+    -->
 </ul>
+
+<button (click)="deslogar()" mat-stroked-button color="primary">
+    <mat-icon>logout</mat-icon>
+    Deslogar
+  </button>
 
 <form class="form-inline ml-3" [formGroup]="searchForm" *ngIf="false">
     <div class="input-group input-group-sm">
@@ -27,7 +34,7 @@
         </div>
     </div>
 </form>
-
+<!--
 <ul class="navbar-nav ml-auto">
     <app-messages></app-messages>
     <app-notifications></app-notifications>
@@ -39,3 +46,4 @@
         </button>
     </li>
 </ul>
+-->

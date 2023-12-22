@@ -12,9 +12,14 @@ export class ProdutoComponent extends Base {
 
   pagina: string = "Produto"
   endPoint = "produto" 
-  coluna = ["Nome", "Descricao", "Quantidade", "Minimo", "Maximo"]
+  coluna = ["Nome", "Quantidade", "Minimo", "Maximo"]
+
+  quantidadeAtual: number
 
   campos(dados?: Produto) {
+
+    this.quantidadeAtual = dados != null ? dados.quantidade : 0  
+
     return this.builder.group({
       id: [(dados != null ? dados.id : "")],
       nome: [(dados != null ? dados.nome : ""), Validators.compose([

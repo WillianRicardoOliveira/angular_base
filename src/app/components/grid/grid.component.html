@@ -22,7 +22,7 @@
           <tr>
             <th>Código</th>
             <th *ngFor="let item of coluna | keyvalue">{{ item.value }}</th>
-            <th>Ações</th>
+            <th></th>
           </tr>
         </thead>
         <tbody *ngIf="lista.length > 0, else semRegistros">
@@ -37,9 +37,7 @@
             </td>
             <td>
               <button class="btn btn-tool" (click)="botaoChamar(dado.id)" matTooltip="Mostrar" *ngIf="b_chamar">
-                <mat-icon>
-                  list_alt_add
-                </mat-icon>
+                <mat-icon>list_alt_add</mat-icon>
               </button>
               &nbsp;&nbsp;
               <button class="btn btn-tool" (click)="botaoVisualizar(dado.id)" matTooltip="Visualizar" *ngIf="b_visualizar">
@@ -63,7 +61,7 @@
       <mat-paginator class="cor-paginator"
         [length]="totalRegistros"
         (page)="quantidadePorPagina($event)"
-        [pageSizeOptions]="[5, 10]"></mat-paginator>
+        [pageSizeOptions]="[10, 20]"></mat-paginator>
     </mat-card-actions>
   </mat-card>
 </section>

@@ -5,9 +5,9 @@ import {
     Renderer2,
     HostBinding
 } from '@angular/core';
-import {UntypedFormGroup, UntypedFormControl, Validators, FormGroup, FormBuilder} from '@angular/forms';
-import {ToastrService} from 'ngx-toastr';
-import {AppService} from '@services/app.service';
+import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { AppService } from '@services/app.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -17,24 +17,15 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit, OnDestroy {
     @HostBinding('class') class = 'login-box';
-    //public loginForm: UntypedFormGroup;
-    public loginForm: FormGroup;
-
-
-
-
+    public loginForm: UntypedFormGroup;
     public isAuthLoading = false;
     public isGoogleLoading = false;
     public isFacebookLoading = false;
 
     constructor(
-        private formBuilder: FormBuilder,
-        private appService: AppService,
-        private router: Router,
-
-
         private renderer: Renderer2,
-        private toastr: ToastrService
+        private toastr: ToastrService,
+        private appService: AppService
     ) {}
 
     ngOnInit() {
@@ -42,30 +33,16 @@ export class LoginComponent implements OnInit, OnDestroy {
             document.querySelector('app-root'),
             'login-page'
         );
-        this.loginForm = this.formBuilder.group({
-            usuario:[null, Validators.required],
-            senha:[null, Validators.required]
-        })
-
+        this.loginForm = new UntypedFormGroup({
+            email: new UntypedFormControl(null, Validators.required),
+            password: new UntypedFormControl(null, Validators.required)
+        });
     }
 
     async loginByAuth() {
         if (this.loginForm.valid) {
-
-            const usuario = this.loginForm.value.usuario
-            const senha = this.loginForm.value.senha
-
             this.isAuthLoading = true;
-            
-            this.appService.autenticacao(usuario, senha).subscribe({
-                next: (value) => {
-                    this.router.navigateByUrl("/")
-                },
-                error: (err) => {
-                    console.log("Erro no login", err)
-                }
-            })
-
+            await this.appService.loginByAuth(this.loginForm.value);
             this.isAuthLoading = false;
         } else {
             this.toastr.error('Form is not valid!');

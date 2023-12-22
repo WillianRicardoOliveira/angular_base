@@ -4,7 +4,6 @@ import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UserService } from '@services/user/user.service';
 import { environment } from 'environments/environment';
-import { ToastrService } from 'ngx-toastr';
 import { Observable, tap } from 'rxjs';
 
 interface AuthResponse {
@@ -20,8 +19,7 @@ export class BaseService {
   
   constructor(
     private http: HttpClient,
-    private userService: UserService,
-    private toastr: ToastrService
+    private userService: UserService
     ) {}
 
   login(endPoint: string, dados: any): Observable<HttpResponse<AuthResponse>> {
@@ -49,7 +47,7 @@ export class BaseService {
     if(sort) {
       params = params.set("sort", sort)
     }
-    if(filtro) {
+    if(filtro && filtro.length >= 3) {
       params = params.set("filtro", filtro)
     }
     return this.http.get<any>(`${this.api}/${endPoint}`, { params })
@@ -70,23 +68,15 @@ export class BaseService {
   salvar(endPoint: string, formulario: FormGroup) {
     if(formulario.valid) {
       if(formulario.value.id != "") {
-        this.atualizar(endPoint, formulario.value).subscribe(() => {
-          this.toastr.success('Atualizado com successo');
-        })
+        return this.atualizar(endPoint, formulario.value)
       } else {
-        this.cadastrar(endPoint, formulario.value).subscribe(() => {
-          this.toastr.success('Salvo com successo');
-        })
+        return this.cadastrar(endPoint, formulario.value)
       }
     }
   }
 
   inativar(endPoint: string, id: number) {
-    this.excluir(endPoint, id).subscribe(
-      () => {
-        this.toastr.success('Inativado com successo');
-      }
-    )    
+    return this.excluir(endPoint, id)
   }
 
 }

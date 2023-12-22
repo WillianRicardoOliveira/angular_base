@@ -9,9 +9,8 @@ import {MainComponent} from '@modules/main/main.component';
 import {HeaderComponent} from '@modules/main/header/header.component';
 import {FooterComponent} from '@modules/main/footer/footer.component';
 import {MenuSidebarComponent} from '@modules/main/menu-sidebar/menu-sidebar.component';
-import {BlankComponent} from '@pages/blank/blank.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {ProfileComponent} from '@pages/profile/profile.component';
+
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {RegisterComponent} from '@modules/register/register.component';
 import {DashboardComponent} from '@pages/dashboard/dashboard.component';
@@ -28,7 +27,7 @@ import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.
 import {RecoverPasswordComponent} from '@modules/recover-password/recover-password.component';
 import {LanguageComponent} from '@modules/main/header/language/language.component';
 import {MainMenuComponent} from './pages/main-menu/main-menu.component';
-import {SubMenuComponent} from './pages/main-menu/sub-menu/sub-menu.component';
+
 import {MenuItemComponent} from './components/menu-item/menu-item.component';
 import {ControlSidebarComponent} from './modules/main/control-sidebar/control-sidebar.component';
 import {StoreModule} from '@ngrx/store';
@@ -37,9 +36,9 @@ import {uiReducer} from './store/ui/reducer';
 import {ProfabricComponentsModule} from '@profabric/angular-components';
 import {SidebarSearchComponent} from './components/sidebar-search/sidebar-search.component';
 
-import { GridComponent } from './components/grid/grid.component';
 
-import { FormularioValidacaoComponent } from './components/formulario-validacao/formulario-validacao.component';
+
+
 import { CabecalhoPaginaComponent } from './components/cabecalho-pagina/cabecalho-pagina.component';
 import { InformacaoComponent } from './components/dashboard/informacao/informacao.component';
 import { SucessoComponent } from './components/dashboard/sucesso/sucesso.component';
@@ -50,8 +49,6 @@ import { CurrencyPipe } from '@angular/common';
 import { NgChartsModule } from 'ng2-charts';
 
 /* MODULO DE ETOQUE */
-import { DashboardEstoqueComponent } from './pages/estoque/dashboard-estoque/dashboard-estoque.component';
-import { InputTextComponent } from './components/formulario/input-text/input-text.component';
 
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask'
 
@@ -113,6 +110,7 @@ import { CompraItemComponent } from './pages/estoque/compra/compra-item/compra-i
 import { MovimentacaoComponent } from './pages/estoque/movimentacao/movimentacao.component';
 
 /* COMPONENTE */
+import { GridComponent } from './components/grid/grid.component';
 import { DropdownComponent } from './components/dropdown/dropdown.component';
 import { SelectComponent } from './components/select/select.component';
 import { BarchartComponent } from './components/barchart/barchart.component';
@@ -128,8 +126,6 @@ registerLocaleData(localePt);
         HeaderComponent,
         FooterComponent,
         MenuSidebarComponent,
-        BlankComponent,
-        ProfileComponent,
         RegisterComponent,
         DashboardComponent,
         MessagesComponent,
@@ -139,7 +135,6 @@ registerLocaleData(localePt);
         RecoverPasswordComponent,
         LanguageComponent,
         MainMenuComponent,
-        SubMenuComponent,
         MenuItemComponent,
         ControlSidebarComponent,
         SidebarSearchComponent,
@@ -147,7 +142,7 @@ registerLocaleData(localePt);
 
         GridComponent,
 
-        FormularioValidacaoComponent,
+        
         CabecalhoPaginaComponent,
         InformacaoComponent,
         SucessoComponent,
@@ -170,9 +165,7 @@ registerLocaleData(localePt);
 
         
         
-        DashboardEstoqueComponent,
         
-        InputTextComponent,
         BannerComponent,
         ContainerComponent,
                   
@@ -264,8 +257,13 @@ registerLocaleData(localePt);
         
         CurrencyPipe,
 
-        // Graficos
-        NgChartsModule // https://www.npmjs.com/package/ng2-charts/v/4.1.1
+        /* Graficos
+        https://github.com/valor-software/ng2-charts
+        https://www.npmjs.com/package/ng2-charts/v/4.1.1
+        https://valor-software.com/ng2-charts
+        https://www.chartjs.org/docs/4.4.1
+        */        
+        NgChartsModule
         
 
     ],
