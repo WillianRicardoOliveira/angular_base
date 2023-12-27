@@ -13,7 +13,8 @@
     (p_paginacao)="quantidadePorPagina($event)">
 </app-grid>
 
-<mat-card class="card formulario" *ngIf="isFormulario && formulario">
+<!--
+<mat-card class="card tela formulario" *ngIf="isFormulario && formulario">
   <mat-card-header class="card-header">
     <mat-card-title class="card-title">
       <h2>Cadastro de fornecedor</h2>
@@ -68,3 +69,100 @@
     </button>
   </mat-card-actions>
 </mat-card>
+-->
+
+
+
+
+<!--
+<div class="tela">
+  <section class="content">
+    <div class="row">
+      <div class="col-md-4 coluna"><p class="roxo">Fornecedor</p></div>
+    </div>
+  </section>
+</div>
+-->
+
+
+<div class="tela">
+
+
+  <section class="content">
+    <form [formGroup]="formulario" *ngIf="isFormulario && formulario">
+
+
+      <div class="row"><b><h1>Dados do Fornecedor</h1></b></div>
+
+      <div class="row">        
+        <div class="col-md-2 coluna">Nome</div>
+        <div class="col-md-10 coluna">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nome*</mat-label>
+            <input matInput formControlName="nome" maxlength="100">
+          </mat-form-field>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-md-2 coluna">CNPJ</div>
+        <div class="col-md-10 coluna">
+
+      
+          <mat-form-field appearance="outline" class="cnpj">
+            <input matInput formControlName="cnpj" mask="00.000.000/0000-00">
+          </mat-form-field>
+          
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-md-2 coluna">Telefone</div>
+        <div class="col-md-10 coluna">
+
+
+          <mat-form-field appearance="outline" class="celular">
+            <input type="text" matInput formControlName="telefone" mask="(00) 00000-0000">
+          </mat-form-field>
+               
+        </div>
+      </div>
+      
+      
+        
+      <div class="row">
+        <div class="col-md-2 coluna">Descrição</div>
+        <div class="col-md-10 coluna">
+
+
+          <mat-form-field appearance="outline"  class="full-width">
+            <textarea matInput formControlName="descricao" maxlength="250"></textarea>
+          </mat-form-field>
+      
+
+        </div>
+      </div>
+
+      <mat-card-actions class="card-footer">
+        <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
+          Salvar
+        </button>      
+        <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
+          Cancelar
+        </button>
+      </mat-card-actions>
+
+    </form>
+
+
+
+  
+
+  
+</section>
+
+</div>
+
+

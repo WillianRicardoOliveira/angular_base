@@ -1,0 +1,31 @@
+
+@media (max-width: 600px) {
+    .cnpj {
+        width: 190px;
+    }
+    .celular {
+        width: 160px;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+    .cnpj {
+        width: 190px;
+    }
+    .celular {
+        width: 160px;
+    }
+    .descricao {
+        width: 500px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .cnpj {
+        width: 190px;
+    }
+    .celular {
+        width: 160px;
+    }
+  
+}
