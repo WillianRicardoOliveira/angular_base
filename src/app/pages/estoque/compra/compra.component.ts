@@ -21,6 +21,10 @@ export class CompraComponent extends Base {
   campos(dados?: Compra) {
     return this.builder.group({
       id: [(dados != null ? dados.id : "")],
+      nome: [(dados != null ? dados.nome : ""), Validators.compose([
+        Validators.required,
+        Validators.maxLength(100)
+      ])],
       descricao: [(dados != null ? dados.descricao : ""), Validators.compose([
         Validators.required,
         Validators.maxLength(250)

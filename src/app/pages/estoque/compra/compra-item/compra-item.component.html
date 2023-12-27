@@ -15,6 +15,7 @@
     (p_paginacao)="quantidadePorPagina($event)">
 </app-grid>
 
+<!--
 <mat-card class="card formulario" *ngIf="isFormulario && formulario">
   <mat-card-header class="card-header">
     <mat-card-title class="card-title">
@@ -80,3 +81,70 @@
     </button>
   </mat-card-actions>
 </mat-card>
+-->
+
+<div class="tela">
+  <section class="content">
+  
+    <form [formGroup]="formulario" *ngIf="isFormulario && formulario">
+
+      <div class="row">
+        <b><h1 class="titulo-cadastro">Dados de itens</h1></b>
+      </div>
+      <div class="row">        
+        <div class="col-md-2 label">Fornecedor</div>
+        <div class="col-md-10">         
+          <app-dropdown
+          [control]="fornecedorControl"
+          (objeto)="fornecedorChange()"
+          class="full-width"
+          label="Fornecedor"
+          point="fornecedor"></app-dropdown>
+        </div>
+      </div>
+
+      <div class="row">        
+        <div class="col-md-2 label">Valor</div>
+        <div class="col-md-10">
+          <mat-form-field appearance="outline">
+            <mat-label>Valor</mat-label>
+            <input type="text" matInput formControlName="valor" mask="0,00 || 000,00 || 0.000,00">
+          </mat-form-field>
+        </div>
+      </div>
+          
+      <div class="row">        
+        <div class="col-md-2 label">Produto</div>
+        <div class="col-md-10">
+          <app-dropdown 
+          [control]="produtoControl"
+          (objeto)="produtoChange()"
+          class="full-width"
+          label="Produto"
+          point="produto"></app-dropdown>
+        </div>
+      </div>
+
+      <div class="row">        
+        <div class="col-md-2 label">Quantidade</div>
+        <div class="col-md-10">
+          <mat-form-field appearance="outline">
+            <mat-label>Quantidade</mat-label>
+            <input type="text" matInput formControlName="quantidade" mask="0 || 00 || 000">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <mat-card-actions>
+        <button type="submit" mat-stroked-button color="primary" (click)="salvar()" >
+          Salvar
+        </button>      
+        <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
+          Cancelar
+        </button>
+      </mat-card-actions>    
+      
+    </form>  
+
+  </section>
+</div>

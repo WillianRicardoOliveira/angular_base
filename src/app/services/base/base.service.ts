@@ -36,7 +36,7 @@ export class BaseService {
     return this.http.post<any>(`${this.api}/${endPoint}`, dados)
   }
 
-  listar(endPoint: string, page?: number, size?: number, sort?: string, filtro?: string): Observable<any[]> {
+  listar(endPoint: string, page?: number, size?: number, sort?: string, filtro?: string, outroId?: number): Observable<any[]> {
     let params = new HttpParams()
     if(page) {
       params = params.set("page", page)
@@ -49,6 +49,9 @@ export class BaseService {
     }
     if(filtro && filtro.length >= 3) {
       params = params.set("filtro", filtro)
+    }
+    if(outroId) {
+      params = params.set("outroId", outroId)
     }
     return this.http.get<any>(`${this.api}/${endPoint}`, { params })
   }

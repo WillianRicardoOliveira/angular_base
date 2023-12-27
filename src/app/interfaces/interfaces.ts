@@ -20,6 +20,7 @@ export interface Produto {
 
 export interface Compra {
     id?: number,
+    nome: string,
     descricao: string,
     status?: string,
     data?: string,

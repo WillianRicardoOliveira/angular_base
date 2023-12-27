@@ -16,6 +16,7 @@
     (p_paginacao)="quantidadePorPagina($event)">
 </app-grid>
 
+<!--
 <mat-card class="card formulario" *ngIf="isFormulario && formulario">
     <mat-card-header class="card-header">
       <mat-card-title class="card-title">
@@ -66,3 +67,57 @@
       </button>
     </mat-card-actions>
   </mat-card>
+  -->
+
+
+<div class="tela">
+  <section class="content">    
+
+    <form [formGroup]="formulario" *ngIf="isFormulario && formulario">
+       
+      <div class="row">
+        <b><h1 class="titulo-cadastro">Dados de Movimentação</h1></b>
+      </div>
+
+      <div class="row">        
+        <div class="col-md-2 label">Tipo</div>
+        <div class="col-md-10">
+          <app-select point="tipoMovimentacao"
+          [control]="tipoMovimentacaoControl"
+          (objeto)="tipoMovimentacaoChange()"></app-select>
+        </div>
+      </div> 
+        
+      <div class="row">        
+        <div class="col-md-2 label">Produto</div>
+        <div class="col-md-10">
+          <app-dropdown 
+          [control]="produtoControl"
+          (objeto)="produtoChange()"
+          class="full-width"
+          point="produto"></app-dropdown>
+        </div>
+      </div>        
+            
+      <div class="row">        
+        <div class="col-md-2 label">Quantidade</div>
+        <div class="col-md-10">
+          <mat-form-field appearance="outline">
+            <input type="text" matInput formControlName="quantidade" mask="0 || 00 || 000">
+          </mat-form-field>
+        </div>
+      </div>
+          
+      <mat-card-actions>
+        <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
+          Salvar
+        </button>      
+        <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
+          Cancelar
+        </button>
+      </mat-card-actions>
+          
+    </form>
+
+  </section>
+</div>

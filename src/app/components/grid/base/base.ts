@@ -17,7 +17,7 @@ export class Base implements OnInit {
   endPoint: string
   totalRegistros: number
   builder: FormBuilder
-  id: String
+  outroId: number
   chamar: String
   tipoMovimentacaoControl = new FormControl<TipoMovimentacao | null>(null, Validators.required)  
   fornecedorControl = new FormControl<Fornecedor | null>(null, Validators.required)
@@ -37,7 +37,7 @@ export class Base implements OnInit {
    * Todo : PASSAR O ID SE EXISTIR
    */
   ngOnInit(): void {
-    this.id = this.route.snapshot.paramMap.get('id')
+    this.outroId = parseInt(this.route.snapshot.paramMap.get('id'))
     this.carregarLista()
   }
 
@@ -45,7 +45,7 @@ export class Base implements OnInit {
    * Todo : Colocar o NEXT
    */
   carregarLista(page?: number, size?: number, sort?: string, filtro?: string) {
-    this.service.listar(this.endPoint, page, size, sort, filtro).subscribe((lista: any) => {
+    this.service.listar(this.endPoint, page, size, sort, filtro, this.outroId).subscribe((lista: any) => {
       this.lista = lista.content
       this.totalRegistros = lista.totalElements
       this.atualizaGrid()

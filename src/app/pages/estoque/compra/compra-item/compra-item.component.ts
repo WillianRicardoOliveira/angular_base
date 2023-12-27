@@ -22,7 +22,7 @@ export class CompraItemComponent extends Base {
     }
     return this.builder.group({   
       id: [(dados != null ? dados.id : "")],
-      compra: [this.id, Validators.compose([Validators.required])],
+      compra: [this.outroId, Validators.compose([Validators.required])],
       fornecedor: [(dados != null ? dados.fornecedor : ""), Validators.compose([Validators.required])],
       produto: [(dados != null ? dados.produto : ""), Validators.compose([Validators.required])],
       quantidade: [(dados != null ? dados.quantidade : ""), Validators.compose([Validators.required])],

@@ -86,13 +86,13 @@
 
 
 <div class="tela">
-
-
   <section class="content">
+
     <form [formGroup]="formulario" *ngIf="isFormulario && formulario">
 
-
-      <div class="row"><b><h1 class="titulo-cadastro">Dados do Fornecedor</h1></b></div>
+      <div class="row">
+        <b><h1 class="titulo-cadastro">Dados do Fornecedor</h1></b>
+      </div>
 
       <div class="row">        
         <div class="col-md-2 label">Nome</div>
@@ -103,44 +103,30 @@
         </div>
       </div>
 
-
       <div class="row">
         <div class="col-md-2 label">CNPJ</div>
         <div class="col-md-10">
-
-      
           <mat-form-field appearance="outline" class="cnpj">
             <input matInput formControlName="cnpj" mask="00.000.000/0000-00">
           </mat-form-field>
-          
         </div>
       </div>
-
 
       <div class="row">
         <div class="col-md-2 label">Telefone</div>
         <div class="col-md-10">
-
-
           <mat-form-field appearance="outline" class="celular">
             <input type="text" matInput formControlName="telefone" mask="(00) 00000-0000">
           </mat-form-field>
-               
         </div>
       </div>
-      
-      
-        
+
       <div class="row">
         <div class="col-md-2 label">Descrição</div>
         <div class="col-md-10">
-
-
           <mat-form-field appearance="outline"  class="full-width">
             <textarea matInput formControlName="descricao" maxlength="250"></textarea>
           </mat-form-field>
-      
-
         </div>
       </div>
 
@@ -155,13 +141,5 @@
 
     </form>
 
-
-
-  
-
-  
-</section>
-
+  </section>
 </div>
-
-
