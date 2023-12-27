@@ -92,13 +92,12 @@
     <form [formGroup]="formulario" *ngIf="isFormulario && formulario">
 
 
-      <div class="row"><b><h1>Dados do Fornecedor</h1></b></div>
+      <div class="row"><b><h1 class="titulo-cadastro">Dados do Fornecedor</h1></b></div>
 
       <div class="row">        
-        <div class="col-md-2 coluna">Nome</div>
-        <div class="col-md-10 coluna">
+        <div class="col-md-2 label">Nome</div>
+        <div class="col-md-10">
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Nome*</mat-label>
             <input matInput formControlName="nome" maxlength="100">
           </mat-form-field>
         </div>
@@ -106,8 +105,8 @@
 
 
       <div class="row">
-        <div class="col-md-2 coluna">CNPJ</div>
-        <div class="col-md-10 coluna">
+        <div class="col-md-2 label">CNPJ</div>
+        <div class="col-md-10">
 
       
           <mat-form-field appearance="outline" class="cnpj">
@@ -119,8 +118,8 @@
 
 
       <div class="row">
-        <div class="col-md-2 coluna">Telefone</div>
-        <div class="col-md-10 coluna">
+        <div class="col-md-2 label">Telefone</div>
+        <div class="col-md-10">
 
 
           <mat-form-field appearance="outline" class="celular">
@@ -133,8 +132,8 @@
       
         
       <div class="row">
-        <div class="col-md-2 coluna">Descrição</div>
-        <div class="col-md-10 coluna">
+        <div class="col-md-2 label">Descrição</div>
+        <div class="col-md-10">
 
 
           <mat-form-field appearance="outline"  class="full-width">
@@ -145,7 +144,7 @@
         </div>
       </div>
 
-      <mat-card-actions class="card-footer">
+      <mat-card-actions>
         <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
           Salvar
         </button>      

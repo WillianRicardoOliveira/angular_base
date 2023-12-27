@@ -140,6 +140,25 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     .full-width {
       width: 100%;
     }
+    .label {
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .titulo-cadastro{
+      color:blueviolet;
+    }
+
+    mat-card-actions {
+      display: flex;
+      justify-content: center;
+      button {
+        margin: 0 8px;
+        img {
+          vertical-align: middle;
+        }
+      }
+    }
 
   }
 }
