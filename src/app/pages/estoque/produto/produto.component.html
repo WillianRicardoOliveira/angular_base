@@ -39,7 +39,7 @@
         <div class="col-md-2 titulo-campo">Minímo</div>
         <div class="col-md-10">
           <mat-form-field appearance="outline" class="minimo">
-            <input matInput formControlName="minimo" >
+            <input matInput formControlName="minimo" mask="0 || 00 || 000">
           </mat-form-field>
           <!--
           <div *ngIf="formulario.get('minimo')?.errors?.['required'] && formulario.get('minimo')?.touched">
@@ -53,7 +53,7 @@
         <div class="col-md-2 titulo-campo">Máximo</div>
         <div class="col-md-10">
           <mat-form-field appearance="outline" class="maximo">
-            <input matInput formControlName="maximo" >
+            <input matInput formControlName="maximo" mask="0 || 00 || 000">
           </mat-form-field>
           <!--
           <div *ngIf="formulario.get('maximo')?.errors?.['required'] && formulario.get('maximo')?.touched">

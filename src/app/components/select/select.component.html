@@ -1,7 +1,5 @@
 <mat-form-field appearance="outline">
-    <mat-label>Tipo movimentação</mat-label>
     <mat-select [(value)]="selected" [formControl]="control" (selectionChange)="onMatSelectChange($event)">
-      <mat-option></mat-option>
       <mat-option [value]="dado" *ngFor="let dado of dados">
         {{ dado.nome }}
       </mat-option>
