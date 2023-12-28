@@ -118,48 +118,39 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 
 /* Estilos padrão, aplicados em todas as situações */
-.tela {
+.formulario {
   margin: auto;
-  .row {
-    align-items: center;
-    //border: 2px solid red;
-    //padding: 0 0 20px 0;
-    .mat-mdc-form-field {
-    //  flex-direction: row;     
-    }
+  align-items: center;
+  .titulo-formulario {
+    color:blueviolet;
   }
-
+  .titulo-campo {
+    color: rgba(0, 0, 0, 0.6);
+    font-weight: bold;
+  }
+  .full-width {
+    width: 100%;
+  }
+  // border: 2px solid red;
 }
 /* Estilos para telas grandes (ex: desktops) */
 @media (min-width: 1080px) {
-  .tela {
+  .formulario {
     width: 80%;
-    
-    //border: 2px solid red;
-
-    .full-width {
-      width: 100%;
+    .titulo-formulario {
+      font-size: 30px;
+      padding: 0 0 40px 0;
     }
-    .label {
-      color: rgba(0, 0, 0, 0.6);
-      font-size: 16px;
-      font-weight: bold;
+    .titulo-campo {      
+      font-size: 15px;      
     }
-    .titulo-cadastro{
-      color:blueviolet;
-    }
-
-    mat-card-actions {
+    .botao {
       display: flex;
       justify-content: center;
       button {
         margin: 0 8px;
-        img {
-          vertical-align: middle;
-        }
       }
     }
-
   }
 }
 
@@ -176,6 +167,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 
 /* Estilos para telas pequenas (ex: celulares) */
+/*
 @media (max-width: 600px) {
   .tela {
     width: 95%;
@@ -183,8 +175,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     border: 2px solid green
   }
 }
-
+*/
 /* Estilos para telas médias (ex: tablets) */
+/*
 @media (min-width: 601px) and (max-width: 1024px) {
   .tela {
     width: 50%;
@@ -204,5 +197,5 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
   }
 }
-
+*/
 

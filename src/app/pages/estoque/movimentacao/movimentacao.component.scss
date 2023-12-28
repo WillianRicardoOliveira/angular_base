@@ -1,0 +1,12 @@
+/* Estilos para telas grandes (ex: desktops) */
+@media (min-width: 1080px) {
+    .tipo {
+        width: 50px;
+    }
+	.produto {
+        width: 400px;
+    }
+	.quantidade {
+        width: 70px;
+    }
+}

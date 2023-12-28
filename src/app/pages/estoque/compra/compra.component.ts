@@ -26,7 +26,6 @@ export class CompraComponent extends Base {
         Validators.maxLength(100)
       ])],
       descricao: [(dados != null ? dados.descricao : ""), Validators.compose([
-        Validators.required,
         Validators.maxLength(250)
       ])]
     })   
