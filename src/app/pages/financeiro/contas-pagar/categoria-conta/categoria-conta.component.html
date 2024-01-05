@@ -1,1 +1,51 @@
-<p>categoria-conta works!</p>
+<app-cabecalho-pagina [pagina]="pagina"></app-cabecalho-pagina>
+
+<app-grid *ngIf="isLista"
+    [totalRegistros]="totalRegistros"
+    [lista]="lista"
+    [coluna]="coluna"
+    (pesquisa)="pesquisar($event)"
+    (adicionar)="botaoAdicionar()"
+    (editar)="botaoEditar($event)"
+    (excluir)="botaoExcluir($event)"
+    (visualizar)="botaoVisualizar($event)"
+    (chamar)="botaoChamar($event)"
+    (p_paginacao)="quantidadePorPagina($event)">
+</app-grid>
+
+<div class="formulario">
+  <section class="content">
+    <form [formGroup]="formulario" *ngIf="isFormulario && formulario">
+
+      <div class="row">
+        <div class="col-md-12 titulo-formulario">Dados da Categoria</div>
+      </div>
+
+      <div class="row">        
+        <div class="col-md-2 titulo-campo">Nome</div>
+        <div class="col-md-10">
+          <mat-form-field appearance="outline" class="full-width">
+            <input matInput formControlName="nome" maxlength="100">
+          </mat-form-field>
+          <!--
+          <div *ngIf="formulario.get('nome')?.errors?.['required'] && formulario.get('nome')?.touched">
+            Este campo é obrigatório
+          </div>
+        -->
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12 botao">
+          <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
+            Salvar
+          </button>      
+          <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </section>
+</div>

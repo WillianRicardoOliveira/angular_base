@@ -54,6 +54,11 @@ export interface TipoMovimentacao {
     nome: string
 }
 
+export interface CategoriaConta {
+    id?: number,
+    nome: string
+}
+
 
 
 

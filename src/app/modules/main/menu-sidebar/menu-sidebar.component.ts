@@ -60,7 +60,17 @@ export const MENU = [
                 name: 'Movimentacao',
                 iconClasses: 'fas fa-file',
                 path: ['/movimentacao']
-            }
+            },
+            {
+                name: 'Categoria-Conta',
+                iconClasses: 'fas fa-file',
+                path: ['/categoria-conta']
+            },
+            {
+                name: 'Sub-Categoria-Conta',
+                iconClasses: 'fas fa-file',
+                path: ['/sub-categoria-conta']
+            },
         ]
     }
 ];

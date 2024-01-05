@@ -27,6 +27,12 @@ import { CompraComponent } from '@pages/estoque/compra/compra.component';
 import { CompraItemComponent } from '@pages/estoque/compra/compra-item/compra-item.component';
 import { MovimentacaoComponent } from '@pages/estoque/movimentacao/movimentacao.component';
 
+
+/* Financeiro */
+import { CategoriaContaComponent } from '@pages/financeiro/contas-pagar/categoria-conta/categoria-conta.component';
+import { SubCategoriaContaComponent } from '@pages/financeiro/contas-pagar/categoria-conta/sub-categoria-conta/sub-categoria-conta.component';
+
+
 const routes: Routes = [
     {
         path: '',
@@ -47,6 +53,11 @@ const routes: Routes = [
             { path: 'compra'            , component: CompraComponent },
             { path: 'compra-item/:id'   , component: CompraItemComponent },
             { path: 'movimentacao'      , component: MovimentacaoComponent },
+
+
+            /* Financeiro */
+            { path: 'categoria-conta'       , component: CategoriaContaComponent },
+            { path: 'sub-categoria-conta'   , component: SubCategoriaContaComponent },
             
         ]
     },
