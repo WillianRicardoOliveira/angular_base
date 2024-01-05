@@ -1,6 +1,8 @@
 <app-cabecalho-pagina [pagina]="pagina"></app-cabecalho-pagina>
 
 <app-grid *ngIf="isLista"
+    [b_chamar]="true"    
+
     [totalRegistros]="totalRegistros"
     [lista]="lista"
     [coluna]="coluna"
@@ -10,9 +12,8 @@
     (excluir)="botaoExcluir($event)"
     (visualizar)="botaoVisualizar($event)"
     (chamar)="botaoChamar($event)"
-    (p_paginacao)="quantidadePorPagina($event)">
+    (p_paginacao)="quantidadePorPagina($event)">,
 </app-grid>
-
 <div class="formulario">
   <section class="content">
     <form [formGroup]="formulario" *ngIf="isFormulario && formulario">

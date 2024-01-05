@@ -13,6 +13,7 @@ export class CategoriaContaComponent extends Base {
   pagina: string = "Categoria-Conta"
   endPoint = "categoriaConta"
   coluna = ["Nome"]
+  chamar = "sub-categoria-conta"
 
   campos(dados?: CategoriaConta) {
     return this.builder.group({

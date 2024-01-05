@@ -56,8 +56,8 @@ const routes: Routes = [
 
 
             /* Financeiro */
-            { path: 'categoria-conta'       , component: CategoriaContaComponent },
-            { path: 'sub-categoria-conta'   , component: SubCategoriaContaComponent },
+            { path: 'categoria-conta'           , component: CategoriaContaComponent },
+            { path: 'sub-categoria-conta/:id'   , component: SubCategoriaContaComponent },
             
         ]
     },
