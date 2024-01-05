@@ -115,6 +115,9 @@ import { DropdownComponent } from './components/dropdown/dropdown.component';
 import { SelectComponent } from './components/select/select.component';
 import { BarchartComponent } from './components/barchart/barchart.component';
 import { PiechartComponent } from './components/piechart/piechart.component';
+import { ContasPagarComponent } from './pages/financeiro/contas-pagar/contas-pagar.component';
+import { CategoriaContaComponent } from './pages/financeiro/contas-pagar/categoria-conta/categoria-conta.component';
+import { SubCategoriaContaComponent } from './pages/financeiro/contas-pagar/categoria-conta/sub-categoria-conta/sub-categoria-conta.component';
 
 registerLocaleData(localePt);
 
@@ -196,6 +199,9 @@ registerLocaleData(localePt);
         FormBasePerfilComponent,
         BarchartComponent,
         PiechartComponent,
+        ContasPagarComponent,
+        CategoriaContaComponent,
+        SubCategoriaContaComponent,
         
         
        
