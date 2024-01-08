@@ -11,9 +11,12 @@ import { Base } from '@components/grid/base/base';
 export class CategoriaContaComponent extends Base {
 
   pagina: string = "Categoria-Conta"
+
   endPoint = "categoriaConta"
-  coluna = ["Nome"]
+
   chamar = "sub-categoria-conta"
+
+  coluna = ["Nome"]
 
   campos(dados?: CategoriaConta) {
     return this.builder.group({

@@ -61,7 +61,7 @@ export interface CategoriaConta {
 export interface SubCategoriaConta {
     id?: number,
     nome: string,
-    categoriaconta:CategoriaConta,
+    categoriaConta: number,
     ativo?: boolean
 }  
 
