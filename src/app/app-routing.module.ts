@@ -31,6 +31,7 @@ import { MovimentacaoComponent } from '@pages/estoque/movimentacao/movimentacao.
 /* Financeiro */
 import { CategoriaContaComponent } from '@pages/financeiro/contas-pagar/categoria-conta/categoria-conta.component';
 import { SubCategoriaContaComponent } from '@pages/financeiro/contas-pagar/categoria-conta/sub-categoria-conta/sub-categoria-conta.component';
+import { ContasPagarComponent } from '@pages/financeiro/contas-pagar/contas-pagar.component';
 
 
 const routes: Routes = [
@@ -58,6 +59,7 @@ const routes: Routes = [
             /* Financeiro */
             { path: 'categoria-conta'           , component: CategoriaContaComponent },
             { path: 'sub-categoria-conta/:id'   , component: SubCategoriaContaComponent },
+            { path: 'contas-pagar'              , component: ContasPagarComponent },
             
         ]
     },

@@ -11,7 +11,9 @@ import { Base } from '@components/grid/base/base';
 export class FornecedorComponent extends Base {
 
   pagina: string = "Fornecedor"
+
   endPoint = "fornecedor"
+  
   coluna = ["CNPJ", "Nome", "Telefone"]
 
   campos(dados?: Fornecedor) {

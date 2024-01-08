@@ -67,9 +67,9 @@ export const MENU = [
                 path: ['/categoria-conta']
             },
             {
-                name: 'Sub-Categoria-Conta',
+                name: 'Contas a Pagar',
                 iconClasses: 'fas fa-file',
-                path: ['/sub-categoria-conta']
+                path: ['/contas-pagar']
             },
         ]
     }

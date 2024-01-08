@@ -1,1 +1,121 @@
-<p>contas-pagar works!</p>
+<app-cabecalho-pagina [pagina]="pagina"></app-cabecalho-pagina>
+
+<app-grid *ngIf="isLista"
+    [totalRegistros]="totalRegistros"
+    [lista]="lista"
+    [coluna]="coluna"
+    (pesquisa)="pesquisar($event)"
+    (adicionar)="botaoAdicionar()"
+    (editar)="botaoEditar($event)"
+    (excluir)="botaoExcluir($event)"
+    (visualizar)="botaoVisualizar($event)"
+    (chamar)="botaoChamar($event)"
+    (p_paginacao)="quantidadePorPagina($event)">
+</app-grid>
+
+<div class="formulario">
+  <section class="content">
+    <form [formGroup]="formulario" *ngIf="isFormulario && formulario">
+
+      <div class="row">
+        <div class="col-md-12 titulo-formulario">Dados da Conta a Pagar</div>
+      </div>
+
+      <div class="row">        
+        <div class="col-md-2 titulo-campo">Fornecedor</div>
+        <div class="col-md-10">
+            <div class="fornecedor">
+                <app-dropdown 
+                [control]="fornecedorControl"
+                (objeto)="fornecedorChange()"
+                point="fornecedor"></app-dropdown>
+            </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 titulo-campo">Categoria</div>
+        <div class="col-md-10">
+            <div class="categoria">
+                <app-select point="categoriaConta"
+                [control]="categoriaContaControl"
+                (objeto)="categoriaContaChange()"></app-select>
+            </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 titulo-campo">Sub Categoria</div>
+        <div class="col-md-10">
+            <div class="subcategoria">
+                <app-select point="subCategoriaConta"
+                [control]="subCategoriaContaControl"
+                (objeto)="subCategoriaContaChange()"></app-select>
+            </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 titulo-campo">Descrição</div>
+        <div class="col-md-10">
+          <mat-form-field appearance="outline" class="full-width">
+            <textarea matInput formControlName="descricao" maxlength="250"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row">        
+        <div class="col-md-2 titulo-campo">Valor</div>
+        <div class="col-md-10">
+          <mat-form-field appearance="outline" class="valor">
+            <input type="text" matInput formControlName="valor" mask="0,00 || 000,00 || 0.000,00">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row">        
+        <div class="col-md-2 titulo-campo">Parcelas</div>
+        <div class="col-md-10">
+          <mat-form-field appearance="outline" class="parcelas">
+            <input type="text" matInput formControlName="parcelas">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 titulo-campo">Status</div>
+        <div class="col-md-10">
+            <div class="status">
+                <app-select point="status"
+                [control]="statusContaControl"
+                (objeto)="statusContaChange()"></app-select>
+            </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 titulo-campo">Metodo de Pagamento</div>
+        <div class="col-md-10">
+            <div class="metodoPagamento">
+                <app-select point="metodoPagamento"
+                [control]="metodoPagamentoControl"
+                (objeto)="metodoPagamentoChange()"></app-select>
+            </div>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-md-12 botao">
+          <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
+            Salvar
+          </button>      
+          <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </section>
+</div>

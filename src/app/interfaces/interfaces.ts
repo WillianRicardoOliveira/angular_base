@@ -58,12 +58,38 @@ export interface CategoriaConta {
     id?: number,
     nome: string
 }
+
 export interface SubCategoriaConta {
     id?: number,
     nome: string,
     categoriaConta: number,
     ativo?: boolean
 }  
+
+export interface ContasApagar {
+    id?: number,
+    fornecedor: Fornecedor,
+    subCategoria: SubCategoriaConta,
+    descricao: string,
+    valor: String,
+    parcelas: number, 
+    status: String,
+    metodoPagamento: MetodoPagamento,
+    ativo?: boolean
+}  
+
+export interface MetodoPagamento {
+    id?: number,
+    nome: string,
+    ativo?: boolean  
+}  
+
+export interface StatusPagamento {
+    id?: number,
+    nome: string,
+    ativo?: boolean  
+}  
+
 
 
 

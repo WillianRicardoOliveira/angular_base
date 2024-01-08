@@ -1,4 +1,4 @@
-import { Fornecedor, Produto, TipoMovimentacao } from "@/interfaces/interfaces";
+import { CategoriaConta, Fornecedor, MetodoPagamento, Produto, StatusPagamento, SubCategoriaConta, TipoMovimentacao } from "@/interfaces/interfaces";
 import { Directive, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -22,6 +22,12 @@ export class Base implements OnInit {
   tipoMovimentacaoControl = new FormControl<TipoMovimentacao | null>(null, Validators.required)  
   fornecedorControl = new FormControl<Fornecedor | null>(null, Validators.required)
   produtoControl = new FormControl<Produto | null>(null, Validators.required)
+
+
+  categoriaContaControl = new FormControl<CategoriaConta | null>(null, Validators.required)
+  subCategoriaContaControl = new FormControl<SubCategoriaConta | null>(null, Validators.required)
+  statusContaControl = new FormControl<StatusPagamento | null>(null, Validators.required)
+  metodoPagamentoControl = new FormControl<MetodoPagamento | null>(null, Validators.required)
 
   constructor(    
     private service: BaseService,
@@ -199,6 +205,34 @@ export class Base implements OnInit {
   */   
   produtoChange() {
     this.formulario.patchValue({ "produto": this.produtoControl.value })
+  }
+
+  /*
+   * Todo :
+  */   
+  categoriaContaChange() {
+   
+  }
+  
+  /*
+   * Todo :
+  */   
+  subCategoriaContaChange() {
+    this.formulario.patchValue({ "subCategoria": this.subCategoriaContaControl.value })
+  }
+
+  /*
+   * Todo :
+  */   
+  statusContaChange() {
+    this.formulario.patchValue({ "status": this.statusContaControl.value })
+  }
+
+  /*
+   * Todo :
+  */   
+  metodoPagamentoChange() {
+    this.formulario.patchValue({ "metodoPagamento": this.metodoPagamentoControl.value })
   }
 
 }
