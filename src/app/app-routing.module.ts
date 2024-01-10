@@ -32,7 +32,8 @@ import { MovimentacaoComponent } from '@pages/estoque/movimentacao/movimentacao.
 import { CategoriaContaComponent } from '@pages/financeiro/contas-pagar/categoria-conta/categoria-conta.component';
 import { SubCategoriaContaComponent } from '@pages/financeiro/contas-pagar/categoria-conta/sub-categoria-conta/sub-categoria-conta.component';
 import { ContasPagarComponent } from '@pages/financeiro/contas-pagar/contas-pagar.component';
-
+import { FormaPagamentoComponent } from '@pages/financeiro/contas-pagar/forma-pagamento/forma-pagamento.component';
+import { StatusPagamentoComponent } from '@pages/financeiro/contas-pagar/status-pagamento/status-pagamento.component';
 
 const routes: Routes = [
     {
@@ -60,6 +61,8 @@ const routes: Routes = [
             { path: 'categoria-conta'           , component: CategoriaContaComponent },
             { path: 'sub-categoria-conta/:id'   , component: SubCategoriaContaComponent },
             { path: 'contas-pagar'              , component: ContasPagarComponent },
+            { path: 'forma-pagamento'          , component: FormaPagamentoComponent },
+            { path: 'status-pagamento'          , component: StatusPagamentoComponent },
             
         ]
     },

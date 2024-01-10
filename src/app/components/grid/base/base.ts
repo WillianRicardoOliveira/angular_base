@@ -1,4 +1,4 @@
-import { CategoriaConta, Fornecedor, MetodoPagamento, Produto, StatusPagamento, SubCategoriaConta, TipoMovimentacao } from "@/interfaces/interfaces";
+import { CategoriaConta, FormaPagamento, Fornecedor, Produto, StatusPagamento, SubCategoriaConta, TipoMovimentacao } from "@/interfaces/interfaces";
 import { Directive, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -26,8 +26,8 @@ export class Base implements OnInit {
 
   categoriaContaControl = new FormControl<CategoriaConta | null>(null, Validators.required)
   subCategoriaContaControl = new FormControl<SubCategoriaConta | null>(null, Validators.required)
-  statusContaControl = new FormControl<StatusPagamento | null>(null, Validators.required)
-  metodoPagamentoControl = new FormControl<MetodoPagamento | null>(null, Validators.required)
+  statusPagamentoControl = new FormControl<StatusPagamento | null>(null, Validators.required)
+  formaPagamentoControl = new FormControl<FormaPagamento | null>(null, Validators.required)
 
   constructor(    
     private service: BaseService,
@@ -85,6 +85,7 @@ export class Base implements OnInit {
    * Todo :
    */
   salvar() {
+    console.log("FORMULARIO ::: ", this.formulario)
     this.service.salvar(this.endPoint, this.formulario).subscribe({
       next: (value) => {
         this.isFormulario = false
@@ -211,28 +212,28 @@ export class Base implements OnInit {
    * Todo :
   */   
   categoriaContaChange() {
-   
+    this.formulario.patchValue({ "categoriaConta": this.categoriaContaControl.value })
   }
   
   /*
    * Todo :
   */   
   subCategoriaContaChange() {
-    this.formulario.patchValue({ "subCategoria": this.subCategoriaContaControl.value })
+    this.formulario.patchValue({ "subCategoriaConta": this.subCategoriaContaControl.value })
   }
 
   /*
    * Todo :
   */   
-  statusContaChange() {
-    this.formulario.patchValue({ "status": this.statusContaControl.value })
+  statusPagamentoChange() {
+    this.formulario.patchValue({ "statusPagamento": this.statusPagamentoControl.value })
   }
 
   /*
    * Todo :
   */   
-  metodoPagamentoChange() {
-    this.formulario.patchValue({ "metodoPagamento": this.metodoPagamentoControl.value })
+  formaPagamentoChange() {
+    this.formulario.patchValue({ "formaPagamento": this.formaPagamentoControl.value })
   }
 
 }

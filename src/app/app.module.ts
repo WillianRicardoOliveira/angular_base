@@ -118,6 +118,8 @@ import { PiechartComponent } from './components/piechart/piechart.component';
 import { ContasPagarComponent } from './pages/financeiro/contas-pagar/contas-pagar.component';
 import { CategoriaContaComponent } from './pages/financeiro/contas-pagar/categoria-conta/categoria-conta.component';
 import { SubCategoriaContaComponent } from './pages/financeiro/contas-pagar/categoria-conta/sub-categoria-conta/sub-categoria-conta.component';
+import { StatusPagamentoComponent } from './pages/financeiro/contas-pagar/status-pagamento/status-pagamento.component';
+import { FormaPagamentoComponent } from './pages/financeiro/contas-pagar/forma-pagamento/forma-pagamento.component';
 
 registerLocaleData(localePt);
 
@@ -202,6 +204,8 @@ registerLocaleData(localePt);
         ContasPagarComponent,
         CategoriaContaComponent,
         SubCategoriaContaComponent,
+        StatusPagamentoComponent,
+        FormaPagamentoComponent,
         
         
        

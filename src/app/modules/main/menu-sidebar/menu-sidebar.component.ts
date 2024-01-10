@@ -71,6 +71,16 @@ export const MENU = [
                 iconClasses: 'fas fa-file',
                 path: ['/contas-pagar']
             },
+            {
+                name: 'Forma de Pagamento',
+                iconClasses: 'fas fa-file',
+                path: ['/forma-pagamento']
+            },
+            {
+                name: 'Status do Pagamento',
+                iconClasses: 'fas fa-file',
+                path: ['/status-pagamento']
+            },
         ]
     }
 ];

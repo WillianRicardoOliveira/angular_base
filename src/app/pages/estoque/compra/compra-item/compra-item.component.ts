@@ -11,8 +11,11 @@ import { Base } from '@components/grid/base/base';
 export class CompraItemComponent extends Base {
 
   pagina: string = "Intens da compra";
+
   endPoint = "compraItem";
+  
   coluna = ["Fornecedor", "Produto", "Quantidade", "Valor", "Total"]
+  
   formatarComoMoeda = ["valor", "total"]
 
   campos(dados?: CompraItem) {

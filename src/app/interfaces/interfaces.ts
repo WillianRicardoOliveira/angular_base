@@ -69,16 +69,17 @@ export interface SubCategoriaConta {
 export interface ContasApagar {
     id?: number,
     fornecedor: Fornecedor,
-    subCategoria: SubCategoriaConta,
+    categoriaConta : CategoriaConta
+    subCategoriaConta: SubCategoriaConta,
     descricao: string,
     valor: String,
     parcelas: number, 
-    status: String,
-    metodoPagamento: MetodoPagamento,
+    statusPagamento: StatusPagamento,
+    formaPagamento: FormaPagamento,
     ativo?: boolean
 }  
 
-export interface MetodoPagamento {
+export interface FormaPagamento {
     id?: number,
     nome: string,
     ativo?: boolean  
