@@ -1,1 +1,3 @@
-# angular_base
+# Instalações
+
+	Visual Studio Code			: https://code.visualstudio.com/download
