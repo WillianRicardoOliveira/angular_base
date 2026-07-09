@@ -1,6 +1,6 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule, LOCALE_ID } from '@angular/core';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import {AppRoutingModule} from '@/app-routing.module';
 import {AppComponent} from './app.component';
@@ -123,11 +123,9 @@ import { FormaPagamentoComponent } from './pages/financeiro/contas-pagar/forma-p
 
 registerLocaleData(localePt);
 
-@NgModule({
-    declarations: [
+@NgModule({ declarations: [
         AppComponent,
         MainComponent,
-        
         HeaderComponent,
         FooterComponent,
         MenuSidebarComponent,
@@ -143,44 +141,27 @@ registerLocaleData(localePt);
         MenuItemComponent,
         ControlSidebarComponent,
         SidebarSearchComponent,
-
-
         GridComponent,
-
-        
         CabecalhoPaginaComponent,
         InformacaoComponent,
         SucessoComponent,
         AvisoComponent,
         PerigoComponent,
-
-       
         /* ESTOQUE */
         FornecedorComponent,
         ProdutoComponent,
         CompraComponent,
         CompraItemComponent,
         MovimentacaoComponent,
-
         /* COMPONENTE */
         DropdownComponent,
         SelectComponent,
-
-
-
-        
-        
-        
         BannerComponent,
         ContainerComponent,
-                  
         /* Site */
         LoginComponent,
         CadastroComponent,
         FormBasePerfilComponent,
-
-
-
         HeaderSiteComponent,
         FooterSiteComponent,
         HomeSiteComponent,
@@ -190,15 +171,10 @@ registerLocaleData(localePt);
         FormBuscaComponent,
         ModalComponent,
         BotaoControleComponent,
-       
-     
         DepoimentoSiteComponent,
         ConteudoSiteComponent,
         SeletorPassageiroComponent,
-        
-        
         PerfilComponent,
-        FormBasePerfilComponent,
         BarchartComponent,
         PiechartComponent,
         ContasPagarComponent,
@@ -206,19 +182,11 @@ registerLocaleData(localePt);
         SubCategoriaContaComponent,
         StatusPagamentoComponent,
         FormaPagamentoComponent,
-        
-        
-       
-        
-
-
     ],
-    imports: [
-        ProfabricComponentsModule,
+    bootstrap: [AppComponent], imports: [ProfabricComponentsModule,
         CommonModule,
         BrowserModule,
-        StoreModule.forRoot({auth: authReducer, ui: uiReducer}),
-        HttpClientModule,
+        StoreModule.forRoot({ auth: authReducer, ui: uiReducer }),
         AppRoutingModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
@@ -229,21 +197,10 @@ registerLocaleData(localePt);
         }),
         NgxMaskDirective, /* https://github.com/JsDaddy/ngx-mask */
         NgxMaskPipe,
-        //.forRoot(
-        //{
-        //    dropSpecialCharacters: true
-        //}
-        //),
-
-
-
-        // WillianOliveira
-        HttpClientModule,
         ReactiveFormsModule,
         FormsModule,
-       // MatFormFieldModule,
-       // MatInputModule
-
+        // MatFormFieldModule,
+        // MatInputModule
         /* Angular Material */
         MatToolbarModule, /* https://material.angular.io/components/toolbar/overview */
         MatButtonModule, /* https://material.angular.io/components/button/overview */
@@ -259,35 +216,23 @@ registerLocaleData(localePt);
         MatAutocompleteModule,
         MatRadioModule,
         MatDividerModule,
-        MatCheckboxModule, 
+        MatCheckboxModule,
         MatTooltipModule,
         MatPaginatorModule,
         MatSelectModule,
-
-        
         CurrencyPipe,
-
         /* Graficos
         https://github.com/valor-software/ng2-charts
         https://www.npmjs.com/package/ng2-charts/v/4.1.1
         https://valor-software.com/ng2-charts
         https://www.chartjs.org/docs/4.4.1
-        */        
-        NgChartsModule
-        
-
-    ],
-    providers: [ { provide: LOCALE_ID, useValue: 'pt-BR' },
+        */
+        NgChartsModule], providers: [{ provide: LOCALE_ID, useValue: 'pt-BR' },
         {
-        provide: HTTP_INTERCEPTORS,
-        multi: true,
-        //useClass: () => {AutenticacaoInterceptor}
-
-        useClass: AutenticacaoInterceptor,
-        
-    },
-    provideNgxMask()
-    ],
-    bootstrap: [AppComponent]
-})
+            provide: HTTP_INTERCEPTORS,
+            multi: true,
+            //useClass: () => {AutenticacaoInterceptor}
+            useClass: AutenticacaoInterceptor,
+        },
+        provideNgxMask(), provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {}
