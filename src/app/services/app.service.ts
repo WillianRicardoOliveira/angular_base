@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {ToastrService} from 'ngx-toastr';
-import {Gatekeeper} from 'gatekeeper-client-sdk';
 
 @Injectable({
     providedIn: 'root'
@@ -12,89 +11,35 @@ export class AppService {
     constructor(private router: Router, private toastr: ToastrService) {}
 
     async loginByAuth({email, password}) {
-        try {
-            const token = await Gatekeeper.loginByAuth(email, password);
-            localStorage.setItem('token', token);
-            await this.getProfile();
-            this.router.navigate(['/']);
-            this.toastr.success('Login success');
-        } catch (error) {
-            this.toastr.error(error.message);
-        }
+    this.toastr.error('Login legado desativado.');
     }
 
     async registerByAuth({email, password}) {
-        try {
-            const token = await Gatekeeper.registerByAuth(email, password);
-            localStorage.setItem('token', token);
-            await this.getProfile();
-            this.router.navigate(['/']);
-            this.toastr.success('Register success');
-        } catch (error) {
-            this.toastr.error(error.message);
-        }
+        this.toastr.error('Cadastro legado desativado.');
     }
 
     async loginByGoogle() {
-        try {
-            const token = await Gatekeeper.loginByGoogle();
-            localStorage.setItem('token', token);
-            await this.getProfile();
-            this.router.navigate(['/']);
-            this.toastr.success('Login success');
-        } catch (error) {
-            this.toastr.error(error.message);
-        }
+        this.toastr.error('Login Google legado desativado.');
     }
 
     async registerByGoogle() {
-        try {
-            const token = await Gatekeeper.registerByGoogle();
-            localStorage.setItem('token', token);
-            await this.getProfile();
-            this.router.navigate(['/']);
-            this.toastr.success('Register success');
-        } catch (error) {
-            this.toastr.error(error.message);
-        }
+        this.toastr.error('Cadastro Google legado desativado.');
     }
 
     async loginByFacebook() {
-        try {
-            const token = await Gatekeeper.loginByFacebook();
-            localStorage.setItem('token', token);
-            await this.getProfile();
-            this.router.navigate(['/']);
-            this.toastr.success('Login success');
-        } catch (error) {
-            this.toastr.error(error.message);
-        }
+        this.toastr.error('Login Facebook legado desativado.');
     }
 
     async registerByFacebook() {
-        try {
-            const token = await Gatekeeper.registerByFacebook();
-            localStorage.setItem('token', token);
-            await this.getProfile();
-            this.router.navigate(['/']);
-            this.toastr.success('Register success');
-        } catch (error) {
-            this.toastr.error(error.message);
-        }
+        this.toastr.error('Cadastro Facebook legado desativado.');
     }
 
     async getProfile() {
-        try {
-            this.user = await Gatekeeper.getProfile();
-        } catch (error) {
-            this.logout();
-            throw error;
-        }
+        return this.user;
     }
 
     logout() {
         localStorage.removeItem('token');
-        localStorage.removeItem('gatekeeper_token');
         this.user = null;
         this.router.navigate(['/login']);
     }
