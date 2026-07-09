@@ -78,18 +78,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "adminlte:build"
+            "buildTarget": "adminlte:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "adminlte:build:production"
+              "buildTarget": "adminlte:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "adminlte:build"
+            "buildTarget": "adminlte:build"
           }
         },
         "test": {
