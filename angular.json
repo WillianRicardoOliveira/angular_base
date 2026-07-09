@@ -41,8 +41,7 @@
             "namedChunks": true,
             "allowedCommonJsDependencies": [
               "path",
-              "os",
-              "fs"
+              "os"
             ]
           },
           "configurations": {
