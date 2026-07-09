@@ -4,9 +4,10 @@ import { Validators } from '@angular/forms';
 import { Base } from '@components/grid/base/base';
 
 @Component({
-  selector: 'app-status-pagamento',
-  templateUrl: './status-pagamento.component.html',
-  styleUrls: ['./status-pagamento.component.scss']
+    selector: 'app-status-pagamento',
+    templateUrl: './status-pagamento.component.html',
+    styleUrls: ['./status-pagamento.component.scss'],
+    standalone: false
 })
 export class StatusPagamentoComponent extends Base {
 

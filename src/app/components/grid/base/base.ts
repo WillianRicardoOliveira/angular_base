@@ -6,7 +6,8 @@ import { BaseService } from "@services/base/base.service";
 import { ToastrService } from "ngx-toastr";
 
 @Directive({
-  selector: 'app-base-grid'
+    selector: 'app-base-grid',
+    standalone: false
 })
 export class Base implements OnInit {
 

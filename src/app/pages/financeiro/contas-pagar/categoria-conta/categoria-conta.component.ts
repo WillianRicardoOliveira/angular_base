@@ -4,9 +4,10 @@ import { Validators } from '@angular/forms';
 import { Base } from '@components/grid/base/base';
 
 @Component({
-  selector: 'app-categoria-conta',
-  templateUrl: './categoria-conta.component.html',
-  styleUrls: ['./categoria-conta.component.scss']
+    selector: 'app-categoria-conta',
+    templateUrl: './categoria-conta.component.html',
+    styleUrls: ['./categoria-conta.component.scss'],
+    standalone: false
 })
 export class CategoriaContaComponent extends Base {
 

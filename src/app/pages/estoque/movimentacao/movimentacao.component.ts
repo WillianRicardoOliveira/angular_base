@@ -4,9 +4,10 @@ import { Validators } from '@angular/forms';
 import { Base } from '@components/grid/base/base';
 
 @Component({
-  selector: 'app-movimentacao',
-  templateUrl: './movimentacao.component.html',
-  styleUrls: ['./movimentacao.component.scss']
+    selector: 'app-movimentacao',
+    templateUrl: './movimentacao.component.html',
+    styleUrls: ['./movimentacao.component.scss'],
+    standalone: false
 })
 export class MovimentacaoComponent extends Base {
 

@@ -3,12 +3,11 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 
 @Component({
-  selector: 'app-grid',
-  templateUrl: './grid.component.html',
-  styleUrls: ['./grid.component.scss'],
-
-  animations: [triggerDestaque]
-
+    selector: 'app-grid',
+    templateUrl: './grid.component.html',
+    styleUrls: ['./grid.component.scss'],
+    animations: [triggerDestaque],
+    standalone: false
 })
 export class GridComponent implements OnInit {
 

@@ -4,9 +4,10 @@ import { Validators } from '@angular/forms';
 import { Base } from '@components/grid/base/base';
 
 @Component({
-  selector: 'app-forma-pagamento',
-  templateUrl: './forma-pagamento.component.html',
-  styleUrls: ['./forma-pagamento.component.scss']
+    selector: 'app-forma-pagamento',
+    templateUrl: './forma-pagamento.component.html',
+    styleUrls: ['./forma-pagamento.component.scss'],
+    standalone: false
 })
 export class FormaPagamentoComponent extends Base {
 

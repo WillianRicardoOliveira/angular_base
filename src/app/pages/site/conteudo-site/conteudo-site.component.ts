@@ -3,9 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { ConteudoService } from '@services/site/conteudo/conteudo.service';
 
 @Component({
-  selector: 'app-conteudo-site',
-  templateUrl: './conteudo-site.component.html',
-  styleUrls: ['./conteudo-site.component.scss']
+    selector: 'app-conteudo-site',
+    templateUrl: './conteudo-site.component.html',
+    styleUrls: ['./conteudo-site.component.scss'],
+    standalone: false
 })
 export class ConteudoSiteComponent implements OnInit {
   

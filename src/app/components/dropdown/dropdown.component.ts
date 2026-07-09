@@ -5,9 +5,10 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { BaseService } from '@services/base/base.service';
 import { Observable, map, startWith } from 'rxjs';
 @Component({
-  selector: 'app-dropdown',
-  templateUrl: './dropdown.component.html',
-  styleUrls: ['./dropdown.component.scss']
+    selector: 'app-dropdown',
+    templateUrl: './dropdown.component.html',
+    styleUrls: ['./dropdown.component.scss'],
+    standalone: false
 })
 export class DropdownComponent implements OnInit {
 

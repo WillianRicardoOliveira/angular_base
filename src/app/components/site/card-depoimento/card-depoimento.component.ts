@@ -2,9 +2,10 @@ import { Depoimento } from '@/interfaces/interfaces';
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-card-depoimento',
-  templateUrl: './card-depoimento.component.html',
-  styleUrls: ['./card-depoimento.component.scss']
+    selector: 'app-card-depoimento',
+    templateUrl: './card-depoimento.component.html',
+    styleUrls: ['./card-depoimento.component.scss'],
+    standalone: false
 })
 export class CardDepoimentoComponent {
 

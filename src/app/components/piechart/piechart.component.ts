@@ -4,9 +4,10 @@ import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
-  selector: 'app-piechart',
-  templateUrl: './piechart.component.html',
-  styleUrls: ['./piechart.component.scss']
+    selector: 'app-piechart',
+    templateUrl: './piechart.component.html',
+    styleUrls: ['./piechart.component.scss'],
+    standalone: false
 })
 export class PiechartComponent {
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;

@@ -3,9 +3,10 @@ import { ChartConfiguration, ChartData, ChartEvent, ChartType } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
-  selector: 'app-barchart',
-  templateUrl: './barchart.component.html',
-  styleUrls: ['./barchart.component.scss']
+    selector: 'app-barchart',
+    templateUrl: './barchart.component.html',
+    styleUrls: ['./barchart.component.scss'],
+    standalone: false
 })
 export class BarchartComponent {
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;

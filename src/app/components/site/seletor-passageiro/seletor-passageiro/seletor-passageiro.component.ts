@@ -2,16 +2,17 @@ import { Component, Input, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
-  selector: 'app-seletor-passageiro',
-  templateUrl: './seletor-passageiro.component.html',
-  styleUrls: ['./seletor-passageiro.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => SeletorPassageiroComponent),
-      multi: true
-    }
-  ]
+    selector: 'app-seletor-passageiro',
+    templateUrl: './seletor-passageiro.component.html',
+    styleUrls: ['./seletor-passageiro.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => SeletorPassageiroComponent),
+            multi: true
+        }
+    ],
+    standalone: false
 })
 export class SeletorPassageiroComponent implements ControlValueAccessor {
   

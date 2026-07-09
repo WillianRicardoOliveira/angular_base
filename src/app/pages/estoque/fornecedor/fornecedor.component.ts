@@ -4,9 +4,10 @@ import { Validators } from '@angular/forms';
 import { Base } from '@components/grid/base/base';
 
 @Component({
-  selector: 'app-fornecedor',
-  templateUrl: './fornecedor.component.html',
-  styleUrls: ['./fornecedor.component.scss']
+    selector: 'app-fornecedor',
+    templateUrl: './fornecedor.component.html',
+    styleUrls: ['./fornecedor.component.scss'],
+    standalone: false
 })
 export class FornecedorComponent extends Base {
 

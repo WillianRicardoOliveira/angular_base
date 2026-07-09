@@ -3,9 +3,10 @@ import { Router } from '@angular/router';
 import { UserService } from '@services/user/user.service';
 
 @Component({
-  selector: 'app-header-site',
-  templateUrl: './header-site.component.html',
-  styleUrls: ['./header-site.component.scss']
+    selector: 'app-header-site',
+    templateUrl: './header-site.component.html',
+    styleUrls: ['./header-site.component.scss'],
+    standalone: false
 })
 export class HeaderSiteComponent {
 

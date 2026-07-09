@@ -19,7 +19,8 @@ import {Observable} from 'rxjs';
 @Component({
     selector: 'app-control-sidebar',
     templateUrl: './control-sidebar.component.html',
-    styleUrls: ['./control-sidebar.component.scss']
+    styleUrls: ['./control-sidebar.component.scss'],
+    standalone: false
 })
 export class ControlSidebarComponent implements OnInit {
     @HostBinding('class') classes: string =

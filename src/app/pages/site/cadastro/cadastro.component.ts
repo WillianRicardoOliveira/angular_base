@@ -5,9 +5,10 @@ import { Router } from '@angular/router';
 import { CadastroService } from '@services/site/cadastro/cadastro.service';
 
 @Component({
-  selector: 'app-cadastro',
-  templateUrl: './cadastro.component.html',
-  styleUrls: ['./cadastro.component.scss']
+    selector: 'app-cadastro',
+    templateUrl: './cadastro.component.html',
+    styleUrls: ['./cadastro.component.scss'],
+    standalone: false
 })
 export class CadastroComponent {
 

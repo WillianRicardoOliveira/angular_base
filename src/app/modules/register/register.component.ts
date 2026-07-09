@@ -12,7 +12,8 @@ import {ToastrService} from 'ngx-toastr';
 @Component({
     selector: 'app-register',
     templateUrl: './register.component.html',
-    styleUrls: ['./register.component.scss']
+    styleUrls: ['./register.component.scss'],
+    standalone: false
 })
 export class RegisterComponent implements OnInit, OnDestroy {
     @HostBinding('class') class = 'register-box';

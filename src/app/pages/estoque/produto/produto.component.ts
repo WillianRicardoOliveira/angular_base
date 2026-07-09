@@ -4,9 +4,10 @@ import { Validators } from '@angular/forms';
 import { Base } from '@components/grid/base/base';
 
 @Component({
-  selector: 'app-produto',
-  templateUrl: './produto.component.html',
-  styleUrls: ['./produto.component.scss']
+    selector: 'app-produto',
+    templateUrl: './produto.component.html',
+    styleUrls: ['./produto.component.scss'],
+    standalone: false
 })
 export class ProdutoComponent extends Base {
 

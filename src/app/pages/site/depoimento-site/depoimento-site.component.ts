@@ -3,9 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { DepoimentoService } from '@services/site/depoimento/depoimento.service';
 
 @Component({
-  selector: 'app-depoimento-site',
-  templateUrl: './depoimento-site.component.html',
-  styleUrls: ['./depoimento-site.component.scss']
+    selector: 'app-depoimento-site',
+    templateUrl: './depoimento-site.component.html',
+    styleUrls: ['./depoimento-site.component.scss'],
+    standalone: false
 })
 export class DepoimentoSiteComponent implements OnInit {
 

@@ -11,7 +11,8 @@ import {PfDropdown} from '@profabric/angular-components';
 @Component({
     selector: 'app-sidebar-search',
     templateUrl: './sidebar-search.component.html',
-    styleUrls: ['./sidebar-search.component.scss']
+    styleUrls: ['./sidebar-search.component.scss'],
+    standalone: false
 })
 export class SidebarSearchComponent implements OnInit {
     public searchText: string = '';

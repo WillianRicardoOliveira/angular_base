@@ -3,9 +3,10 @@ import { FormControl } from '@angular/forms';
 import { BaseService } from '@services/base/base.service';
 
 @Component({
-  selector: 'app-select',
-  templateUrl: './select.component.html',
-  styleUrls: ['./select.component.scss']
+    selector: 'app-select',
+    templateUrl: './select.component.html',
+    styleUrls: ['./select.component.scss'],
+    standalone: false
 })
 export class SelectComponent implements OnInit {
   

@@ -7,7 +7,8 @@ import {openCloseAnimation, rotateAnimation} from './menu-item.animations';
     selector: 'app-menu-item',
     templateUrl: './menu-item.component.html',
     styleUrls: ['./menu-item.component.scss'],
-    animations: [openCloseAnimation, rotateAnimation]
+    animations: [openCloseAnimation, rotateAnimation],
+    standalone: false
 })
 export class MenuItemComponent implements OnInit {
     @Input() menuItem: any = null;

@@ -9,7 +9,8 @@ const BASE_CLASSES = 'main-sidebar elevation-4';
 @Component({
     selector: 'app-menu-sidebar',
     templateUrl: './menu-sidebar.component.html',
-    styleUrls: ['./menu-sidebar.component.scss']
+    styleUrls: ['./menu-sidebar.component.scss'],
+    standalone: false
 })
 export class MenuSidebarComponent implements OnInit {
     @HostBinding('class') classes: string = BASE_CLASSES;

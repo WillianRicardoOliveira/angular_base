@@ -8,7 +8,8 @@ import {Observable} from 'rxjs';
 @Component({
     selector: 'app-main',
     templateUrl: './main.component.html',
-    styleUrls: ['./main.component.scss']
+    styleUrls: ['./main.component.scss'],
+    standalone: false
 })
 export class MainComponent implements OnInit {
     @HostBinding('class') class = 'wrapper';

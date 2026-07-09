@@ -4,9 +4,10 @@ import { Validators } from '@angular/forms';
 import { Base } from '@components/grid/base/base';
 
 @Component({
-  selector: 'app-compra',
-  templateUrl: './compra.component.html',
-  styleUrls: ['./compra.component.scss']
+    selector: 'app-compra',
+    templateUrl: './compra.component.html',
+    styleUrls: ['./compra.component.scss'],
+    standalone: false
 })
 export class CompraComponent extends Base {
 

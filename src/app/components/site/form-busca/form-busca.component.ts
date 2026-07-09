@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { FormBuscaService } from '@services/site/form-busca/form-busca.service';
 
 @Component({
-  selector: 'app-form-busca',
-  templateUrl: './form-busca.component.html',
-  styleUrls: ['./form-busca.component.scss']
+    selector: 'app-form-busca',
+    templateUrl: './form-busca.component.html',
+    styleUrls: ['./form-busca.component.scss'],
+    standalone: false
 })
 export class FormBuscaComponent {
   constructor( 

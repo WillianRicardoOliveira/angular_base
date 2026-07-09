@@ -4,9 +4,10 @@ import { FormValidations } from '@components/form-validations';
 import { CadastroService } from '@services/site/cadastro/cadastro.service';
 
 @Component({
-  selector: 'app-form-base-perfil',
-  templateUrl: './form-base-perfil.component.html',
-  styleUrls: ['./form-base-perfil.component.scss']
+    selector: 'app-form-base-perfil',
+    templateUrl: './form-base-perfil.component.html',
+    styleUrls: ['./form-base-perfil.component.scss'],
+    standalone: false
 })
 export class FormBasePerfilComponent implements OnInit {
   

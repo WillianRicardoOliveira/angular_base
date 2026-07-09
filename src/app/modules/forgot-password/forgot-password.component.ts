@@ -12,7 +12,8 @@ import {AppService} from '@services/app.service';
 @Component({
     selector: 'app-forgot-password',
     templateUrl: './forgot-password.component.html',
-    styleUrls: ['./forgot-password.component.scss']
+    styleUrls: ['./forgot-password.component.scss'],
+    standalone: false
 })
 export class ForgotPasswordComponent implements OnInit, OnDestroy {
     @HostBinding('class') class = 'login-box';
