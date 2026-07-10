@@ -1,9 +1,8 @@
 <app-cabecalho-pagina [pagina]="pagina"></app-cabecalho-pagina>
 
-<app-grid *ngIf="isLista"
-
+@if (isLista) {
+  <app-grid
     [formatarComoMoeda]="formatarComoMoeda"
-
     [totalRegistros]="totalRegistros"
     [lista]="lista"
     [coluna]="coluna"
@@ -14,110 +13,102 @@
     (visualizar)="botaoVisualizar($event)"
     (chamar)="botaoChamar($event)"
     (p_paginacao)="quantidadePorPagina($event)">
-</app-grid>
+  </app-grid>
+}
 
 <div class="formulario">
   <section class="content">
-    <form [formGroup]="formulario" *ngIf="isFormulario && formulario">
-
-      <div class="row">
-        <div class="col-md-12 titulo-formulario">Dados da Conta a Pagar</div>
-      </div>
-
-      <div class="row">        
-        <div class="col-md-2 titulo-campo">Fornecedor</div>
-        <div class="col-md-10">
+    @if (isFormulario && formulario) {
+      <form [formGroup]="formulario">
+        <div class="row">
+          <div class="col-md-12 titulo-formulario">Dados da Conta a Pagar</div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Fornecedor</div>
+          <div class="col-md-10">
             <div class="fornecedor">
-                <app-dropdown 
+              <app-dropdown
                 [control]="fornecedorControl"
                 (objeto)="fornecedorChange()"
-                point="fornecedor"></app-dropdown>
+              point="fornecedor"></app-dropdown>
             </div>
+          </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-2 titulo-campo">Categoria</div>
-        <div class="col-md-10">
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Categoria</div>
+          <div class="col-md-10">
             <div class="categoria">
-                <app-select point="categoriaConta"
+              <app-select point="categoriaConta"
                 [control]="categoriaContaControl"
-                (objeto)="categoriaContaChange()"></app-select>
+              (objeto)="categoriaContaChange()"></app-select>
             </div>
+          </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-2 titulo-campo">Sub Categoria</div>
-        <div class="col-md-10">
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Sub Categoria</div>
+          <div class="col-md-10">
             <div class="subcategoria">
-                <app-select point="subCategoriaConta"
+              <app-select point="subCategoriaConta"
                 [control]="subCategoriaContaControl"
-                (objeto)="subCategoriaContaChange()"></app-select>
+              (objeto)="subCategoriaContaChange()"></app-select>
             </div>
+          </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-2 titulo-campo">Descrição</div>
-        <div class="col-md-10">
-          <mat-form-field appearance="outline" class="descricao">
-            <textarea matInput formControlName="descricao" maxlength="250"></textarea>
-          </mat-form-field>
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Descrição</div>
+          <div class="col-md-10">
+            <mat-form-field appearance="outline" class="descricao">
+              <textarea matInput formControlName="descricao" maxlength="250"></textarea>
+            </mat-form-field>
+          </div>
         </div>
-      </div>
-
-      <div class="row">        
-        <div class="col-md-2 titulo-campo">Valor</div>
-        <div class="col-md-10">
-          <mat-form-field appearance="outline" class="valor">
-            <input type="text" matInput formControlName="valor" mask="0,00 || 000,00 || 0.000,00">
-          </mat-form-field>
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Valor</div>
+          <div class="col-md-10">
+            <mat-form-field appearance="outline" class="valor">
+              <input type="text" matInput formControlName="valor" mask="0,00 || 000,00 || 0.000,00">
+            </mat-form-field>
+          </div>
         </div>
-      </div>
-
-      <div class="row">        
-        <div class="col-md-2 titulo-campo">Parcelas</div>
-        <div class="col-md-10">
-          <mat-form-field appearance="outline" class="parcelas">
-            <input type="text" matInput formControlName="parcelas">
-          </mat-form-field>
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Parcelas</div>
+          <div class="col-md-10">
+            <mat-form-field appearance="outline" class="parcelas">
+              <input type="text" matInput formControlName="parcelas">
+            </mat-form-field>
+          </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-2 titulo-campo">Status</div>
-        <div class="col-md-10">
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Status</div>
+          <div class="col-md-10">
             <div class="status">
-                <app-select point="statusPagamento"
+              <app-select point="statusPagamento"
                 [control]="statusPagamentoControl"
-                (objeto)="statusPagamentoChange()"></app-select>
+              (objeto)="statusPagamentoChange()"></app-select>
             </div>
+          </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-2 titulo-campo">Forma de Pagamento</div>
-        <div class="col-md-10">
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Forma de Pagamento</div>
+          <div class="col-md-10">
             <div class="formaPagamento">
-                <app-select point="formaPagamento"
+              <app-select point="formaPagamento"
                 [control]="formaPagamentoControl"
-                (objeto)="formaPagamentoChange()"></app-select>
+              (objeto)="formaPagamentoChange()"></app-select>
             </div>
+          </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12 botao">
-          <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
-            Salvar
-          </button>      
-          <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
-            Cancelar
-          </button>
+        <div class="row">
+          <div class="col-md-12 botao">
+            <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
+              Salvar
+            </button>
+            <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
+              Cancelar
+            </button>
+          </div>
         </div>
-      </div>
-
-    </form>
+      </form>
+    }
   </section>
 </div>

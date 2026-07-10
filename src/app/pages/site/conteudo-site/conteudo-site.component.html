@@ -1,3 +1,5 @@
 <div class="card-wrapper">
-    <app-card-busca  *ngFor="let item of conteudos" [conteudo]="item" ></app-card-busca>
+  @for (item of conteudos; track item) {
+    <app-card-busca  [conteudo]="item" ></app-card-busca>
+  }
 </div>

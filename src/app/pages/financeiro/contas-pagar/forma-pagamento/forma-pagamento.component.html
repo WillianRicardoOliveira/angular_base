@@ -1,6 +1,7 @@
 <app-cabecalho-pagina [pagina]="pagina"></app-cabecalho-pagina>
 
-<app-grid *ngIf="isLista"
+@if (isLista) {
+  <app-grid
     [totalRegistros]="totalRegistros"
     [lista]="lista"
     [coluna]="coluna"
@@ -11,17 +12,17 @@
     (visualizar)="botaoVisualizar($event)"
     (chamar)="botaoChamar($event)"
     (p_paginacao)="quantidadePorPagina($event)">
-</app-grid>
+  </app-grid>
+}
 
 <div class="formulario">
-    <section class="content">
-      <form [formGroup]="formulario" *ngIf="isFormulario && formulario">
-  
+  <section class="content">
+    @if (isFormulario && formulario) {
+      <form [formGroup]="formulario">
         <div class="row">
           <div class="col-md-12 titulo-formulario">Dados do Método de Pagamento</div>
         </div>
-    
-        <div class="row">        
+        <div class="row">
           <div class="col-md-2 titulo-campo">Nome</div>
           <div class="col-md-10">
             <mat-form-field appearance="outline" class="nome">
@@ -29,19 +30,17 @@
             </mat-form-field>
           </div>
         </div>
-    
         <div class="row">
           <div class="col-md-12 botao">
             <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
               Salvar
-            </button>      
+            </button>
             <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
               Cancelar
             </button>
           </div>
         </div>
-  
       </form>
-    </section>
-  </div>
-  
+    }
+  </section>
+</div>

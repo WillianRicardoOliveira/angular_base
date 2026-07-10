@@ -1,6 +1,7 @@
 <app-cabecalho-pagina [pagina]="pagina"></app-cabecalho-pagina>
 
-<app-grid *ngIf="isLista"
+@if (isLista) {
+  <app-grid
     [totalRegistros]="totalRegistros"
     [lista]="lista"
     [coluna]="coluna"
@@ -11,78 +12,74 @@
     (visualizar)="botaoVisualizar($event)"
     (chamar)="botaoChamar($event)"
     (p_paginacao)="quantidadePorPagina($event)">
-</app-grid>
+  </app-grid>
+}
 
 <div class="formulario">
-  <section class="content">  
-    <form [formGroup]="formulario" *ngIf="isFormulario && formulario">
-      
-      <div class="row">
-        <div class="col-md-12 titulo-formulario">Dados do Produto</div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-2 titulo-campo">Nome</div>
-        <div class="col-md-10">
-          <mat-form-field appearance="outline" class="full-width">
-            <input matInput formControlName="nome">
-          </mat-form-field>
-          <!--
-          <div *ngIf="formulario.get('nome')?.errors?.['required'] && formulario.get('nome')?.touched">
-            Este campo é obrigatório
+  <section class="content">
+    @if (isFormulario && formulario) {
+      <form [formGroup]="formulario">
+        <div class="row">
+          <div class="col-md-12 titulo-formulario">Dados do Produto</div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Nome</div>
+          <div class="col-md-10">
+            <mat-form-field appearance="outline" class="full-width">
+              <input matInput formControlName="nome">
+            </mat-form-field>
+            <!--
+            <div *ngIf="formulario.get('nome')?.errors?.['required'] && formulario.get('nome')?.touched">
+              Este campo é obrigatório
+            </div>
+            -->
           </div>
-          -->
         </div>
-      </div>  
-          
-      <div class="row">
-        <div class="col-md-2 titulo-campo">Minímo</div>
-        <div class="col-md-10">
-          <mat-form-field appearance="outline" class="minimo">
-            <input matInput formControlName="minimo" mask="0 || 00 || 000">
-          </mat-form-field>
-          <!--
-          <div *ngIf="formulario.get('minimo')?.errors?.['required'] && formulario.get('minimo')?.touched">
-            Este campo é obrigatório
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Minímo</div>
+          <div class="col-md-10">
+            <mat-form-field appearance="outline" class="minimo">
+              <input matInput formControlName="minimo" mask="0 || 00 || 000">
+            </mat-form-field>
+            <!--
+            <div *ngIf="formulario.get('minimo')?.errors?.['required'] && formulario.get('minimo')?.touched">
+              Este campo é obrigatório
+            </div>
+            -->
           </div>
-          -->
         </div>
-      </div> 
-
-      <div class="row">
-        <div class="col-md-2 titulo-campo">Máximo</div>
-        <div class="col-md-10">
-          <mat-form-field appearance="outline" class="maximo">
-            <input matInput formControlName="maximo" mask="0 || 00 || 000">
-          </mat-form-field>
-          <!--
-          <div *ngIf="formulario.get('maximo')?.errors?.['required'] && formulario.get('maximo')?.touched">
-            Este campo é obrigatório
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Máximo</div>
+          <div class="col-md-10">
+            <mat-form-field appearance="outline" class="maximo">
+              <input matInput formControlName="maximo" mask="0 || 00 || 000">
+            </mat-form-field>
+            <!--
+            <div *ngIf="formulario.get('maximo')?.errors?.['required'] && formulario.get('maximo')?.touched">
+              Este campo é obrigatório
+            </div>
+            -->
           </div>
-          -->
         </div>
-      </div> 
-        
-      <div class="row">
-        <div class="col-md-2 titulo-campo">Descrição</div>
-        <div class="col-md-10">
-          <mat-form-field appearance="outline" class="full-width">
-            <textarea matInput formControlName="descricao" maxlength="250"></textarea>
-          </mat-form-field>
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Descrição</div>
+          <div class="col-md-10">
+            <mat-form-field appearance="outline" class="full-width">
+              <textarea matInput formControlName="descricao" maxlength="250"></textarea>
+            </mat-form-field>
+          </div>
         </div>
-      </div>
-        
-      <div class="row">
-        <div class="col-md-12 botao">
-          <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
-            Salvar
-          </button>      
-          <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
-            Cancelar
-          </button>
+        <div class="row">
+          <div class="col-md-12 botao">
+            <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
+              Salvar
+            </button>
+            <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
+              Cancelar
+            </button>
+          </div>
         </div>
-      </div>
-
-    </form>
+      </form>
+    }
   </section>
 </div>

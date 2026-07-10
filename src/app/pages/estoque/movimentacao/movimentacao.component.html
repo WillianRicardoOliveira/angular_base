@@ -1,9 +1,9 @@
 <app-cabecalho-pagina [pagina]="pagina"></app-cabecalho-pagina>
 
-<app-grid *ngIf="isLista"    
+@if (isLista) {
+  <app-grid
     [b_excluir]="false"
     [b_editar]="false"
-    
     [totalRegistros]="totalRegistros"
     [lista]="lista"
     [coluna]="coluna"
@@ -14,74 +14,71 @@
     (visualizar)="botaoVisualizar($event)"
     (chamar)="botaoChamar($event)"
     (p_paginacao)="quantidadePorPagina($event)">
-</app-grid>
+  </app-grid>
+}
 
 <div class="formulario">
   <section class="content">
-    <form [formGroup]="formulario" *ngIf="isFormulario && formulario">
-       
-      <div class="row">
-        <div class="col-md-12 titulo-formulario">Dados da Movimentação</div>
-      </div>
-
-      <div class="row">        
-        <div class="col-md-2 titulo-campo">Tipo</div>
-        <div class="col-md-10">
-          <div class="tipo">
-            <app-select point="tipoMovimentacao"
-            [control]="tipoMovimentacaoControl"
-            (objeto)="tipoMovimentacaoChange()"></app-select>
-          </div>
-          <!--
-          <div *ngIf="formulario.get('tipoMovimentacao')?.errors?.['required'] && formulario.get('tipoMovimentacao')?.touched">
-            Este campo é obrigatório
-          </div>
-          -->
+    @if (isFormulario && formulario) {
+      <form [formGroup]="formulario">
+        <div class="row">
+          <div class="col-md-12 titulo-formulario">Dados da Movimentação</div>
         </div>
-      </div> 
-        
-      <div class="row">        
-        <div class="col-md-2 titulo-campo">Produto</div>
-        <div class="col-md-10">
-          <div class="produto">
-            <app-dropdown 
-            [control]="produtoControl"
-            (objeto)="produtoChange()"
-            point="produto"></app-dropdown>
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Tipo</div>
+          <div class="col-md-10">
+            <div class="tipo">
+              <app-select point="tipoMovimentacao"
+                [control]="tipoMovimentacaoControl"
+              (objeto)="tipoMovimentacaoChange()"></app-select>
+            </div>
+            <!--
+            <div *ngIf="formulario.get('tipoMovimentacao')?.errors?.['required'] && formulario.get('tipoMovimentacao')?.touched">
+              Este campo é obrigatório
+            </div>
+            -->
           </div>
-          <!--
-          <div *ngIf="formulario.get('produto')?.errors?.['required'] && formulario.get('produto')?.touched">
-            Este campo é obrigatório
+        </div>
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Produto</div>
+          <div class="col-md-10">
+            <div class="produto">
+              <app-dropdown
+                [control]="produtoControl"
+                (objeto)="produtoChange()"
+              point="produto"></app-dropdown>
+            </div>
+            <!--
+            <div *ngIf="formulario.get('produto')?.errors?.['required'] && formulario.get('produto')?.touched">
+              Este campo é obrigatório
+            </div>
+            -->
           </div>
-          -->
         </div>
-      </div>        
-            
-      <div class="row">     
-        <div class="col-md-2 titulo-campo">Quantidade</div>
-        <div class="col-md-10">
-          <mat-form-field appearance="outline" class="quantidade">
-            <input type="text" matInput formControlName="quantidade" mask="0 || 00 || 000">
-          </mat-form-field>
-          <!--
-          <div *ngIf="formulario.get('quantidade')?.errors?.['required'] && formulario.get('quantidade')?.touched">
-            Este campo é obrigatório
+        <div class="row">
+          <div class="col-md-2 titulo-campo">Quantidade</div>
+          <div class="col-md-10">
+            <mat-form-field appearance="outline" class="quantidade">
+              <input type="text" matInput formControlName="quantidade" mask="0 || 00 || 000">
+            </mat-form-field>
+            <!--
+            <div *ngIf="formulario.get('quantidade')?.errors?.['required'] && formulario.get('quantidade')?.touched">
+              Este campo é obrigatório
+            </div>
+            -->
           </div>
-          -->
         </div>
-      </div>
-          
-      <div class="row">
-        <div class="col-md-12 botao">
-          <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
-            Salvar
-          </button>      
-          <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
-            Cancelar
-          </button>
+        <div class="row">
+          <div class="col-md-12 botao">
+            <button type="submit" mat-stroked-button color="primary" (click)="salvar()" [disabled]="!formulario.valid">
+              Salvar
+            </button>
+            <button type="submit" mat-stroked-button color="primary" (click)="cancelar()">
+              Cancelar
+            </button>
+          </div>
         </div>
-      </div>
-          
-    </form>
+      </form>
+    }
   </section>
 </div>
