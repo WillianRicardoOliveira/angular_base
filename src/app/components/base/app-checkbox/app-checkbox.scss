@@ -1,0 +1,25 @@
+:host {
+  display: block;
+}
+
+:host([disabled]) {
+  cursor: not-allowed;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+}
+
+.form-check-input {
+  cursor: pointer;
+  margin-right: 0.5em;
+}
+
+.form-check-input:disabled {
+  cursor: not-allowed;
+}
+
+.form-check-label {
+  margin-bottom: 0;
+}

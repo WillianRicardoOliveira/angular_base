@@ -1,0 +1,98 @@
+:host {
+  display: inline-block;
+  width: var(--pf-dropdown-width, 15rem);
+  border-radius: var(--pf-dropdown-border-radius, 0.25rem);
+  border: var(--pf-dropdown-border, 1px solid rgba(0, 0, 0, 0.15));
+  position: relative;
+}
+
+.dropdown-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  z-index: 1000;
+  display: none;
+  min-width: var(--pf-dropdown-menu-min-width, inherit);
+  height: var(--pf-dropdown-menu-height, inherit);
+  padding: var(--pf-dropdown-menu-padding-y, inherit) var(--pf-dropdown-menu-padding-x, inherit);
+  margin: var(--pf-dropdown-menu-margin-y, inherit) var(--pf-dropdown-menu-margin-x, inherit);
+  margin-top: var(--pf-dropdown-menu-margin-top, inherit);
+  margin-bottom: var(--pf-dropdown-menu-margin-bottom, inherit);
+  margin-right: var(--pf-dropdown-menu-margin-right, inherit);
+  margin-left: var(--pf-dropdown-menu-margin-left, inherit);
+  padding-top: var(--pf-dropdown-menu-padding-top, inherit);
+  padding-bottom: var(--pf-dropdown-menu-padding-bottom, inherit);
+  padding-right: var(--pf-dropdown-menu-padding-right, inherit);
+  padding-left: var(--pf-dropdown-menu-padding-left, inherit);
+  font-size: 1rem;
+  color: #212529;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.25rem;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.25rem 1rem;
+  clear: both;
+  font-weight: 400;
+  color: #212529;
+  text-align: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border: 0;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  color: #1e2125;
+  background-color: #e9ecef;
+}
+
+.dropdown-divider {
+  height: 0;
+  margin: 0.5rem 0;
+  overflow: hidden;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-header {
+  display: block;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0;
+  font-size: 0.875rem;
+  color: #6c757d;
+  white-space: nowrap;
+}
+
+.arrow {
+  border: solid rgba(0, 0, 0, 0.15);
+  border-width: 0 3px 3px 0;
+  display: flex;
+  align-self: center;
+  padding: 3px;
+}
+
+.up {
+  transform: rotate(-135deg);
+  transition: all 0.2s ease-in-out;
+}
+
+.down {
+  transform: rotate(45deg);
+  transition: all 0.2s ease-in-out;
+}

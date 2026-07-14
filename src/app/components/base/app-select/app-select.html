@@ -1,0 +1,26 @@
+<div class="form-group" [style.width]="isBlock ? '100%' : 'inherit'">
+  <label
+    class="select-label"
+    [for]="selectId"
+    [style.fontWeight]="500"
+  >
+    {{ label }}
+  </label>
+
+  <select
+    [id]="selectId"
+    [name]="selectId"
+    [ngClass]="selectClasses"
+    aria-label=".form-select example"
+    [disabled]="isDisabled"
+    [value]="value || ''"
+  >
+    <option [selected]="value === ''" value="">Please pick..</option>
+
+    @for (option of options; track option.value) {
+      <option [selected]="isSelected(option.value)" [value]="option.value">
+        {{ option.label }}
+      </option>
+    }
+  </select>
+</div>

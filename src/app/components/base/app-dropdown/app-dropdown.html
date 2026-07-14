@@ -1,0 +1,25 @@
+<div
+  #dropdownButton
+  class="dropdown-head"
+  (click)="handleButtonClick()"
+>
+  <ng-content select="[slot=button]"></ng-content>
+
+  @if (!shouldHideArrow) {
+    <i
+      class="arrow"
+      [class.down]="!isOpen"
+      [class.up]="isOpen"
+      [style.margin]="isOpen ? '3px 3px 0 0' : '0 3px 3px 0'"
+    ></i>
+  }
+</div>
+
+<div
+  #dropdownMenu
+  class="dropdown-menu"
+  [class.show]="isOpen"
+  [ngStyle]="fixedStyles"
+>
+  <ng-content select="[slot=menu]"></ng-content>
+</div>

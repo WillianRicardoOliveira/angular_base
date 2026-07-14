@@ -1,0 +1,21 @@
+<button
+  [type]="type"
+  [ngClass]="buttonClasses"
+  [style.width]="isBlock ? '100%' : 'inherit'"
+  [disabled]="isDisabled"
+>
+  @if (isLoading) {
+    <div
+      class="center-items"
+      [style.padding]="size === 'large' ? '3px 0' : '0'"
+    >
+      <div class="spinner-border spinner-border-sm" role="status">
+        <span [ngClass]="mode === 'bs4' ? 'sr-only' : 'visually-hidden'">
+          Loading...
+        </span>
+      </div>
+    </div>
+  } @else {
+    <ng-content></ng-content>
+  }
+</button>

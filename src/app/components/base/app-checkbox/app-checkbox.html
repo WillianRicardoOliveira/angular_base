@@ -1,0 +1,17 @@
+<div
+  class="form-check"
+  [class.form-switch]="isSwitchable"
+  [style.width]="isBlock ? '100%' : 'inherit'"
+>
+  <input
+    class="form-check-input"
+    type="checkbox"
+    [id]="inputId"
+    [disabled]="isDisabled"
+    [checked]="isChecked"
+    [value]="value"
+  />
+  <label class="form-check-label" [for]="inputId">
+    <ng-content></ng-content>
+  </label>
+</div>
