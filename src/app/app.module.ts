@@ -33,7 +33,7 @@ import {ControlSidebarComponent} from './modules/main/control-sidebar/control-si
 import {StoreModule} from '@ngrx/store';
 import {authReducer} from './store/auth/reducer';
 import {uiReducer} from './store/ui/reducer';
-import {ProfabricComponentsModule} from '@profabric/angular-components';
+
 import {SidebarSearchComponent} from './components/sidebar-search/sidebar-search.component';
 
 
@@ -199,7 +199,7 @@ registerLocaleData(localePt);
         BaseModule,
         
         
-        ProfabricComponentsModule,
+        
         CommonModule,
         BrowserModule,
         StoreModule.forRoot({ auth: authReducer, ui: uiReducer }),

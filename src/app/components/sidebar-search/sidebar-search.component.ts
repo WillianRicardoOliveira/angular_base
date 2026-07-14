@@ -6,7 +6,7 @@ import {
     ViewChild
 } from '@angular/core';
 import {MENU} from '@modules/main/menu-sidebar/menu-sidebar.component';
-import {PfDropdown} from '@profabric/angular-components';
+import {AppDropdown} from '../base/app-dropdown/app-dropdown';
 
 @Component({
     selector: 'app-sidebar-search',
@@ -17,7 +17,7 @@ import {PfDropdown} from '@profabric/angular-components';
 export class SidebarSearchComponent implements OnInit {
     public searchText: string = '';
     public foundMenuItems = [];
-    @ViewChild('dropdown') dropdown: PfDropdown;
+    @ViewChild('dropdown') dropdown!: AppDropdown;
 
     constructor() {}
 
