@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, HostListener, Input } from '@angular/core';
 
 type ButtonMode = 'bs4' | 'bs5';
 type ButtonSize = 'default' | 'small' | 'large';
@@ -53,6 +53,14 @@ export class AppButton {
       'btn-lg': this.size === 'large',
       disabled: this.isDisabled
     };
+  }
+
+  @HostListener('click', ['$event'])
+  handleHostClick(event: MouseEvent): void {
+    if (this.isDisabled) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
   }
 
   private toBoolean(value: BooleanInput): boolean {

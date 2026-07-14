@@ -61,21 +61,21 @@
                 </div>
                 <!-- /.col -->
                 <div class="col-5">
-                    <pf-button
+                    <app-button
                         [type]="'submit'"
                         [block]="true"
                         [loading]="isAuthLoading"
                         [disabled]="isFacebookLoading || isGoogleLoading"
                     >
                         Register
-                    </pf-button>
+                    </app-button>
                 </div>
                 <!-- /.col -->
             </div>
         </form>
 
         <div class="social-auth-links text-center">
-            <pf-button
+            <app-button
                 class="mb-2"
                 [block]="true"
                 [loading]="isFacebookLoading"
@@ -84,8 +84,8 @@
             >
                 <i class="fab fa-facebook mr-2"></i>
                 Sign up using Facebook
-            </pf-button>
-            <pf-button
+            </app-button>
+            <app-button
                 [block]="true"
                 [loading]="isGoogleLoading"
                 [disabled]="isAuthLoading || isFacebookLoading"
@@ -94,7 +94,7 @@
             >
                 <i class="fab fa-google mr-2"></i>
                 Sign up using Google+
-            </pf-button>
+            </app-button>
         </div>
 
         <a [routerLink]="['/login']" class="text-center">

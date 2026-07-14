@@ -121,6 +121,12 @@ import { SubCategoriaContaComponent } from './pages/financeiro/contas-pagar/cate
 import { StatusPagamentoComponent } from './pages/financeiro/contas-pagar/status-pagamento/status-pagamento.component';
 import { FormaPagamentoComponent } from './pages/financeiro/contas-pagar/forma-pagamento/forma-pagamento.component';
 
+
+
+
+
+import { BaseModule } from './components/base/base-module';
+
 registerLocaleData(localePt);
 
 @NgModule({ declarations: [
@@ -147,6 +153,10 @@ registerLocaleData(localePt);
         SucessoComponent,
         AvisoComponent,
         PerigoComponent,
+
+
+        
+
         /* ESTOQUE */
         FornecedorComponent,
         ProdutoComponent,
@@ -183,7 +193,13 @@ registerLocaleData(localePt);
         StatusPagamentoComponent,
         FormaPagamentoComponent,
     ],
-    bootstrap: [AppComponent], imports: [ProfabricComponentsModule,
+    bootstrap: [AppComponent], imports: [
+        
+        
+        BaseModule,
+        
+        
+        ProfabricComponentsModule,
         CommonModule,
         BrowserModule,
         StoreModule.forRoot({ auth: authReducer, ui: uiReducer }),
