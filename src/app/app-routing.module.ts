@@ -36,7 +36,7 @@ import {NonAuthGuard} from '@guards/non-auth.guard';
 
 import { AuthGuard } from '@guards/auth.guard';
 
-import { LoginComponent } from '@pages/site/login/login.component';
+import { LoginComponent } from '@modules/login/login.component';
 
 //import {RegisterComponent} from '@modules/register/register.component';
 //import {DashboardComponent} from '@pages/dashboard/dashboard.component';
@@ -84,7 +84,7 @@ const routes: Routes = [
         ]
     },
 
-    /* Site */
+    
     { path: "login"     , component: LoginComponent },
     //{ path: "cadastro"  , component: CadastroComponent },
     //{ path: "perfil"    , component: PerfilComponent },

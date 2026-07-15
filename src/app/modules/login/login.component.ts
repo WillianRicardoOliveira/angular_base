@@ -1,14 +1,7 @@
-import {
-    Component,
-    OnInit,
-    OnDestroy,
-    Renderer2,
-    HostBinding
-} from '@angular/core';
-import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
-import { AppService } from '@services/app.service';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { LoginService } from '@services/site/login/login.service';
 
 @Component({
     selector: 'app-login',
@@ -16,56 +9,33 @@ import { Router } from '@angular/router';
     styleUrls: ['./login.component.scss'],
     standalone: false
 })
-export class LoginComponent implements OnInit, OnDestroy {
-    @HostBinding('class') class = 'login-box';
-    public loginForm: UntypedFormGroup;
-    public isAuthLoading = false;
-    public isGoogleLoading = false;
-    public isFacebookLoading = false;
+export class LoginComponent implements OnInit {
+  
+  loginForm!: FormGroup
 
-    constructor(
-        private renderer: Renderer2,
-        private toastr: ToastrService,
-        private appService: AppService
-    ) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private service: LoginService,
+    private router: Router
+    ){}
+  ngOnInit(): void {
+    this.loginForm = this.formBuilder.group({
+      email: [null, [Validators.required, Validators.email]],
+      senha: [null, Validators.required]
+    })
+  }
 
-    ngOnInit() {
-        this.renderer.addClass(
-            document.querySelector('app-root'),
-            'login-page'
-        );
-        this.loginForm = new UntypedFormGroup({
-            email: new UntypedFormControl(null, Validators.required),
-            password: new UntypedFormControl(null, Validators.required)
-        });
-    }
+  login() {
+    const email = this.loginForm.value.email
+    const senha = this.loginForm.value.senha
+    this.service.login(email, senha).subscribe({
+      next: (value) => {
+        this.router.navigateByUrl("/")
+      },
+      error: (err) => {
+      
+      }
+    })
+  }
 
-    async loginByAuth() {
-        if (this.loginForm.valid) {
-            this.isAuthLoading = true;
-            await this.appService.loginByAuth(this.loginForm.value);
-            this.isAuthLoading = false;
-        } else {
-            this.toastr.error('Form is not valid!');
-        }
-    }
-
-    async loginByGoogle() {
-        this.isGoogleLoading = true;
-        await this.appService.loginByGoogle();
-        this.isGoogleLoading = false;
-    }
-
-    async loginByFacebook() {
-        this.isFacebookLoading = true;
-        await this.appService.loginByFacebook();
-        this.isFacebookLoading = false;
-    }
-
-    ngOnDestroy() {
-        this.renderer.removeClass(
-            document.querySelector('app-root'),
-            'login-page'
-        );
-    }
 }

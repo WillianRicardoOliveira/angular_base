@@ -39,6 +39,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 /* SECURITY */
 import { AutenticacaoInterceptor } from './interceptors/autenticacao.interceptor';
+import { LoginComponent } from '@modules/login/login.component';
 
 /* APP */
 import { AppRoutingModule } from '@/app-routing.module';
@@ -61,9 +62,6 @@ import { SharedModule } from './components/shared/shared.module';
 
 /* COMPONENTE SITE */
 import { BannerComponent } from './components/site/banner/banner.component';
-
-/* PAGES SITE */
-import { LoginComponent } from './pages/site/login/login.component';
 
 /* PAGES ESTOQUE */
 
@@ -136,11 +134,11 @@ registerLocaleData(localePt);
         ControlSidebarComponent,
         SidebarSearchComponent,
 
+        /* SECURITY */
+        LoginComponent,
+
         /* COMPONENTE SITE */
         BannerComponent,
-
-        /* PAGES SITE */
-        LoginComponent,
 
         /* PAGES ESTOQUE */
 
