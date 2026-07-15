@@ -28,9 +28,9 @@
           <div class="col-md-2 titulo-campo">Tipo</div>
           <div class="col-md-10">
             <div class="tipo">
-              <app-select point="tipoMovimentacao"
+              <app-shared-select point="tipoMovimentacao"
                 [control]="tipoMovimentacaoControl"
-              (objeto)="tipoMovimentacaoChange()"></app-select>
+              (objeto)="tipoMovimentacaoChange()"></app-shared-select>
             </div>
             <!--
             <div *ngIf="formulario.get('tipoMovimentacao')?.errors?.['required'] && formulario.get('tipoMovimentacao')?.touched">

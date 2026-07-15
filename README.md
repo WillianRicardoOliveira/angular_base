@@ -17,3 +17,7 @@ npx.cmd ng generate component components/base/app-select --standalone=false --mo
 npx.cmd ng generate component components/base/app-dropdown --standalone=false --module=components/base/base-module.ts --selector=app-dropdown
 
 npx.cmd ng build
+
+
+npx.cmd ng cache clean
+npx.cmd ng build

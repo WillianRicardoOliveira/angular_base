@@ -47,6 +47,7 @@ export const MENU = [
                 iconClasses: 'fas fa-file',
                 path: ['/fornecedor']
             },
+            /*
             {
                 name: 'Produtos',
                 iconClasses: 'fas fa-file',
@@ -76,12 +77,13 @@ export const MENU = [
                 name: 'Forma de Pagamento',
                 iconClasses: 'fas fa-file',
                 path: ['/forma-pagamento']
-            },
+            },            
             {
                 name: 'Status do Pagamento',
                 iconClasses: 'fas fa-file',
                 path: ['/status-pagamento']
             },
+            */
         ]
     }
 ];
