@@ -25,13 +25,13 @@ import { FornecedorComponent } from '@pages/estoque/fornecedor/fornecedor.compon
 import { ProdutoComponent } from '@pages/estoque/produto/produto.component';
 import { CompraComponent } from '@pages/estoque/compra/compra.component';
 import { CompraItemComponent } from '@pages/estoque/compra/compra-item/compra-item.component';
-import { MovimentacaoComponent } from '@pages/estoque/movimentacao/movimentacao.component';
+//import { MovimentacaoComponent } from '@pages/estoque/movimentacao/movimentacao.component';
 
 
 /* Financeiro */
 import { CategoriaContaComponent } from '@pages/financeiro/contas-pagar/categoria-conta/categoria-conta.component';
 import { SubCategoriaContaComponent } from '@pages/financeiro/contas-pagar/categoria-conta/sub-categoria-conta/sub-categoria-conta.component';
-import { ContasPagarComponent } from '@pages/financeiro/contas-pagar/contas-pagar.component';
+//import { ContasPagarComponent } from '@pages/financeiro/contas-pagar/contas-pagar.component';
 import { FormaPagamentoComponent } from '@pages/financeiro/contas-pagar/forma-pagamento/forma-pagamento.component';
 import { StatusPagamentoComponent } from '@pages/financeiro/contas-pagar/status-pagamento/status-pagamento.component';
 
@@ -54,13 +54,13 @@ const routes: Routes = [
             { path: 'produto'           , component: ProdutoComponent },
             { path: 'compra'            , component: CompraComponent },
             { path: 'compra-item/:id'   , component: CompraItemComponent },
-            { path: 'movimentacao'      , component: MovimentacaoComponent },
+            //{ path: 'movimentacao'      , component: MovimentacaoComponent },
 
 
             /* Financeiro */
             { path: 'categoria-conta'           , component: CategoriaContaComponent },
             { path: 'sub-categoria-conta/:id'   , component: SubCategoriaContaComponent },
-            { path: 'contas-pagar'              , component: ContasPagarComponent },
+            //{ path: 'contas-pagar'              , component: ContasPagarComponent },
             { path: 'forma-pagamento'          , component: FormaPagamentoComponent },
             { path: 'status-pagamento'          , component: StatusPagamentoComponent },
             

@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { BaseService } from '@services/base/base.service';
 
 @Component({
-    selector: 'app-select',
+    selector: 'app-select-antigo',
     templateUrl: './select.component.html',
     styleUrls: ['./select.component.scss'],
     standalone: false

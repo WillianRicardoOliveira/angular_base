@@ -107,7 +107,7 @@ import { FornecedorComponent } from './pages/estoque/fornecedor/fornecedor.compo
 import { ProdutoComponent } from './pages/estoque/produto/produto.component';
 import { CompraComponent } from './pages/estoque/compra/compra.component';
 import { CompraItemComponent } from './pages/estoque/compra/compra-item/compra-item.component';
-import { MovimentacaoComponent } from './pages/estoque/movimentacao/movimentacao.component';
+//import { MovimentacaoComponent } from './pages/estoque/movimentacao/movimentacao.component';
 
 /* COMPONENTE */
 import { GridComponent } from './components/grid/grid.component';
@@ -115,7 +115,7 @@ import { DropdownComponent } from './components/dropdown/dropdown.component';
 import { SelectComponent } from './components/select/select.component';
 import { BarchartComponent } from './components/barchart/barchart.component';
 import { PiechartComponent } from './components/piechart/piechart.component';
-import { ContasPagarComponent } from './pages/financeiro/contas-pagar/contas-pagar.component';
+//import { ContasPagarComponent } from './pages/financeiro/contas-pagar/contas-pagar.component';
 import { CategoriaContaComponent } from './pages/financeiro/contas-pagar/categoria-conta/categoria-conta.component';
 import { SubCategoriaContaComponent } from './pages/financeiro/contas-pagar/categoria-conta/sub-categoria-conta/sub-categoria-conta.component';
 import { StatusPagamentoComponent } from './pages/financeiro/contas-pagar/status-pagamento/status-pagamento.component';
@@ -162,7 +162,7 @@ registerLocaleData(localePt);
         ProdutoComponent,
         CompraComponent,
         CompraItemComponent,
-        MovimentacaoComponent,
+        //MovimentacaoComponent,
         /* COMPONENTE */
         DropdownComponent,
         SelectComponent,
@@ -187,7 +187,7 @@ registerLocaleData(localePt);
         PerfilComponent,
         BarchartComponent,
         PiechartComponent,
-        ContasPagarComponent,
+        //ContasPagarComponent,
         CategoriaContaComponent,
         SubCategoriaContaComponent,
         StatusPagamentoComponent,
