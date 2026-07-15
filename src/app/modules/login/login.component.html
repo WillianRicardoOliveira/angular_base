@@ -1,69 +1,88 @@
-<app-banner src="../../../../assets/img/banner-login.png" alt="Banner da tela de login"></app-banner>
+<section class="login-page">
+    <div class="login-shell">
+        <aside class="login-brand" aria-label="Agro ERP - Gestão que cultiva resultados"></aside>
 
-<section class="login-component">
-  <mat-card class="login">
+        <mat-card class="login-card">
+            <div class="login-card__header">
+                <div class="login-card__icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
 
-    <div class="image-container">
-      <figure>
-        <img src="../../../../assets/img/simbolo-bussola.png" alt="Símbolo de uma bússola laranja">
-      </figure>
-    </div>
+                <div>
+                    <span>Bem-vindo(a)</span>
+                    <h2>Entrar na conta</h2>
+                </div>
+            </div>
 
-    <div class="form-container">
+            <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form">
+                <mat-card-content>
+                    <mat-form-field appearance="outline">
+                        <mat-label>E-mail</mat-label>
+                        <i class="far fa-user" matPrefix></i>
 
-      <mat-card-header>
-        <mat-card-title>Login</mat-card-title>
-      </mat-card-header>
+                        <input formControlName="email" matInput type="email" autocomplete="username"
+                            placeholder="Digite seu e-mail">
 
-      <form [formGroup]="loginForm">
+                        @if (loginForm.get('email')?.errors?.['required']) {
+                        <mat-error>E-mail é obrigatório</mat-error>
+                        }
 
-        <mat-card-content>
+                        @if (loginForm.get('email')?.errors?.['email']) {
+                        <mat-error>Formato de e-mail é inválido</mat-error>
+                        }
+                    </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>E-mail</mat-label>
-            <input
-              formControlName="email"
-              matInput type="email"
-              placeholder="Digite seu e-mail">
-              @if (loginForm.get('email')?.errors?.['required']) {
-                <mat-error>E-mail é obrigatório</mat-error>
-              }
-              @if (loginForm.get('email')?.errors?.['email']) {
-                <mat-error>Formato de e-mail é inválido</mat-error>
-              }
-            </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Senha</mat-label>
+                        <i class="fas fa-lock" matPrefix></i>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Senha</mat-label>
-              <input
-                formControlName="senha"
-                matInput
-                type="password"
-                placeholder="Digite sua senha">
-                @if (loginForm.get('senha')?.errors?.['required']) {
-                  <mat-error>Senha é obrigatório</mat-error>
-                }
-              </mat-form-field>
+                        <input formControlName="senha" matInput [type]="isPasswordVisible ? 'text' : 'password'"
+                            autocomplete="current-password" placeholder="Digite sua senha">
 
-            </mat-card-content>
+                        <button class="password-toggle" matSuffix type="button" aria-label="Mostrar ou ocultar senha"
+                            (click)="togglePasswordVisibility()">
+                            <i [class]="isPasswordVisible ? 'far fa-eye-slash' : 'far fa-eye'"></i>
+                        </button>
 
-            <mat-card-actions>
-              <button
-                mat-flat-button
-                color="primary"
-                [disabled]="loginForm.invalid"
-                (click)="login()">
-                Acessar minha conta
-              </button>
-            </mat-card-actions>
-            <p>Ainda não possui conta?
-              <a><strong><u>Clique aqui para se cadastrar!</u></strong></a>
+                        @if (loginForm.get('senha')?.errors?.['required']) {
+                        <mat-error>Senha é obrigatória</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <div class="login-form__links">
+                        <button type="button" (click)="recoverPassword()">
+                            Esqueceu sua senha?
+                        </button>
+                    </div>
+                </mat-card-content>
+
+                <mat-card-actions>
+                    <button class="login-button" mat-flat-button type="submit"
+                        [disabled]="loginForm.invalid || isAuthLoading">
+                        @if (isAuthLoading) {
+                        Acessando...
+                        } @else {
+                        Acessar sistema
+                        }
+                    </button>
+                </mat-card-actions>
+            </form>
+
+            <div class="login-divider">
+                <span></span>
+                <strong>ou continue com</strong>
+                <span></span>
+            </div>
+
+            <button class="microsoft-button" type="button" (click)="loginWithMicrosoft()">
+                <i class="fab fa-microsoft"></i>
+                <span>Entrar com Microsoft</span>
+            </button>
+
+            <p class="login-card__help">
+                <i class="fas fa-lock"></i>
+                <span>Acesso restrito a usuários autorizados.</span>
             </p>
-
-          </form>
-
-        </div>
-
-      </mat-card>
-
-    </section>
+        </mat-card>
+    </div>
+</section>
