@@ -1,58 +1,23 @@
-import {BrowserModule} from '@angular/platform-browser';
-import {NgModule, LOCALE_ID } from '@angular/core';
+/* ANGULAR */
+import { CommonModule, CurrencyPipe, registerLocaleData } from '@angular/common';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-
-import {AppRoutingModule} from '@/app-routing.module';
-import {AppComponent} from './app.component';
-import {MainComponent} from '@modules/main/main.component';
-
-import {HeaderComponent} from '@modules/main/header/header.component';
-import {FooterComponent} from '@modules/main/footer/footer.component';
-import {MenuSidebarComponent} from '@modules/main/menu-sidebar/menu-sidebar.component';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {RegisterComponent} from '@modules/register/register.component';
-import {DashboardComponent} from '@pages/dashboard/dashboard.component';
-import {ToastrModule} from 'ngx-toastr';
-import {MessagesComponent} from '@modules/main/header/messages/messages.component';
-import {NotificationsComponent} from '@modules/main/header/notifications/notifications.component';
-
-import {CommonModule, registerLocaleData} from '@angular/common';
-
 import localePt from '@angular/common/locales/pt';
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule, LOCALE_ID } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import {UserComponent} from '@modules/main/header/user/user.component';
-import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
-import {RecoverPasswordComponent} from '@modules/recover-password/recover-password.component';
-import {LanguageComponent} from '@modules/main/header/language/language.component';
-import {MainMenuComponent} from './pages/main-menu/main-menu.component';
-
-import {MenuItemComponent} from './components/menu-item/menu-item.component';
-import {ControlSidebarComponent} from './modules/main/control-sidebar/control-sidebar.component';
-import {StoreModule} from '@ngrx/store';
-import {authReducer} from './store/auth/reducer';
-import {uiReducer} from './store/ui/reducer';
-
-import {SidebarSearchComponent} from './components/sidebar-search/sidebar-search.component';
-
-
-
-
-import { CabecalhoPaginaComponent } from './components/cabecalho-pagina/cabecalho-pagina.component';
-import { InformacaoComponent } from './components/dashboard/informacao/informacao.component';
-import { SucessoComponent } from './components/dashboard/sucesso/sucesso.component';
-import { AvisoComponent } from './components/dashboard/aviso/aviso.component';
-import { PerigoComponent } from './components/dashboard/perigo/perigo.component';
-import { CurrencyPipe } from '@angular/common';
-
+/* TERCEIROS */
+import { ToastrModule } from 'ngx-toastr';
 import { NgChartsModule } from 'ng2-charts';
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 
-/* MODULO DE ETOQUE */
+/* STORE */
+import { StoreModule } from '@ngrx/store';
+import { authReducer } from './store/auth/reducer';
+import { uiReducer } from './store/ui/reducer';
 
-import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask'
-
-/* Angular Material */
+/* ANGULAR MATERIAL */
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -65,181 +30,199 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatRadioModule  } from '@angular/material/radio' 
-import { MatDividerModule } from '@angular/material/divider'
-import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatRadioModule } from '@angular/material/radio';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSelectModule } from '@angular/material/select'
+import { MatSelectModule } from '@angular/material/select';
 
-
-import { ContainerComponent } from './components/site/container/container.component';
-
-import { BannerComponent } from './components/site/banner/banner.component';
-import { HeaderSiteComponent } from './components/site/header-site/header-site.component';
-import { FooterSiteComponent } from './components/site/footer-site/footer-site.component';
-import { HomeSiteComponent } from './pages/site/home-site/home-site.component';
-import { CardComponent } from './components/site/card/card.component';
-import { CardBuscaComponent } from './components/site/card-busca/card-busca.component';
-import { CardDepoimentoComponent } from './components/site/card-depoimento/card-depoimento.component';
-import { FormBuscaComponent } from './components/site/form-busca/form-busca.component';
-import { ModalComponent } from './components/site/modal/modal.component';
-import { BotaoControleComponent } from './components/site/botao-controle/botao-controle.component';
-
-import { DepoimentoSiteComponent } from './pages/site/depoimento-site/depoimento-site.component';
-import { ConteudoSiteComponent } from './pages/site/conteudo-site/conteudo-site.component';
-import { SeletorPassageiroComponent } from './components/site/seletor-passageiro/seletor-passageiro/seletor-passageiro.component';
-
-
-import { PerfilComponent } from './pages/site/perfil/perfil.component';
+/* SECURITY */
 import { AutenticacaoInterceptor } from './interceptors/autenticacao.interceptor';
 
-/* Site */
-import { LoginComponent } from './pages/site/login/login.component';
-import { CadastroComponent } from './pages/site/cadastro/cadastro.component';
-import { FormBasePerfilComponent } from './components/site/form-base-perfil/form-base-perfil.component';
-import { interval, take } from 'rxjs';
+/* APP */
+import { AppRoutingModule } from '@/app-routing.module';
+import { AppComponent } from './app.component';
 
-
-
-/* ESTOQUE */
-import { FornecedorComponent } from './pages/estoque/fornecedor/fornecedor.component';
-import { ProdutoComponent } from './pages/estoque/produto/produto.component';
-import { CompraComponent } from './pages/estoque/compra/compra.component';
-import { CompraItemComponent } from './pages/estoque/compra/compra-item/compra-item.component';
-//import { MovimentacaoComponent } from './pages/estoque/movimentacao/movimentacao.component';
-
-
+/* LAYOUT ADMINLTE */
+import { MainComponent } from '@modules/main/main.component';
+import { HeaderComponent } from '@modules/main/header/header.component';
+import { FooterComponent } from '@modules/main/footer/footer.component';
+import { MenuSidebarComponent } from '@modules/main/menu-sidebar/menu-sidebar.component';
+import { ControlSidebarComponent } from './modules/main/control-sidebar/control-sidebar.component';
+import { MenuItemComponent } from './components/menu-item/menu-item.component';
+import { SidebarSearchComponent } from './components/sidebar-search/sidebar-search.component';
 
 /* COMPONENTE BASE */
+import { BaseModule } from './components/base/base.module';
 
 /* COMPONENTE SHARED */
-import { AppSharedSelectComponent } from './components/shared/app-shared-select/app-shared-select.component';
+import { SharedModule } from './components/shared/shared.module';
+
+/* COMPONENTE SITE */
+import { BannerComponent } from './components/site/banner/banner.component';
+
+/* PAGES SITE */
+import { LoginComponent } from './pages/site/login/login.component';
+
+/* PAGES ESTOQUE */
+
+/* PAGES FINANCEIRO */
+
+/* COMPONENTE OUTROS */
 
 
-import { GridComponent } from './components/grid/grid.component';
-import { DropdownComponent } from './components/dropdown/dropdown.component';
 
-import { BarchartComponent } from './components/barchart/barchart.component';
-import { PiechartComponent } from './components/piechart/piechart.component';
-
-
-
-
-
-
+//import {MainMenuComponent} from './pages/main-menu/main-menu.component';
+//import { interval, take } from 'rxjs';
+//import {RegisterComponent} from '@modules/register/register.component';
+//import {DashboardComponent} from '@pages/dashboard/dashboard.component';
+//import {MessagesComponent} from '@modules/main/header/messages/messages.component';
+//import {NotificationsComponent} from '@modules/main/header/notifications/notifications.component';
+//import {UserComponent} from '@modules/main/header/user/user.component';
+//import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
+//import {RecoverPasswordComponent} from '@modules/recover-password/recover-password.component';
+//import {LanguageComponent} from '@modules/main/header/language/language.component';
+//import { CabecalhoPaginaComponent } from './components/cabecalho-pagina/cabecalho-pagina.component';
+//import { InformacaoComponent } from './components/dashboard/informacao/informacao.component';
+//import { SucessoComponent } from './components/dashboard/sucesso/sucesso.component';
+//import { AvisoComponent } from './components/dashboard/aviso/aviso.component';
+//import { PerigoComponent } from './components/dashboard/perigo/perigo.component';
+//import { ContainerComponent } from './components/site/container/container.component';
+//import { HeaderSiteComponent } from './components/site/header-site/header-site.component';
+//import { FooterSiteComponent } from './components/site/footer-site/footer-site.component';
+//import { HomeSiteComponent } from './pages/site/home-site/home-site.component';
+//import { CardComponent } from './components/site/card/card.component';
+//import { CardBuscaComponent } from './components/site/card-busca/card-busca.component';
+//import { CardDepoimentoComponent } from './components/site/card-depoimento/card-depoimento.component';
+//import { FormBuscaComponent } from './components/site/form-busca/form-busca.component';
+//import { ModalComponent } from './components/site/modal/modal.component';
+//import { BotaoControleComponent } from './components/site/botao-controle/botao-controle.component';
+//import { DepoimentoSiteComponent } from './pages/site/depoimento-site/depoimento-site.component';
+//import { ConteudoSiteComponent } from './pages/site/conteudo-site/conteudo-site.component';
+//import { SeletorPassageiroComponent } from './components/site/seletor-passageiro/seletor-passageiro/seletor-passageiro.component';
+//import { PerfilComponent } from './pages/site/perfil/perfil.component';
+//import { CadastroComponent } from './pages/site/cadastro/cadastro.component';
+//import { FormBasePerfilComponent } from './components/site/form-base-perfil/form-base-perfil.component';
+//import { FornecedorComponent } from './pages/estoque/fornecedor/fornecedor.component';
+//import { ProdutoComponent } from './pages/estoque/produto/produto.component';
+//import { CompraComponent } from './pages/estoque/compra/compra.component';
+//import { CompraItemComponent } from './pages/estoque/compra/compra-item/compra-item.component';
+//import { MovimentacaoComponent } from './pages/estoque/movimentacao/movimentacao.component';
+//import { GridComponent } from './components/grid/grid.component';
+//import { DropdownComponent } from './components/dropdown/dropdown.component';
+//import { BarchartComponent } from './components/barchart/barchart.component';
+//import { PiechartComponent } from './components/piechart/piechart.component';
 //import { ContasPagarComponent } from './pages/financeiro/contas-pagar/contas-pagar.component';
-import { CategoriaContaComponent } from './pages/financeiro/contas-pagar/categoria-conta/categoria-conta.component';
-import { SubCategoriaContaComponent } from './pages/financeiro/contas-pagar/categoria-conta/sub-categoria-conta/sub-categoria-conta.component';
-import { StatusPagamentoComponent } from './pages/financeiro/contas-pagar/status-pagamento/status-pagamento.component';
-import { FormaPagamentoComponent } from './pages/financeiro/contas-pagar/forma-pagamento/forma-pagamento.component';
-
-
-
-
-
-import { BaseModule } from './components/base/base-module';
+//import { CategoriaContaComponent } from './pages/financeiro/contas-pagar/categoria-conta/categoria-conta.component';
+//import { SubCategoriaContaComponent } from './pages/financeiro/contas-pagar/categoria-conta/sub-categoria-conta/sub-categoria-conta.component';
+//import { StatusPagamentoComponent } from './pages/financeiro/contas-pagar/status-pagamento/status-pagamento.component';
+//import { FormaPagamentoComponent } from './pages/financeiro/contas-pagar/forma-pagamento/forma-pagamento.component';
 
 registerLocaleData(localePt);
 
-@NgModule({ declarations: [
+@NgModule({
+    declarations: [
+
+        /* APP */
         AppComponent,
+
+        /* LAYOUT ADMINLTE */
         MainComponent,
         HeaderComponent,
         FooterComponent,
         MenuSidebarComponent,
-        RegisterComponent,
-        DashboardComponent,
-        MessagesComponent,
-        NotificationsComponent,
-        UserComponent,
-        ForgotPasswordComponent,
-        RecoverPasswordComponent,
-        LanguageComponent,
-        MainMenuComponent,
         MenuItemComponent,
         ControlSidebarComponent,
         SidebarSearchComponent,
-        GridComponent,
-        CabecalhoPaginaComponent,
-        InformacaoComponent,
-        SucessoComponent,
-        AvisoComponent,
-        PerigoComponent,
 
-
-        
-
-        /* ESTOQUE */
-        FornecedorComponent,
-        ProdutoComponent,
-        CompraComponent,
-        CompraItemComponent,
-        //MovimentacaoComponent,
-        
-        
-        /* COMPONENTE SHARED */        
-        AppSharedSelectComponent,
-
-        DropdownComponent,
-
+        /* COMPONENTE SITE */
         BannerComponent,
-        ContainerComponent,
-        /* Site */
+
+        /* PAGES SITE */
         LoginComponent,
-        CadastroComponent,
-        FormBasePerfilComponent,
-        HeaderSiteComponent,
-        FooterSiteComponent,
-        HomeSiteComponent,
-        CardComponent,
-        CardBuscaComponent,
-        CardDepoimentoComponent,
-        FormBuscaComponent,
-        ModalComponent,
-        BotaoControleComponent,
-        DepoimentoSiteComponent,
-        ConteudoSiteComponent,
-        SeletorPassageiroComponent,
-        PerfilComponent,
-        BarchartComponent,
-        PiechartComponent,
+
+        /* PAGES ESTOQUE */
+
+        /* PAGES FINANCEIRO */
+
+        /* COMPONENTE OUTROS */
+
+        //MainMenuComponent,
+        //RegisterComponent,
+        //DashboardComponent,
+        //MessagesComponent,
+        //NotificationsComponent,
+        //UserComponent,
+        //ForgotPasswordComponent,
+        //RecoverPasswordComponent,
+        //LanguageComponent,
+        //GridComponent,
+        //CabecalhoPaginaComponent,
+        //InformacaoComponent,
+        //SucessoComponent,
+        //AvisoComponent,
+        //PerigoComponent,
+        //FornecedorComponent,
+        //ProdutoComponent,
+        //CompraComponent,
+        //CompraItemComponent,
+        //MovimentacaoComponent,
+        //DropdownComponent,
+        //ContainerComponent,
+        //CadastroComponent,
+        //FormBasePerfilComponent,
+        //HeaderSiteComponent,
+        //FooterSiteComponent,
+        //HomeSiteComponent,
+        //CardComponent,
+        //CardBuscaComponent,
+        //CardDepoimentoComponent,
+        //FormBuscaComponent,
+        //ModalComponent,
+        //BotaoControleComponent,
+        //DepoimentoSiteComponent,
+        //ConteudoSiteComponent,
+        //SeletorPassageiroComponent,
+        //PerfilComponent,
+        //BarchartComponent,
+        //PiechartComponent,
         //ContasPagarComponent,
-        CategoriaContaComponent,
-        SubCategoriaContaComponent,
-        StatusPagamentoComponent,
-        FormaPagamentoComponent,
+        //CategoriaContaComponent,
+        //SubCategoriaContaComponent,
+        //StatusPagamentoComponent,
+        //FormaPagamentoComponent,
     ],
-    bootstrap: [AppComponent], imports: [
-        
-        
-        BaseModule,
-        
-        
-        
+    bootstrap: [AppComponent],
+    imports: [
+        /* ANGULAR */
         CommonModule,
         BrowserModule,
-        StoreModule.forRoot({ auth: authReducer, ui: uiReducer }),
         AppRoutingModule,
+        FormsModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
+        CurrencyPipe,
+
+        /* TERCEIROS */
         ToastrModule.forRoot({
             timeOut: 3000,
             positionClass: 'toast-top-right',
             preventDuplicates: true
         }),
-        NgxMaskDirective, /* https://github.com/JsDaddy/ngx-mask */
+        NgxMaskDirective,
         NgxMaskPipe,
-        ReactiveFormsModule,
-        FormsModule,
-        // MatFormFieldModule,
-        // MatInputModule
-        /* Angular Material */
-        MatToolbarModule, /* https://material.angular.io/components/toolbar/overview */
-        MatButtonModule, /* https://material.angular.io/components/button/overview */
+        NgChartsModule,
+
+        /* STORE */
+        StoreModule.forRoot({ auth: authReducer, ui: uiReducer }),
+
+        /* ANGULAR MATERIAL */
+        MatToolbarModule,
+        MatButtonModule,
         MatCardModule,
         MatButtonToggleModule,
-        MatIconModule, /* https://fonts.google.com/icons?hl=pt-br */
+        MatIconModule,
         MatChipsModule,
         MatFormFieldModule,
         MatInputModule,
@@ -253,19 +236,38 @@ registerLocaleData(localePt);
         MatTooltipModule,
         MatPaginatorModule,
         MatSelectModule,
-        CurrencyPipe,
-        /* Graficos
-        https://github.com/valor-software/ng2-charts
-        https://www.npmjs.com/package/ng2-charts/v/4.1.1
-        https://valor-software.com/ng2-charts
-        https://www.chartjs.org/docs/4.4.1
-        */
-        NgChartsModule], providers: [{ provide: LOCALE_ID, useValue: 'pt-BR' },
+
+        /* SECURITY */
+
+        /* APP */
+
+        /* LAYOUT ADMINLTE */
+
+        /* COMPONENTE BASE */
+        BaseModule,
+
+        /* COMPONENTE SHARED */
+        SharedModule,
+
+        /* COMPONENTE SITE */
+
+        /* PAGES SITE */
+
+        /* PAGES ESTOQUE */
+
+        /* PAGES FINANCEIRO */
+
+        /* COMPONENTE OUTROS */
+    ],
+    providers: [
+        { provide: LOCALE_ID, useValue: 'pt-BR' },
         {
             provide: HTTP_INTERCEPTORS,
             multi: true,
-            //useClass: () => {AutenticacaoInterceptor}
             useClass: AutenticacaoInterceptor,
         },
-        provideNgxMask(), provideHttpClient(withInterceptorsFromDi())] })
-export class AppModule {}
+        provideNgxMask(),
+        provideHttpClient(withInterceptorsFromDi())
+    ]
+})
+export class AppModule { }
