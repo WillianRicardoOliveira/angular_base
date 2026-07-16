@@ -38,16 +38,15 @@ export const MENU = [
         iconClasses: 'fas fa-tachometer-alt',
         path: ['/dashboard']
     },
-    {
+    {/*
         name: 'Main Menu',
         iconClasses: 'fas fa-folder',
-        children: [
+        children: [            
             {
                 name: 'Fornecedores',
                 iconClasses: 'fas fa-file',
                 path: ['/fornecedor']
-            },
-            /*
+            },            
             {
                 name: 'Produtos',
                 iconClasses: 'fas fa-file',
@@ -82,8 +81,7 @@ export const MENU = [
                 name: 'Status do Pagamento',
                 iconClasses: 'fas fa-file',
                 path: ['/status-pagamento']
-            },
-            */
-        ]
+            },            
+        ]*/
     }
 ];
