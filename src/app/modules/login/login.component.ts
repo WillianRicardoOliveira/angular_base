@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
         private service: LoginService,
         private router: Router,
         private toastr: ToastrService
-    ) { }
+    ) {}
 
     ngOnInit(): void {
         this.loginForm = this.formBuilder.group({
@@ -36,19 +36,25 @@ export class LoginComponent implements OnInit {
             return;
         }
 
-        const email = this.loginForm.value.email;
-        const senha = this.loginForm.value.senha;
+        const { email, senha } = this.loginForm.getRawValue();
 
         this.isAuthLoading = true;
 
-        this.service.login(email, senha)
-            .pipe(finalize(() => this.isAuthLoading = false))
+        this.service
+            .login(email, senha)
+            .pipe(
+                finalize(() => {
+                    this.isAuthLoading = false;
+                })
+            )
             .subscribe({
                 next: () => {
                     this.router.navigateByUrl('/');
                 },
                 error: () => {
-                    this.toastr.error('Não foi possível acessar o sistema. Verifique suas credenciais.');
+                    this.toastr.error(
+                        'Não foi possível acessar o sistema. Verifique suas credenciais.'
+                    );
                 }
             });
     }
@@ -58,10 +64,14 @@ export class LoginComponent implements OnInit {
     }
 
     recoverPassword(): void {
-        this.toastr.info('Recuperação de senha ainda não configurada.');
+        this.toastr.info(
+            'Recuperação de senha ainda não configurada.'
+        );
     }
 
     loginWithMicrosoft(): void {
-        this.toastr.info('Acesso com Microsoft ainda não configurado.');
+        this.toastr.info(
+            'Acesso com Microsoft ainda não configurado.'
+        );
     }
 }

@@ -1,84 +1,184 @@
 :host {
     display: block;
     min-height: 100vh;
+    min-height: 100dvh;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
 .login-page {
     min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 28px;
-    background-color: #f4f6f4;
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: clamp(16px, 3vw, 32px);
+    background: #f2f5f2;
 }
 
 .login-shell {
     width: min(1400px, 100%);
-    min-height: 760px;
+    min-height: min(760px, calc(100dvh - 64px));
     display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(420px, 0.95fr);
+    grid-template-columns:
+        minmax(0, 1.35fr)
+        minmax(500px, 0.85fr);
     overflow: hidden;
-    border-radius: 12px;
-    background-color: #ffffff;
-    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
+    border: 1px solid rgba(26, 61, 31, 0.08);
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.16);
 }
 
 .login-brand {
-    min-height: 760px;
-    background: url('/assets/img/img_login.png') center / cover no-repeat;
+    position: relative;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    padding: clamp(40px, 5vw, 80px);
+    isolation: isolate;
+    color: #ffffff;
+    background:
+        linear-gradient(
+            90deg,
+            rgba(1, 35, 25, 0.94) 0%,
+            rgba(1, 35, 25, 0.72) 42%,
+            rgba(1, 35, 25, 0.12) 78%
+        ),
+        url('/assets/img/login-hero-desktop.png') center / cover no-repeat;
+}
+
+.login-brand::after {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    content: '';
+    background:
+        linear-gradient(
+            0deg,
+            rgba(0, 25, 18, 0.36),
+            transparent 50%
+        );
+    pointer-events: none;
+}
+
+.login-brand__content {
+    width: min(480px, 75%);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.28);
+}
+
+.login-brand__name {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0 0 clamp(64px, 10vh, 110px);
+    font-size: clamp(24px, 2.5vw, 38px);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.login-brand__name i,
+.login-brand__name strong {
+    color: #79c842;
+}
+
+.login-brand__name i {
+    font-size: 1.15em;
+}
+
+.login-brand__eyebrow {
+    margin: 0 0 18px;
+    color: #83d148;
+    font-size: clamp(14px, 1.2vw, 18px);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.login-brand h1 {
+    margin: 0;
+    font-size: clamp(38px, 4.2vw, 64px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+}
+
+.login-brand__description {
+    max-width: 430px;
+    margin: 28px 0 0;
+    font-size: clamp(17px, 1.5vw, 22px);
+    line-height: 1.55;
+}
+
+.login-content {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(32px, 4vw, 64px);
+    background: #ffffff;
 }
 
 .login-card {
+    width: min(100%, 500px);
     display: flex;
     flex-direction: column;
-    justify-content: center;
     border-radius: 0;
-    padding: 72px 56px;
+    padding: 0;
     box-shadow: none;
 }
 
 .login-card__header {
     display: flex;
     align-items: center;
-    gap: 22px;
-    margin-bottom: 52px;
+    gap: clamp(16px, 2vw, 22px);
+    margin-bottom: clamp(34px, 5vh, 52px);
 }
 
 .login-card__icon {
-    width: 84px;
-    height: 84px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: clamp(66px, 6vw, 84px);
+    height: clamp(66px, 6vw, 84px);
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
     border-radius: 50%;
     color: #ffffff;
-    font-size: 42px;
+    font-size: clamp(32px, 3vw, 42px);
     background:
-        radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.3), transparent 34%),
+        radial-gradient(
+            circle at 34% 26%,
+            rgba(255, 255, 255, 0.3),
+            transparent 34%
+        ),
         #244c28;
     box-shadow: 0 12px 28px rgba(36, 76, 40, 0.25);
 }
 
 .login-card__header span {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     color: #245227;
-    font-size: 20px;
+    font-size: clamp(16px, 1.5vw, 20px);
     font-weight: 800;
 }
 
 .login-card__header h2 {
     margin: 0;
     color: #202124;
-    font-size: 34px;
+    font-size: clamp(27px, 2.5vw, 34px);
     font-weight: 800;
     line-height: 1.15;
+    letter-spacing: -0.025em;
+    white-space: nowrap;
 }
 
 .login-form mat-card-content {
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 18px;
     padding: 0;
 }
 
@@ -92,42 +192,55 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin: 0 16px 0 10px;
-    color: #6fbb3d;
-    font-size: 20px;
+    margin: 0 14px 0 8px;
+    color: #64ae35;
+    font-size: 19px;
     line-height: 1;
 }
 
 .password-toggle {
     width: 44px;
     height: 44px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-grid;
+    place-items: center;
     border: 0;
+    border-radius: 50%;
     padding: 0;
-    color: #7b8087;
+    color: #676d74;
     background: transparent;
     cursor: pointer;
     line-height: 1;
+    transition:
+        color 160ms ease,
+        background-color 160ms ease;
 }
 
 .password-toggle:hover {
     color: #245227;
+    background: rgba(36, 82, 39, 0.08);
+}
+
+.password-toggle:focus-visible,
+.login-form__links button:focus-visible,
+.microsoft-button:focus-visible {
+    outline: 3px solid rgba(100, 174, 53, 0.4);
+    outline-offset: 3px;
 }
 
 .login-form__links {
     display: flex;
     justify-content: flex-end;
-    margin-top: -8px;
+    margin-top: -6px;
 }
 
 .login-form__links button {
+    min-height: 44px;
     border: 0;
-    padding: 0;
+    padding: 8px 0;
     color: #244c28;
-    font-size: 17px;
-    font-weight: 600;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 700;
     background: transparent;
     cursor: pointer;
 }
@@ -138,22 +251,30 @@
 
 .login-form mat-card-actions {
     display: flex;
-    padding: 30px 0 0;
+    padding: 24px 0 0;
+}
+
+.login-button,
+.microsoft-button {
+    width: 100%;
+    min-height: 56px;
+    border-radius: 6px;
+    font-size: 17px;
+    font-weight: 800;
 }
 
 .login-button {
-    width: 100%;
-    min-height: 58px;
-    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     color: #ffffff;
-    font-size: 18px;
-    font-weight: 800;
     background-color: #0d4a1f;
     box-shadow: 0 10px 20px rgba(13, 74, 31, 0.2);
 }
 
 .login-button:not(:disabled):hover {
-    background-color: #0a3d19;
+    background-color: #093d18;
 }
 
 .login-button:disabled {
@@ -164,57 +285,60 @@
 
 .login-divider {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns:
+        minmax(24px, 1fr)
+        auto
+        minmax(24px, 1fr);
     align-items: center;
-    gap: 18px;
-    margin: 34px 0 30px;
-    color: #8b8d92;
+    gap: 16px;
+    margin: 30px 0 26px;
+    color: #73777d;
 }
 
 .login-divider span {
     height: 1px;
-    background-color: #e1e4e8;
+    background: #e1e4e8;
 }
 
 .login-divider strong {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
+    white-space: nowrap;
 }
 
 .microsoft-button {
-    width: 100%;
-    min-height: 58px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 18px;
-    border: 1px solid #dde2e6;
-    border-radius: 6px;
+    gap: 16px;
+    border: 1px solid #d6dce1;
+    padding: 0 20px;
     color: #3f4247;
-    font-size: 18px;
-    font-weight: 700;
-    background-color: #ffffff;
+    background: #ffffff;
     cursor: pointer;
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease;
 }
 
 .microsoft-button i {
     color: #00a4ef;
-    font-size: 26px;
+    font-size: 25px;
 }
 
 .microsoft-button:hover {
-    border-color: #c9d0d6;
-    background-color: #f8faf9;
+    border-color: #bfc8cf;
+    background: #f8faf9;
 }
 
 .login-card__help {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    margin: 66px 0 0;
+    gap: 10px;
+    margin: clamp(34px, 6vh, 62px) 0 0;
     color: #315c35;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.4;
     text-align: center;
 }
@@ -223,54 +347,302 @@
     color: #244c28;
 }
 
-@media (max-width: 1100px) {
+/*
+ * Notebooks e monitores com janela reduzida.
+ * Mantém a coluna do formulário larga o suficiente para que
+ * o título e os campos não fiquem comprimidos.
+ */
+@media (max-width: 1199px) {
     .login-shell {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(500px, 0.95fr);
     }
 
     .login-brand {
-        min-height: 520px;
+        padding: 44px;
+        background-position: 58% center;
+    }
+
+    .login-brand__content {
+        width: 88%;
+    }
+
+    .login-content {
+        padding: 44px 28px;
     }
 
     .login-card {
-        padding: 52px 44px;
-    }
-}
-
-@media (max-width: 720px) {
-    .login-page {
-        padding: 14px;
-    }
-
-    .login-shell {
-        min-height: auto;
-        border-radius: 10px;
-    }
-
-    .login-brand {
-        min-height: 420px;
-    }
-
-    .login-card {
-        padding: 40px 24px;
+        max-width: 444px;
     }
 
     .login-card__header {
-        gap: 16px;
-        margin-bottom: 34px;
+        gap: 18px;
     }
 
     .login-card__icon {
-        width: 66px;
-        height: 66px;
-        font-size: 32px;
+        width: 74px;
+        height: 74px;
+        font-size: 36px;
     }
 
     .login-card__header h2 {
+        font-size: 30px;
+    }
+}
+
+/*
+ * Tablets e telas menores passam para uma única coluna antes
+ * que o conteúdo lateral comece a ficar comprimido.
+ */
+@media (max-width: 1024px) {
+    .login-page {
+        display: block;
+        padding: 0;
+        background: #ffffff;
+    }
+
+    .login-shell {
+        width: 100%;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .login-brand {
+        min-height: clamp(180px, 30vw, 260px);
+        flex: 0 0 auto;
+        align-items: flex-end;
+        padding: 28px clamp(24px, 6vw, 48px);
+        background:
+            linear-gradient(
+                90deg,
+                rgba(1, 35, 25, 0.92),
+                rgba(1, 35, 25, 0.28)
+            ),
+            url('/assets/img/login-hero-mobile.png') center / cover no-repeat;
+    }
+
+    .login-brand__content {
+        width: min(500px, 82%);
+    }
+
+    .login-brand__name {
+        margin-bottom: 22px;
+        font-size: clamp(22px, 4vw, 30px);
+    }
+
+    .login-brand__eyebrow,
+    .login-brand__description {
+        display: none;
+    }
+
+    .login-brand h1 {
+        font-size: clamp(28px, 6vw, 42px);
+    }
+
+    .login-content {
+        flex: 1;
+        align-items: flex-start;
+        padding:
+            clamp(32px, 7vw, 56px)
+            clamp(20px, 7vw, 48px);
+    }
+
+    .login-card {
+        width: min(100%, 500px);
+        max-width: 500px;
+    }
+
+    .login-card__header {
+        gap: clamp(16px, 2vw, 22px);
+    }
+
+    .login-card__icon {
+        width: clamp(66px, 9vw, 84px);
+        height: clamp(66px, 9vw, 84px);
+        font-size: clamp(32px, 5vw, 42px);
+    }
+
+    .login-card__header h2 {
+        font-size: clamp(27px, 4vw, 34px);
+    }
+}
+
+@media (max-width: 600px) {
+    .login-brand {
+        min-height: 160px;
+        padding: 22px 20px;
+    }
+
+    .login-brand__content {
+        width: 100%;
+    }
+
+    .login-brand__name {
+        margin-bottom: 14px;
+        font-size: 21px;
+    }
+
+    .login-brand h1 {
+        font-size: 28px;
+        line-height: 1.1;
+    }
+
+    .login-content {
+        padding: 32px 20px 28px;
+    }
+
+    .login-card__header {
+        margin-bottom: 30px;
+    }
+
+    .login-card__icon {
+        width: 58px;
+        height: 58px;
         font-size: 28px;
     }
 
+    .login-card__header span {
+        font-size: 15px;
+    }
+
+    .login-card__header h2 {
+        font-size: clamp(23px, 7vw, 28px);
+    }
+
+    .login-divider {
+        margin: 26px 0 22px;
+        gap: 12px;
+    }
+
     .login-card__help {
-        margin-top: 42px;
+        margin-top: 34px;
+    }
+}
+
+@media (max-width: 400px) {
+    .login-card__header {
+        align-items: flex-start;
+    }
+
+    .login-card__header h2 {
+        white-space: normal;
+    }
+}
+
+@media (max-width: 360px) {
+    .login-brand {
+        min-height: 130px;
+    }
+
+    .login-brand h1 {
+        font-size: 24px;
+    }
+
+    .login-content {
+        padding-inline: 16px;
+    }
+
+    .login-card__header {
+        gap: 12px;
+    }
+
+    .login-card__icon {
+        width: 52px;
+        height: 52px;
+        font-size: 24px;
+    }
+
+    .login-card__header h2 {
+        font-size: 23px;
+    }
+
+    .microsoft-button {
+        gap: 10px;
+        padding-inline: 12px;
+        font-size: 15px;
+    }
+}
+
+/*
+ * Reduz os espaços verticais em notebooks e monitores
+ * com pouca altura disponível.
+ */
+@media (max-height: 760px) and (min-width: 1025px) {
+    .login-page {
+        align-items: start;
+        padding-block: 16px;
+    }
+
+    .login-shell {
+        min-height: calc(100dvh - 32px);
+    }
+
+    .login-brand__name {
+        margin-bottom: 44px;
+    }
+
+    .login-content {
+        padding-block: 30px;
+    }
+
+    .login-card__header {
+        margin-bottom: 28px;
+    }
+
+    .login-form mat-card-content {
+        gap: 12px;
+    }
+
+    .login-form mat-card-actions {
+        padding-top: 16px;
+    }
+
+    .login-divider {
+        margin-block: 22px 18px;
+    }
+
+    .login-card__help {
+        margin-top: 26px;
+    }
+}
+
+/*
+ * No celular em modo paisagem, remove a imagem para priorizar
+ * o formulário e evitar rolagem vertical excessiva.
+ */
+@media (orientation: landscape) and
+    (max-height: 600px) and
+    (max-width: 1024px) {
+    .login-brand {
+        display: none;
+    }
+
+    .login-content {
+        justify-content: center;
+        padding-block: 24px;
+    }
+
+    .login-card__header {
+        margin-bottom: 24px;
+    }
+
+    .login-card__help {
+        margin-top: 24px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
     }
 }

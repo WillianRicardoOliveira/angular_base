@@ -1,88 +1,191 @@
 <section class="login-page">
     <div class="login-shell">
-        <aside class="login-brand" aria-label="Agro ERP - Gestão que cultiva resultados"></aside>
+        <aside
+            class="login-brand"
+            aria-label="Agro ERP - Gestão que cultiva resultados"
+        >
+            <div class="login-brand__content">
+                <p class="login-brand__name">
+                    <i class="fas fa-leaf" aria-hidden="true"></i>
 
-        <mat-card class="login-card">
-            <div class="login-card__header">
-                <div class="login-card__icon">
-                    <i class="fas fa-leaf"></i>
-                </div>
+                    <span>Agrihold <strong>ERP</strong></span>
+                </p>
 
-                <div>
-                    <span>Bem-vindo(a)</span>
-                    <h2>Entrar na conta</h2>
-                </div>
+                <p class="login-brand__eyebrow">
+                    Portal corporativo
+                </p>
+
+                <h1>
+                    Gestão
+                    <br>
+                    com
+                    <br>
+                    Tecnologia
+                </h1>
+
+                <p class="login-brand__description">
+                    Gerencie sua operação com inteligência.
+                </p>
             </div>
+        </aside>
 
-            <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form">
-                <mat-card-content>
-                    <mat-form-field appearance="outline">
-                        <mat-label>E-mail</mat-label>
-                        <i class="far fa-user" matPrefix></i>
-
-                        <input formControlName="email" matInput type="email" autocomplete="username"
-                            placeholder="Digite seu e-mail">
-
-                        @if (loginForm.get('email')?.errors?.['required']) {
-                        <mat-error>E-mail é obrigatório</mat-error>
-                        }
-
-                        @if (loginForm.get('email')?.errors?.['email']) {
-                        <mat-error>Formato de e-mail é inválido</mat-error>
-                        }
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline">
-                        <mat-label>Senha</mat-label>
-                        <i class="fas fa-lock" matPrefix></i>
-
-                        <input formControlName="senha" matInput [type]="isPasswordVisible ? 'text' : 'password'"
-                            autocomplete="current-password" placeholder="Digite sua senha">
-
-                        <button class="password-toggle" matSuffix type="button" aria-label="Mostrar ou ocultar senha"
-                            (click)="togglePasswordVisibility()">
-                            <i [class]="isPasswordVisible ? 'far fa-eye-slash' : 'far fa-eye'"></i>
-                        </button>
-
-                        @if (loginForm.get('senha')?.errors?.['required']) {
-                        <mat-error>Senha é obrigatória</mat-error>
-                        }
-                    </mat-form-field>
-
-                    <div class="login-form__links">
-                        <button type="button" (click)="recoverPassword()">
-                            Esqueceu sua senha?
-                        </button>
+        <main class="login-content">
+            <mat-card class="login-card">
+                <div class="login-card__header">
+                    <div class="login-card__icon" aria-hidden="true">
+                        <i class="fas fa-leaf"></i>
                     </div>
-                </mat-card-content>
 
-                <mat-card-actions>
-                    <button class="login-button" mat-flat-button type="submit"
-                        [disabled]="loginForm.invalid || isAuthLoading">
-                        @if (isAuthLoading) {
-                        Acessando...
-                        } @else {
-                        Acessar sistema
-                        }
-                    </button>
-                </mat-card-actions>
-            </form>
+                    <div>
+                        <span>Bem-vindo(a)</span>
+                        <h2>Entrar na conta</h2>
+                    </div>
+                </div>
 
-            <div class="login-divider">
-                <span></span>
-                <strong>ou continue com</strong>
-                <span></span>
-            </div>
+                <form
+                    [formGroup]="loginForm"
+                    (ngSubmit)="login()"
+                    class="login-form"
+                    novalidate
+                >
+                    <mat-card-content>
+                        <mat-form-field appearance="outline">
+                            <mat-label>E-mail</mat-label>
 
-            <button class="microsoft-button" type="button" (click)="loginWithMicrosoft()">
-                <i class="fab fa-microsoft"></i>
-                <span>Entrar com Microsoft</span>
-            </button>
+                            <i
+                                class="far fa-user"
+                                matPrefix
+                                aria-hidden="true"
+                            ></i>
 
-            <p class="login-card__help">
-                <i class="fas fa-lock"></i>
-                <span>Acesso restrito a usuários autorizados.</span>
-            </p>
-        </mat-card>
+                            <input
+                                formControlName="email"
+                                matInput
+                                type="email"
+                                autocomplete="username"
+                                inputmode="email"
+                                placeholder="Digite seu e-mail"
+                            >
+
+                            @if (
+                                loginForm.get('email')?.hasError('required') &&
+                                loginForm.get('email')?.touched
+                            ) {
+                                <mat-error>
+                                    E-mail é obrigatório
+                                </mat-error>
+                            }
+
+                            @if (
+                                loginForm.get('email')?.hasError('email') &&
+                                loginForm.get('email')?.touched
+                            ) {
+                                <mat-error>
+                                    Formato de e-mail inválido
+                                </mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>Senha</mat-label>
+
+                            <i
+                                class="fas fa-lock"
+                                matPrefix
+                                aria-hidden="true"
+                            ></i>
+
+                            <input
+                                formControlName="senha"
+                                matInput
+                                [type]="isPasswordVisible ? 'text' : 'password'"
+                                autocomplete="current-password"
+                                placeholder="Digite sua senha"
+                            >
+
+                            <button
+                                class="password-toggle"
+                                matSuffix
+                                type="button"
+                                [attr.aria-label]="
+                                    isPasswordVisible
+                                        ? 'Ocultar senha'
+                                        : 'Mostrar senha'
+                                "
+                                [attr.aria-pressed]="isPasswordVisible"
+                                (click)="togglePasswordVisibility()"
+                            >
+                                <i
+                                    [class]="
+                                        isPasswordVisible
+                                            ? 'far fa-eye-slash'
+                                            : 'far fa-eye'
+                                    "
+                                    aria-hidden="true"
+                                ></i>
+                            </button>
+
+                            @if (
+                                loginForm.get('senha')?.hasError('required') &&
+                                loginForm.get('senha')?.touched
+                            ) {
+                                <mat-error>
+                                    Senha é obrigatória
+                                </mat-error>
+                            }
+                        </mat-form-field>
+
+                        <div class="login-form__links">
+                            <button
+                                type="button"
+                                (click)="recoverPassword()"
+                            >
+                                Esqueceu sua senha?
+                            </button>
+                        </div>
+                    </mat-card-content>
+
+                    <mat-card-actions>
+                        <button
+                            class="login-button"
+                            mat-flat-button
+                            type="submit"
+                            [disabled]="loginForm.invalid || isAuthLoading"
+                        >
+                            @if (isAuthLoading) {
+                                <i
+                                    class="fas fa-circle-notch fa-spin"
+                                    aria-hidden="true"
+                                ></i>
+
+                                <span>Acessando...</span>
+                            } @else {
+                                <span>Acessar sistema</span>
+                            }
+                        </button>
+                    </mat-card-actions>
+                </form>
+
+                <div class="login-divider" aria-hidden="true">
+                    <span></span>
+                    <strong>ou continue com</strong>
+                    <span></span>
+                </div>
+
+                <button
+                    class="microsoft-button"
+                    type="button"
+                    (click)="loginWithMicrosoft()"
+                >
+                    <i class="fab fa-microsoft" aria-hidden="true"></i>
+                    <span>Entrar com Microsoft</span>
+                </button>
+
+                <p class="login-card__help">
+                    <i class="fas fa-lock" aria-hidden="true"></i>
+                    <span>Acesso restrito a usuários autorizados.</span>
+                </p>
+            </mat-card>
+        </main>
     </div>
 </section>
