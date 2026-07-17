@@ -13,17 +13,19 @@
     }
   </p>
 </a>
-@for (item of menuItem.children; track item) {
+@if (isExpandable) {
   <ul class="nav nav-treeview" [@openClose]="isMenuExtended">
-    <li class="nav-item">
-      <a
-        [routerLink]="item.path"
-        [routerLinkActive]="'active'"
-        class="nav-link"
-        >
-        <i class="nav-icon {{ item.iconClasses }}"></i>
-        <p>{{ item.name }}</p>
-      </a>
-    </li>
+    @for (item of menuItem.children; track item) {
+      <li class="nav-item">
+        <a
+          [routerLink]="item.path"
+          [routerLinkActive]="'active'"
+          class="nav-link submenu-link"
+          >
+          <i class="nav-icon {{ item.iconClasses }}"></i>
+          <p>{{ item.name }}</p>
+        </a>
+      </li>
+    }
   </ul>
 }

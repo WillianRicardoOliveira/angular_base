@@ -1,16 +1,10 @@
 <!-- Brand Logo -->
-<a [routerLink]="['/']" class="brand-link">
-  <!--src="assets/img/logo.png"-->
-  <app-image
 
-    alt="AdminLTE Logo"
-    class="brand-image"
-    height="33"
-    width="33"
-    rounded
-    style="opacity: 0.8"
-  ></app-image>
-  <span class="brand-text font-weight-light">Futuro</span>
+<a [routerLink]="['/']" class="brand-link">
+  <span class="brand-mark">
+    <i class="fas fa-leaf" aria-hidden="true"></i>
+  </span>
+  <span class="brand-text">Agrihold</span>
 </a>
 
 <!-- Sidebar -->
@@ -51,6 +45,13 @@
         <app-menu-item
           [menuItem]="item"
         ></app-menu-item>
+      }
+    </ul>
+  </nav>
+  <nav class="sidebar-settings">
+    <ul class="nav nav-pills nav-sidebar flex-column" role="menu">
+      @for (item of menuConfiguracoes; track item) {
+        <app-menu-item [menuItem]="item"></app-menu-item>
       }
     </ul>
   </nav>
