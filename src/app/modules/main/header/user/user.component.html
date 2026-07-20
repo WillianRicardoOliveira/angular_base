@@ -1,27 +1,22 @@
 <app-dropdown hide-arrow class="user-menu">
     <div slot="button">
         <a class="nav-link">
-            <!--[src]="user.picture"
-                fallback-src="assets/img/default-profile.png"-->
             <app-image
-                
-                
+                src="assets/img/default-profile.png"
                 class="user-image-small"
                 width="25"
                 height="25"
                 alt="User Image"
                 rounded
             ></app-image>
+            <span class="d-none d-md-inline">{{ userName }}</span>
         </a>
     </div>
+
     <div slot="menu">
-        <li class="user-header bg-primary">
-            
-            <!--[src]="user.picture"
-                fallback-src="assets/img/default-profile.png"-->
+        <div class="user-header bg-primary">
             <app-image
-                
-                
+                src="assets/img/default-profile.png"
                 class="user-image-big"
                 alt="User Image"
                 width="90"
@@ -30,36 +25,33 @@
             ></app-image>
 
             <p>
-                <span><!--{{ user.email }}--></span>
-                <small>
-                    <span class="mr-2">Member since</span>
-                    <span><!--{{ formatDate(user.createdAt) }}--></span>
-                </small>
+                <span>{{ userName }}</span>
+                <small>{{ userDescription }}</small>
             </p>
-        </li>
-        <!-- Menu Body -->
-        <li class="user-body">
+        </div>
+
+        <div class="user-body">
             <div class="row">
                 <div class="col-4 text-center">
-                    <a [routerLink]="['/']">Followers</a>
+                    <a href="#">Perfil</a>
                 </div>
                 <div class="col-4 text-center">
-                    <a [routerLink]="['/']">Sales</a>
+                    <a href="#">Conta</a>
                 </div>
                 <div class="col-4 text-center">
-                    <a [routerLink]="['/']">Friends</a>
+                    <a href="#">Ajustes</a>
                 </div>
             </div>
-            <!-- /.row -->
-        </li>
-        <!-- Menu Footer-->
-        <li class="user-footer">
-            <a [routerLink]="['/profile']" class="btn btn-default btn-flat">
-                Profile
-            </a>
-            <a (click)="logout()" class="btn btn-default btn-flat float-right">
-                Sign out
-            </a>
-        </li>
+        </div>
+
+        <div class="user-footer">
+            <a href="#" class="btn btn-default btn-flat">Perfil</a>
+            <a
+    class="btn btn-default btn-flat float-right"
+    (click)="logout()"
+>
+    Sair
+</a>
+        </div>
     </div>
 </app-dropdown>

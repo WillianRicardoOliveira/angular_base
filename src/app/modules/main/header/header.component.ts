@@ -1,15 +1,12 @@
-import {AppState} from '@/store/state';
-import {ToggleControlSidebar, ToggleSidebarMenu} from '@/store/ui/actions';
-import {UiState} from '@/store/ui/state';
-import {Component, HostBinding, OnInit} from '@angular/core';
-import {UntypedFormGroup, UntypedFormControl} from '@angular/forms';
-import { Router } from '@angular/router';
-import {Store} from '@ngrx/store';
-import {AppService} from '@services/app.service';
-import { UserService } from '@services/user/user.service';
-import {Observable} from 'rxjs';
+import { AppState } from '@/store/state';
+import { ToggleControlSidebar, ToggleSidebarMenu } from '@/store/ui/actions';
+import { UiState } from '@/store/ui/state';
+import { Component, HostBinding, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 
 const BASE_CLASSES = 'main-header navbar navbar-expand';
+
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
@@ -18,28 +15,15 @@ const BASE_CLASSES = 'main-header navbar navbar-expand';
 })
 export class HeaderComponent implements OnInit {
     @HostBinding('class') classes: string = BASE_CLASSES;
-    public ui: Observable<UiState>;
-    public searchForm: UntypedFormGroup;
+    public ui!: Observable<UiState>;
 
-    constructor(
-        private appService: AppService,
-        private store: Store<AppState>,
-        private userService: UserService,
-        private router: Router
-    ) {}
+    constructor(private store: Store<AppState>) { }
 
     ngOnInit() {
         this.ui = this.store.select('ui');
         this.ui.subscribe((state: UiState) => {
             this.classes = `${BASE_CLASSES} ${state.navbarVariant}`;
         });
-        this.searchForm = new UntypedFormGroup({
-            search: new UntypedFormControl(null)
-        });
-    }
-
-    logout() {
-        this.appService.logout();
     }
 
     onToggleMenuSidebar() {
@@ -49,9 +33,4 @@ export class HeaderComponent implements OnInit {
     onToggleControlSidebar() {
         this.store.dispatch(new ToggleControlSidebar());
     }
-
-    deslogar() {
-        this.userService.logout()
-        this.router.navigate(["/login"])
-      }
 }

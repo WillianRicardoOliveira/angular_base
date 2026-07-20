@@ -48,6 +48,7 @@ import { AppComponent } from './app.component';
 /* LAYOUT ADMINLTE */
 import { MainComponent } from '@modules/main/main.component';
 import { HeaderComponent } from '@modules/main/header/header.component';
+import {UserComponent} from '@modules/main/header/user/user.component';
 import { FooterComponent } from '@modules/main/footer/footer.component';
 import { MenuSidebarComponent } from '@modules/main/menu-sidebar/menu-sidebar.component';
 import { ControlSidebarComponent } from './modules/main/control-sidebar/control-sidebar.component';
@@ -75,12 +76,12 @@ import { BannerComponent } from './components/site/banner/banner.component';
 //import { interval, take } from 'rxjs';
 //import {RegisterComponent} from '@modules/register/register.component';
 //import {DashboardComponent} from '@pages/dashboard/dashboard.component';
-//import {MessagesComponent} from '@modules/main/header/messages/messages.component';
-//import {NotificationsComponent} from '@modules/main/header/notifications/notifications.component';
-//import {UserComponent} from '@modules/main/header/user/user.component';
+
+
+
 //import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
 //import {RecoverPasswordComponent} from '@modules/recover-password/recover-password.component';
-//import {LanguageComponent} from '@modules/main/header/language/language.component';
+
 //import { CabecalhoPaginaComponent } from './components/cabecalho-pagina/cabecalho-pagina.component';
 //import { InformacaoComponent } from './components/dashboard/informacao/informacao.component';
 //import { SucessoComponent } from './components/dashboard/sucesso/sucesso.component';
@@ -128,6 +129,7 @@ registerLocaleData(localePt);
         /* LAYOUT ADMINLTE */
         MainComponent,
         HeaderComponent,
+        UserComponent,
         FooterComponent,
         MenuSidebarComponent,
         MenuItemComponent,
@@ -149,12 +151,12 @@ registerLocaleData(localePt);
         //MainMenuComponent,
         //RegisterComponent,
         //DashboardComponent,
-        //MessagesComponent,
-        //NotificationsComponent,
-        //UserComponent,
+        
+        
+        
         //ForgotPasswordComponent,
         //RecoverPasswordComponent,
-        //LanguageComponent,
+        
         //GridComponent,
         //CabecalhoPaginaComponent,
         //InformacaoComponent,

@@ -1,8 +1,10 @@
-import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
-import {By} from '@angular/platform-browser';
-import {DebugElement} from '@angular/core';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { StoreModule } from '@ngrx/store';
 
-import {HeaderComponent} from './header.component';
+import { authReducer } from '@/store/auth/reducer';
+import { uiReducer } from '@/store/ui/reducer';
+import { HeaderComponent } from './header.component';
 
 describe('HeaderComponent', () => {
     let component: HeaderComponent;
@@ -11,7 +13,14 @@ describe('HeaderComponent', () => {
     beforeEach(
         waitForAsync(() => {
             TestBed.configureTestingModule({
-                declarations: [HeaderComponent]
+                declarations: [HeaderComponent],
+                imports: [
+                    StoreModule.forRoot({
+                        auth: authReducer,
+                        ui: uiReducer
+                    })
+                ],
+                schemas: [NO_ERRORS_SCHEMA]
             }).compileComponents();
         })
     );

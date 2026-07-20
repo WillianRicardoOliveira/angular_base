@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {AppService} from '@services/app.service';
-import {DateTime} from 'luxon';
+import {Component} from '@angular/core';
+import {Router} from '@angular/router';
+import {UserService} from '@services/user/user.service';
 
 @Component({
     selector: 'app-user',
@@ -8,20 +8,17 @@ import {DateTime} from 'luxon';
     styleUrls: ['./user.component.scss'],
     standalone: false
 })
-export class UserComponent implements OnInit {
-    public user;
+export class UserComponent {
+    readonly userName = 'Usuario';
+    readonly userDescription = 'ERP';
 
-    constructor(private appService: AppService) {}
-
-    ngOnInit(): void {
-        this.user = this.appService.user;
-    }
+    constructor(
+        private userService: UserService,
+        private router: Router
+    ) {}
 
     logout() {
-        this.appService.logout();
-    }
-
-    formatDate(date) {
-        return DateTime.fromISO(date).toFormat('dd LLL yyyy');
+        this.userService.logout();
+        this.router.navigate(['/login']);
     }
 }
