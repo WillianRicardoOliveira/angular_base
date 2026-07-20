@@ -52,15 +52,15 @@
     padding: 0 0.85rem 1rem;
 }
 
-.sidebar > nav.mt-2 {
-    margin-top: 0.9rem !important;
+.sidebar>nav.mt-2 {
+    margin-top: 0.75rem !important;
 }
 
 .nav-sidebar {
     gap: 0.1rem;
 }
 
-.nav-sidebar > .nav-item {
+.nav-sidebar>.nav-item {
     margin-bottom: 0.35rem;
 }
 
@@ -73,4 +73,8 @@
 
 .sidebar-settings .nav-sidebar {
     margin-top: 0.65rem;
+}
+
+.sidebar-search {
+    margin-top: 0.85rem;
 }

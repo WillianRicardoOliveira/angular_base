@@ -2,10 +2,9 @@ import { AppState } from '@/store/state';
 import { UiState } from '@/store/ui/state';
 import { Component, HostBinding, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { AppService } from '@services/app.service';
-import { Observable } from 'rxjs';
 
 const BASE_CLASSES = 'main-sidebar elevation-4';
+
 @Component({
     selector: 'app-menu-sidebar',
     templateUrl: './menu-sidebar.component.html',
@@ -13,25 +12,23 @@ const BASE_CLASSES = 'main-sidebar elevation-4';
     standalone: false
 })
 export class MenuSidebarComponent implements OnInit {
+
     @HostBinding('class') classes: string = BASE_CLASSES;
-    public ui: Observable<UiState>;
-    public user;
+
     public menu = MENU;
 
     public menuConfiguracoes = MENU_CONFIGURACOES;
 
     constructor(
-        public appService: AppService,
         private store: Store<AppState>
     ) { }
 
-    ngOnInit() {
-        this.ui = this.store.select('ui');
-        this.ui.subscribe((state: UiState) => {
+    ngOnInit(): void {
+        this.store.select('ui').subscribe((state: UiState) => {
             this.classes = `${BASE_CLASSES} ${state.sidebarSkin}`;
         });
-        this.user = this.appService.user;
     }
+
 }
 
 export const MENU = [
@@ -41,14 +38,36 @@ export const MENU = [
         path: ['/dashboard']
     },
     {
+        name: 'Comercial',
+        iconClasses: 'fas fa-tags',
+        children: [
+            {
+                name: 'Menu 1',
+                iconClasses: 'fas fa-circle',
+                path: ['/comercial/menu-1']
+            }
+        ]
+    },
+    {
+        name: 'Compras',
+        iconClasses: 'fas fa-shopping-cart',
+        children: [
+            {
+                name: 'Menu 1',
+                iconClasses: 'fas fa-circle',
+                path: ['/compras/menu-1']
+            }
+        ]
+    },
+    {
         name: 'Contabilidade',
         iconClasses: 'far fa-list-alt',
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-file',
-                path: ['/dashboard']
-            },
+                iconClasses: 'fas fa-circle',
+                path: ['/contabilidade/menu-1']
+            }
         ]
     },
     {
@@ -57,9 +76,9 @@ export const MENU = [
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-file',
-                path: ['/dashboard']
-            },
+                iconClasses: 'fas fa-circle',
+                path: ['/controladoria/menu-1']
+            }
         ]
     },
     {
@@ -68,9 +87,20 @@ export const MENU = [
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-file',
-                path: ['/dashboard']
-            },
+                iconClasses: 'fas fa-circle',
+                path: ['/credito/menu-1']
+            }
+        ]
+    },
+    {
+        name: 'Estoque',
+        iconClasses: 'fas fa-warehouse',
+        children: [
+            {
+                name: 'Menu 1',
+                iconClasses: 'fas fa-circle',
+                path: ['/estoque/menu-1']
+            }
         ]
     },
     {
@@ -79,9 +109,9 @@ export const MENU = [
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-file',
-                path: ['/dashboard']
-            },
+                iconClasses: 'fas fa-circle',
+                path: ['/faturamento/menu-1']
+            }
         ]
     },
     {
@@ -90,9 +120,9 @@ export const MENU = [
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-file',
-                path: ['/dashboard']
-            },
+                iconClasses: 'fas fa-circle',
+                path: ['/financeiro/menu-1']
+            }
         ]
     },
     {
@@ -101,9 +131,9 @@ export const MENU = [
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-file',
-                path: ['/dashboard']
-            },
+                iconClasses: 'fas fa-circle',
+                path: ['/fiscal/menu-1']
+            }
         ]
     },
     {
@@ -128,9 +158,9 @@ export const MENU = [
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-file',
-                path: ['/dashboard']
-            },
+                iconClasses: 'fas fa-circle',
+                path: ['/supply/menu-1']
+            }
         ]
     },
     {
@@ -139,9 +169,20 @@ export const MENU = [
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-file',
-                path: ['/dashboard']
-            },
+                iconClasses: 'fas fa-circle',
+                path: ['/relatorios/menu-1']
+            }
+        ]
+    },
+    {
+        name: 'Cadastros',
+        iconClasses: 'far fa-address-book',
+        children: [
+            {
+                name: 'Menu 1',
+                iconClasses: 'fas fa-circle',
+                path: ['/cadastros/menu-1']
+            }
         ]
     }
 ];
