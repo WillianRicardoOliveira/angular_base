@@ -1,57 +1,56 @@
 <app-dropdown hide-arrow class="user-menu">
     <div slot="button">
-        <a class="nav-link">
-            <app-image
-                src="assets/img/default-profile.png"
-                class="user-image-small"
-                width="25"
-                height="25"
-                alt="User Image"
-                rounded
-            ></app-image>
+        <button type="button" class="nav-link user-toggle" aria-label="Abrir menu do usuario">
+            <span class="user-avatar user-avatar--small">
+                {{ userInitials }}
+            </span>
             <span class="d-none d-md-inline">{{ userName }}</span>
-        </a>
+        </button>
     </div>
 
     <div slot="menu">
-        <div class="user-header bg-primary">
-            <app-image
-                src="assets/img/default-profile.png"
-                class="user-image-big"
-                alt="User Image"
-                width="90"
-                height="90"
-                rounded
-            ></app-image>
+        <section class="user-card" aria-label="Menu do usuario">
+            <header class="user-card__header">
+                <span class="user-avatar user-avatar--large">
+                    {{ userInitials }}
+                </span>
 
-            <p>
-                <span>{{ userName }}</span>
-                <small>{{ userDescription }}</small>
-            </p>
-        </div>
+                <div class="user-card__identity">
+                    <strong>{{ userName }}</strong>
+                    <span>{{ userEmail }}</span>
+                </div>
 
-        <div class="user-body">
-            <div class="row">
-                <div class="col-4 text-center">
-                    <a href="#">Perfil</a>
-                </div>
-                <div class="col-4 text-center">
-                    <a href="#">Conta</a>
-                </div>
-                <div class="col-4 text-center">
-                    <a href="#">Ajustes</a>
-                </div>
-            </div>
-        </div>
+                <span class="user-card__brand" aria-hidden="true">
+                    <i class="fas fa-seedling"></i>
+                </span>
 
-        <div class="user-footer">
-            <a href="#" class="btn btn-default btn-flat">Perfil</a>
-            <a
-    class="btn btn-default btn-flat float-right"
-    (click)="logout()"
->
-    Sair
-</a>
-        </div>
+                <span class="user-card__lines" aria-hidden="true"></span>
+            </header>
+
+            <nav class="user-actions" aria-label="Acoes do usuario">
+                <a href="#" class="user-action">
+                    <i class="far fa-user" aria-hidden="true"></i>
+                    <span>Meu perfil</span>
+                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                </a>
+
+                <a href="#" class="user-action">
+                    <i class="fas fa-cog" aria-hidden="true"></i>
+                    <span>Configura&ccedil;&otilde;es da conta</span>
+                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                </a>
+
+                <a href="#" class="user-action">
+                    <i class="fas fa-sliders-h" aria-hidden="true"></i>
+                    <span>Prefer&ecirc;ncias</span>
+                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                </a>
+
+                <button type="button" class="user-action user-action--danger" (click)="logout()">
+                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+                    <span>Sair do sistema</span>
+                </button>
+            </nav>
+        </section>
     </div>
 </app-dropdown>

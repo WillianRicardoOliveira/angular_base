@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
-import {Router} from '@angular/router';
-import {UserService} from '@services/user/user.service';
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { UserService } from '@services/user/user.service';
 
 @Component({
     selector: 'app-user',
@@ -9,13 +9,22 @@ import {UserService} from '@services/user/user.service';
     standalone: false
 })
 export class UserComponent {
-    readonly userName = 'Usuario';
-    readonly userDescription = 'ERP';
+    readonly userName = 'Willian Oliveira';
+    readonly userEmail = 'willian.oliveira@alta-brasil.com';
+
+    get userInitials(): string {
+        return this.userName
+            .split(' ')
+            .filter(Boolean)
+            .slice(0, 2)
+            .map((name) => name.charAt(0).toUpperCase())
+            .join('');
+    }
 
     constructor(
         private userService: UserService,
         private router: Router
-    ) {}
+    ) { }
 
     logout() {
         this.userService.logout();
