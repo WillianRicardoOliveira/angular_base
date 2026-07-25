@@ -1,19 +1,19 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { UserService } from '@services/user/user.service';
+import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
 
 import { UserComponent } from './user.component';
 
 describe('UserComponent', () => {
     let component: UserComponent;
     let fixture: ComponentFixture<UserComponent>;
-    let userServiceMock: jasmine.SpyObj<UserService>;
+    let usuarioAutenticadoServiceMock: jasmine.SpyObj<UsuarioAutenticadoService>;
     let routerMock: jasmine.SpyObj<Router>;
 
     beforeEach(
         waitForAsync(() => {
-            userServiceMock = jasmine.createSpyObj<UserService>('UserService', [
+            usuarioAutenticadoServiceMock = jasmine.createSpyObj<UsuarioAutenticadoService>('UsuarioAutenticadoService', [
                 'logout'
             ]);
             routerMock = jasmine.createSpyObj<Router>('Router', ['navigate']);
@@ -21,7 +21,7 @@ describe('UserComponent', () => {
             TestBed.configureTestingModule({
                 declarations: [UserComponent],
                 providers: [
-                    { provide: UserService, useValue: userServiceMock },
+                    { provide: UsuarioAutenticadoService, useValue: usuarioAutenticadoServiceMock },
                     { provide: Router, useValue: routerMock }
                 ],
                 schemas: [NO_ERRORS_SCHEMA]
@@ -46,7 +46,7 @@ describe('UserComponent', () => {
     it('should logout and redirect to login', () => {
         component.logout();
 
-        expect(userServiceMock.logout).toHaveBeenCalled();
+        expect(usuarioAutenticadoServiceMock.logout).toHaveBeenCalled();
         expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
     });
 });

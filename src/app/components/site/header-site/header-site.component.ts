@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '@services/user/user.service';
+import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
 
 @Component({
     selector: 'app-header-site',
@@ -11,14 +11,14 @@ import { UserService } from '@services/user/user.service';
 export class HeaderSiteComponent {
 
   constructor(
-    private userService: UserService,
+    private usuarioAutenticadoService: UsuarioAutenticadoService,
     private router: Router
     ) {}
 
-  user$ = this.userService.retornarUser()
+  user$ = this.usuarioAutenticadoService.retornarUser()
 
   logout() {
-    this.userService.logout()
+    this.usuarioAutenticadoService.logout()
     this.router.navigate(["/"])
   }
 

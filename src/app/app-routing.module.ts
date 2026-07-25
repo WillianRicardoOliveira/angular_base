@@ -34,7 +34,7 @@ import {MainComponent} from '@modules/main/main.component';
 
 import {NonAuthGuard} from '@guards/non-auth.guard';
 
-import { AuthGuard } from '@guards/auth.guard';
+import { AutenticacaoGuard } from '@/core/autenticacao/guards/autenticacao.guard';
 
 import { LoginComponent } from '@modules/login/login.component';
 
@@ -66,7 +66,7 @@ const routes: Routes = [
         component: MainComponent,
         //component: HomeSiteComponent,
         //canActivate: [AuthGuard],
-        canActivateChild: [AuthGuard],
+        canActivateChild: [AutenticacaoGuard],
         children: [
 
             //{ path: ''                  , component: DashboardComponent },

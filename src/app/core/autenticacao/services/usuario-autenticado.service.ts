@@ -1,13 +1,13 @@
 import { PessoaUsuario } from '@/interfaces/interfaces';
 import { Injectable } from '@angular/core';
-import { TokenService } from '@services/token/token.service';
+import { TokenService } from '@/core/autenticacao/services/token.service';
 import { BehaviorSubject } from 'rxjs';
 import jwt_decode from 'jwt-decode'
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class UsuarioAutenticadoService {
 
   private userSubject = new BehaviorSubject<PessoaUsuario | null>(null)
 

@@ -2,7 +2,7 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { UserService } from '@services/user/user.service';
+import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
 import { environment } from 'environments/environment';
 import { Observable, tap } from 'rxjs';
 
@@ -19,7 +19,7 @@ export class BaseService {
   
   constructor(
     private http: HttpClient,
-    private userService: UserService
+    private usuarioAutenticadoService: UsuarioAutenticadoService
     ) {}
 
   login(endPoint: string, dados: any): Observable<HttpResponse<AuthResponse>> {
@@ -27,7 +27,7 @@ export class BaseService {
         .pipe(
           tap((response) => {
             const authtoken = response.body?.token || ""
-            this.userService.salvarToken(authtoken)
+            this.usuarioAutenticadoService.salvarToken(authtoken)
           })
         )
   }

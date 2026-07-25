@@ -38,7 +38,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 
 /* SECURITY */
-import { AutenticacaoInterceptor } from './interceptors/autenticacao.interceptor';
+import { AutenticacaoInterceptor } from './core/autenticacao/interceptors/autenticacao.interceptor';
 import { LoginComponent } from '@modules/login/login.component';
 
 /* APP */

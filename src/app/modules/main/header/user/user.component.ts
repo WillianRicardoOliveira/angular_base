@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '@services/user/user.service';
+import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
 
 @Component({
     selector: 'app-user',
@@ -22,12 +22,12 @@ export class UserComponent {
     }
 
     constructor(
-        private userService: UserService,
+        private usuarioAutenticadoService: UsuarioAutenticadoService,
         private router: Router
     ) { }
 
     logout() {
-        this.userService.logout();
+        this.usuarioAutenticadoService.logout();
         this.router.navigate(['/login']);
     }
 }

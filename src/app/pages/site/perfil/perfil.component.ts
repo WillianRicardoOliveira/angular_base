@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CadastroService } from '@services/site/cadastro/cadastro.service';
-import { UserService } from '@services/user/user.service';
+import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
 
 @Component({
     selector: 'app-perfil',
@@ -23,13 +23,13 @@ export class PerfilComponent implements OnInit {
   form: FormGroup | null
 
   constructor(
-    private userService: UserService,
+    private usuarioAutenticadoService: UsuarioAutenticadoService,
     private cadastroService: CadastroService,
     private router: Router
     ) {}
   
   ngOnInit(): void {
-    this.userService.retornarUser().subscribe(pessoa => {
+    this.usuarioAutenticadoService.retornarUser().subscribe(pessoa => {
       this.id = 1//pessoa.id
       this.cadastroService.detalhar(this.id).subscribe(cadastro => {
         this.cadastro = cadastro
@@ -97,7 +97,7 @@ export class PerfilComponent implements OnInit {
   }
 
   deslogar() {
-    this.userService.logout()
+    this.usuarioAutenticadoService.logout()
     this.router.navigate(["/"])
   }
 
