@@ -1,26 +1,46 @@
 import { Injectable } from '@angular/core';
 
-const KEY = 'token'
+const ACCESS_TOKEN_KEY = 'accessToken';
+const REFRESH_TOKEN_KEY = 'refreshToken';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class TokenService {
+    salvarToken(token: string): void {
+        localStorage.setItem(ACCESS_TOKEN_KEY, token);
+    }
 
-  salvarToken(token: string) {
-    return localStorage.setItem(KEY, token)
-  }
+    salvarRefreshToken(refreshToken: string): void {
+        localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+    }
 
-  excluirToken() {
-    localStorage.removeItem(KEY)
-  }
+    retornarToken(): string {
+        return localStorage.getItem(ACCESS_TOKEN_KEY) ?? '';
+    }
 
-  retornarToken() {
-    return localStorage.getItem(KEY) ?? ""
-  }
+    retornarRefreshToken(): string {
+        return localStorage.getItem(REFRESH_TOKEN_KEY) ?? '';
+    }
 
-  possuiToken() {
-    return !!this.retornarToken()
-  }
+    possuiToken(): boolean {
+        return !!this.retornarToken();
+    }
 
+    possuiRefreshToken(): boolean {
+        return !!this.retornarRefreshToken();
+    }
+
+    excluirToken(): void {
+        localStorage.removeItem(ACCESS_TOKEN_KEY);
+    }
+
+    excluirRefreshToken(): void {
+        localStorage.removeItem(REFRESH_TOKEN_KEY);
+    }
+
+    excluirTokens(): void {
+        this.excluirToken();
+        this.excluirRefreshToken();
+    }
 }

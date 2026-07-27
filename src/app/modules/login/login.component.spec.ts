@@ -10,7 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 import { of, throwError } from 'rxjs';
 
 import { LoginComponent } from './login.component';
-import { LoginService } from '@services/site/login/login.service';
+import { AutenticacaoService } from '@/core/autenticacao/services/autenticacao.service';
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
@@ -41,7 +41,7 @@ describe('LoginComponent', () => {
                 MatInputModule
             ],
             providers: [
-                { provide: LoginService, useValue: loginServiceMock },
+                { provide: AutenticacaoService, useValue: loginServiceMock },
                 { provide: Router, useValue: routerMock },
                 { provide: ToastrService, useValue: toastrMock }
             ]

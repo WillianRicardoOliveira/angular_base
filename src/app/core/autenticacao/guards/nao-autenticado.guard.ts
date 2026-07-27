@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 @Injectable({
     providedIn: 'root'
 })
-export class NonAuthGuard  {
+export class NaoAutenticadoGuard  {
     constructor(private router: Router) {}
 
     canActivate(

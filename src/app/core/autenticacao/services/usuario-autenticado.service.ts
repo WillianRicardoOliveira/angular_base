@@ -1,4 +1,5 @@
 import { PessoaUsuario } from '@/interfaces/interfaces';
+import { TokenJwt } from '@/core/autenticacao/models/token-jwt.model';
 import { Injectable } from '@angular/core';
 import { TokenService } from '@/core/autenticacao/services/token.service';
 import { BehaviorSubject } from 'rxjs';
@@ -31,14 +32,15 @@ export class UsuarioAutenticadoService {
     return this.tokenService.retornarToken()
   }
 
-  salvarToken(token: string) {
-    this.tokenService.salvarToken(token)
-    this.decodificarJWT()
+  salvarTokens(tokens: TokenJwt): void {
+    this.tokenService.salvarToken(tokens.token);
+    this.tokenService.salvarRefreshToken(tokens.refreshToken);
+    this.decodificarJWT();
   }
 
-  logout() {
-    this.tokenService.excluirToken()
-    this.userSubject.next(null)
+  logout(): void {
+    this.tokenService.excluirTokens();
+    this.userSubject.next(null);
   }
 
   estaLogado() {

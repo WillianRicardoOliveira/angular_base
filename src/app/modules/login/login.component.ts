@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoginService } from '@services/site/login/login.service';
+import { AutenticacaoService } from '@/core/autenticacao/services/autenticacao.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
 
@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit {
 
     constructor(
         private formBuilder: FormBuilder,
-        private service: LoginService,
+        private service: AutenticacaoService,
         private router: Router,
         private toastr: ToastrService
     ) {}

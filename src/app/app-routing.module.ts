@@ -32,7 +32,7 @@ import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 import {MainComponent} from '@modules/main/main.component';
 
-import {NonAuthGuard} from '@guards/non-auth.guard';
+import {NaoAutenticadoGuard} from '@/core/autenticacao/guards/nao-autenticado.guard';
 
 import { AutenticacaoGuard } from '@/core/autenticacao/guards/autenticacao.guard';
 
@@ -90,9 +90,9 @@ const routes: Routes = [
     //{ path: "perfil"    , component: PerfilComponent },
     //{ path: "site"      , component: HomeSiteComponent },
 
-    //{ path: 'register'          , component: RegisterComponent          , canActivate: [NonAuthGuard] },
-    //{ path: 'forgot-password'   , component: ForgotPasswordComponent    , canActivate: [NonAuthGuard] },
-    //{ path: 'recover-password'  , component: RecoverPasswordComponent   , canActivate: [NonAuthGuard] },
+    //{ path: 'register'          , component: RegisterComponent          , canActivate: [NaoAutenticadoGuard] },
+    //{ path: 'forgot-password'   , component: ForgotPasswordComponent    , canActivate: [NaoAutenticadoGuard] },
+    //{ path: 'recover-password'  , component: RecoverPasswordComponent   , canActivate: [NaoAutenticadoGuard] },
     { path: '**', redirectTo: '' }
 ];
 
