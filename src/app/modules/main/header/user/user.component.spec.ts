@@ -1,28 +1,50 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import {
+    ComponentFixture,
+    TestBed,
+    waitForAsync
+} from '@angular/core/testing';
 import { Router } from '@angular/router';
-import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
+import { of, throwError } from 'rxjs';
+
+import { AutenticacaoService } from '@/core/autenticacao/services/autenticacao.service';
 
 import { UserComponent } from './user.component';
 
 describe('UserComponent', () => {
     let component: UserComponent;
     let fixture: ComponentFixture<UserComponent>;
-    let usuarioAutenticadoServiceMock: jasmine.SpyObj<UsuarioAutenticadoService>;
-    let routerMock: jasmine.SpyObj<Router>;
+
+    let autenticacaoServiceMock:
+        jasmine.SpyObj<AutenticacaoService>;
+
+    let routerMock:
+        jasmine.SpyObj<Router>;
 
     beforeEach(
         waitForAsync(() => {
-            usuarioAutenticadoServiceMock = jasmine.createSpyObj<UsuarioAutenticadoService>('UsuarioAutenticadoService', [
-                'logout'
-            ]);
-            routerMock = jasmine.createSpyObj<Router>('Router', ['navigate']);
+            autenticacaoServiceMock =
+                jasmine.createSpyObj<AutenticacaoService>(
+                    'AutenticacaoService',
+                    ['logout']
+                );
+
+            routerMock = jasmine.createSpyObj<Router>(
+                'Router',
+                ['navigate']
+            );
 
             TestBed.configureTestingModule({
                 declarations: [UserComponent],
                 providers: [
-                    { provide: UsuarioAutenticadoService, useValue: usuarioAutenticadoServiceMock },
-                    { provide: Router, useValue: routerMock }
+                    {
+                        provide: AutenticacaoService,
+                        useValue: autenticacaoServiceMock
+                    },
+                    {
+                        provide: Router,
+                        useValue: routerMock
+                    }
                 ],
                 schemas: [NO_ERRORS_SCHEMA]
             }).compileComponents();
@@ -35,18 +57,43 @@ describe('UserComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it('deve ser criado', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should build initials from the user name', () => {
+    it('deve criar as iniciais do nome do usuário', () => {
         expect(component.userInitials).toBe('WO');
     });
 
-    it('should logout and redirect to login', () => {
+    it('deve executar logout e redirecionar para o login', () => {
+        autenticacaoServiceMock.logout.and.returnValue(
+            of(undefined)
+        );
+
         component.logout();
 
-        expect(usuarioAutenticadoServiceMock.logout).toHaveBeenCalled();
-        expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
+        expect(
+            autenticacaoServiceMock.logout
+        ).toHaveBeenCalled();
+
+        expect(
+            routerMock.navigate
+        ).toHaveBeenCalledOnceWith(['/login']);
+    });
+
+    it('deve redirecionar para o login quando o logout falhar', () => {
+        autenticacaoServiceMock.logout.and.returnValue(
+            throwError(() => new Error('Falha no logout'))
+        );
+
+        component.logout();
+
+        expect(
+            autenticacaoServiceMock.logout
+        ).toHaveBeenCalled();
+
+        expect(
+            routerMock.navigate
+        ).toHaveBeenCalledOnceWith(['/login']);
     });
 });

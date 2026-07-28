@@ -1,12 +1,22 @@
-import {Injectable} from '@angular/core';
-import { Route, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
-import {Observable} from 'rxjs';
+import { Injectable } from '@angular/core';
+import {
+    ActivatedRouteSnapshot,
+    Router,
+    RouterStateSnapshot,
+    UrlTree
+} from '@angular/router';
+import { Observable } from 'rxjs';
+
+import { TokenService } from '@/core/autenticacao/services/token.service';
 
 @Injectable({
     providedIn: 'root'
 })
-export class NaoAutenticadoGuard  {
-    constructor(private router: Router) {}
+export class NaoAutenticadoGuard {
+    constructor(
+        private router: Router,
+        private tokenService: TokenService
+    ) {}
 
     canActivate(
         next: ActivatedRouteSnapshot,
@@ -16,12 +26,14 @@ export class NaoAutenticadoGuard  {
         | Promise<boolean | UrlTree>
         | boolean
         | UrlTree {
-        if (!localStorage.getItem('token')) {
+        if (!this.tokenService.possuiToken()) {
             return true;
         }
+
         this.router.navigate(['/']);
         return false;
     }
+
     canActivateChild(
         next: ActivatedRouteSnapshot,
         state: RouterStateSnapshot

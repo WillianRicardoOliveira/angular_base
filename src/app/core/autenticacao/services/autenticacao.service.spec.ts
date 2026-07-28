@@ -26,7 +26,10 @@ describe('AutenticacaoService', () => {
         usuarioAutenticadoServiceMock =
             jasmine.createSpyObj<UsuarioAutenticadoService>(
                 'UsuarioAutenticadoService',
-                ['salvarTokens']
+                [
+                    'salvarTokens',
+                    'logout'
+                ]
             );
 
         tokenServiceMock =
@@ -124,5 +127,66 @@ describe('AutenticacaoService', () => {
         expect(
             usuarioAutenticadoServiceMock.salvarTokens
         ).toHaveBeenCalledOnceWith(novosTokens);
+    });
+
+    it('deve executar logout e limpar a sessão local', () => {
+        service.logout().subscribe((response) => {
+            expect(response).toBeNull();
+        });
+
+        const request = httpTestingController.expectOne(
+            `${environment.api}/login/logout`
+        );
+
+        expect(request.request.method).toBe('POST');
+        expect(request.request.body).toEqual({
+            refreshToken: 'refresh-token-atual'
+        });
+
+        request.flush(null);
+
+        expect(
+            tokenServiceMock.retornarRefreshToken
+        ).toHaveBeenCalled();
+
+        expect(
+            usuarioAutenticadoServiceMock.logout
+        ).toHaveBeenCalled();
+    });
+
+    it('deve limpar a sessão local mesmo quando o logout falhar', () => {
+        service.logout().subscribe({
+            next: () => {
+                fail('A requisição deveria falhar');
+            },
+            error: (erro) => {
+                expect(erro.status).toBe(401);
+            }
+        });
+
+        const request = httpTestingController.expectOne(
+            `${environment.api}/login/logout`
+        );
+
+        expect(request.request.method).toBe('POST');
+        expect(request.request.body).toEqual({
+            refreshToken: 'refresh-token-atual'
+        });
+
+        request.flush(
+            {
+                status: 401,
+                erro: 'REFRESH_TOKEN_INVALIDO',
+                mensagem: 'Refresh token inválido'
+            },
+            {
+                status: 401,
+                statusText: 'Unauthorized'
+            }
+        );
+
+        expect(
+            usuarioAutenticadoServiceMock.logout
+        ).toHaveBeenCalled();
     });
 });

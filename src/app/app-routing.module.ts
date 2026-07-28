@@ -85,7 +85,11 @@ const routes: Routes = [
     },
 
     
-    { path: "login"     , component: LoginComponent },
+    {
+        path: 'login',
+        component: LoginComponent,
+        canActivate: [NaoAutenticadoGuard]
+    },
     //{ path: "cadastro"  , component: CadastroComponent },
     //{ path: "perfil"    , component: PerfilComponent },
     //{ path: "site"      , component: HomeSiteComponent },

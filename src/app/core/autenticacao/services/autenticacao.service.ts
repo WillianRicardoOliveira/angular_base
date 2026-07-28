@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, tap } from 'rxjs';
-
+import { finalize, Observable, tap } from 'rxjs';
 import { Login } from '@/core/autenticacao/models/login.model';
 import { TokenJwt } from '@/core/autenticacao/models/token-jwt.model';
 import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
@@ -45,5 +44,19 @@ export class AutenticacaoService {
                   this.usuarioAutenticadoService.salvarTokens(tokens);
               })
           );
+    }
+
+    logout(): Observable<void> {
+        const dados: RefreshToken = {
+            refreshToken: this.tokenService.retornarRefreshToken()
+        };
+
+        return this.http
+            .post<void>(`${this.api}/login/logout`, dados)
+            .pipe(
+                finalize(() => {
+                    this.usuarioAutenticadoService.logout();
+                })
+            );
     }
 }

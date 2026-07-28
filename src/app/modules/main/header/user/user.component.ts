@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
+
+import { AutenticacaoService } from '@/core/autenticacao/services/autenticacao.service';
 
 @Component({
     selector: 'app-user',
@@ -12,6 +13,11 @@ export class UserComponent {
     readonly userName = 'Willian Oliveira';
     readonly userEmail = 'willian.oliveira@alta-brasil.com';
 
+    constructor(
+        private autenticacaoService: AutenticacaoService,
+        private router: Router
+    ) {}
+
     get userInitials(): string {
         return this.userName
             .split(' ')
@@ -21,13 +27,18 @@ export class UserComponent {
             .join('');
     }
 
-    constructor(
-        private usuarioAutenticadoService: UsuarioAutenticadoService,
-        private router: Router
-    ) { }
+    logout(): void {
+        this.autenticacaoService.logout().subscribe({
+            next: () => {
+                this.navegarParaLogin();
+            },
+            error: () => {
+                this.navegarParaLogin();
+            }
+        });
+    }
 
-    logout() {
-        this.usuarioAutenticadoService.logout();
+    private navegarParaLogin(): void {
         this.router.navigate(['/login']);
     }
 }
