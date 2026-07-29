@@ -6,14 +6,12 @@ import {
 } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
-import {
-    of,
-    Subject,
-    throwError
-} from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
+import { of, Subject, throwError } from 'rxjs';
 
 import { TokenJwt } from '@/core/autenticacao/models/token-jwt.model';
 import { AutenticacaoService } from '@/core/autenticacao/services/autenticacao.service';
+import { MensagemAutenticacaoService } from '@/core/autenticacao/services/mensagem-autenticacao.service';
 import { TokenService } from '@/core/autenticacao/services/token.service';
 import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
 import { environment } from 'environments/environment';
@@ -22,27 +20,25 @@ import { AutenticacaoInterceptor } from './autenticacao.interceptor';
 
 describe('AutenticacaoInterceptor', () => {
     let interceptor: AutenticacaoInterceptor;
-    let tokenServiceMock:
-        jasmine.SpyObj<TokenService>;
-    let autenticacaoServiceMock:
-        jasmine.SpyObj<AutenticacaoService>;
+    let tokenServiceMock: jasmine.SpyObj<TokenService>;
+    let autenticacaoServiceMock: jasmine.SpyObj<AutenticacaoService>;
     let usuarioAutenticadoServiceMock:
         jasmine.SpyObj<UsuarioAutenticadoService>;
-    let routerMock:
-        jasmine.SpyObj<Router>;
-    let httpHandlerMock:
-        jasmine.SpyObj<HttpHandler>;
+    let mensagemAutenticacaoServiceMock:
+        jasmine.SpyObj<MensagemAutenticacaoService>;
+    let toastrMock: jasmine.SpyObj<ToastrService>;
+    let routerMock: jasmine.SpyObj<Router>;
+    let httpHandlerMock: jasmine.SpyObj<HttpHandler>;
 
     beforeEach(() => {
-        tokenServiceMock =
-            jasmine.createSpyObj<TokenService>(
-                'TokenService',
-                [
-                    'possuiToken',
-                    'retornarToken',
-                    'possuiRefreshToken'
-                ]
-            );
+        tokenServiceMock = jasmine.createSpyObj<TokenService>(
+            'TokenService',
+            [
+                'possuiToken',
+                'retornarToken',
+                'possuiRefreshToken'
+            ]
+        );
 
         autenticacaoServiceMock =
             jasmine.createSpyObj<AutenticacaoService>(
@@ -56,6 +52,20 @@ describe('AutenticacaoInterceptor', () => {
                 ['logout']
             );
 
+        mensagemAutenticacaoServiceMock =
+            jasmine.createSpyObj<MensagemAutenticacaoService>(
+                'MensagemAutenticacaoService',
+                [
+                    'obterMensagemSessaoExpirada',
+                    'obterMensagemAcessoNegado'
+                ]
+            );
+
+        toastrMock = jasmine.createSpyObj<ToastrService>(
+            'ToastrService',
+            ['warning', 'error']
+        );
+
         routerMock = jasmine.createSpyObj<Router>(
             'Router',
             ['navigate']
@@ -66,31 +76,35 @@ describe('AutenticacaoInterceptor', () => {
             ['handle']
         );
 
-        const tokensRenovados: TokenJwt = {
-            token: 'novo-access-token',
-            refreshToken: 'novo-refresh-token'
-        };
-
         tokenServiceMock.possuiToken.and.returnValue(true);
-
         tokenServiceMock.retornarToken.and.returnValue(
             'access-token'
         );
-
         tokenServiceMock.possuiRefreshToken.and.returnValue(
             true
         );
 
         autenticacaoServiceMock.renovarToken.and.returnValue(
-            of(tokensRenovados)
+            of({
+                token: 'novo-access-token',
+                refreshToken: 'novo-refresh-token'
+            })
         );
 
+        mensagemAutenticacaoServiceMock
+            .obterMensagemSessaoExpirada
+            .and.returnValue(
+                'Sua sessão expirou. Entre novamente.'
+            );
+
+        mensagemAutenticacaoServiceMock
+            .obterMensagemAcessoNegado
+            .and.returnValue(
+                'Você não possui permissão para executar esta ação.'
+            );
+
         httpHandlerMock.handle.and.returnValue(
-            of(
-                new HttpResponse({
-                    status: 200
-                })
-            )
+            of(new HttpResponse({status: 200}))
         );
 
         TestBed.configureTestingModule({
@@ -109,6 +123,14 @@ describe('AutenticacaoInterceptor', () => {
                     useValue: usuarioAutenticadoServiceMock
                 },
                 {
+                    provide: MensagemAutenticacaoService,
+                    useValue: mensagemAutenticacaoServiceMock
+                },
+                {
+                    provide: ToastrService,
+                    useValue: toastrMock
+                },
+                {
                     provide: Router,
                     useValue: routerMock
                 }
@@ -125,24 +147,17 @@ describe('AutenticacaoInterceptor', () => {
     });
 
     it('deve adicionar bearer em requisição protegida da API', () => {
-        const request = new HttpRequest(
-            'GET',
-            `${environment.api}/perfil`
-        );
-
         interceptor
-            .intercept(request, httpHandlerMock)
+            .intercept(
+                criarRequestProtegida('/perfil'),
+                httpHandlerMock
+            )
             .subscribe();
 
-        const requestEncaminhada =
-            httpHandlerMock.handle.calls
-                .mostRecent()
-                .args[0] as HttpRequest<unknown>;
+        const request = obterRequestDaChamada(0);
 
         expect(
-            requestEncaminhada.headers.get(
-                'Authorization'
-            )
+            request.headers.get('Authorization')
         ).toBe('Bearer access-token');
 
         expect(
@@ -157,24 +172,17 @@ describe('AutenticacaoInterceptor', () => {
     it('não deve adicionar bearer quando não houver token', () => {
         tokenServiceMock.possuiToken.and.returnValue(false);
 
-        const request = new HttpRequest(
-            'GET',
-            `${environment.api}/perfil`
-        );
-
         interceptor
-            .intercept(request, httpHandlerMock)
+            .intercept(
+                criarRequestProtegida('/perfil'),
+                httpHandlerMock
+            )
             .subscribe();
 
-        const requestEncaminhada =
-            httpHandlerMock.handle.calls
-                .mostRecent()
-                .args[0] as HttpRequest<unknown>;
+        const request = obterRequestDaChamada(0);
 
         expect(
-            requestEncaminhada.headers.has(
-                'Authorization'
-            )
+            request.headers.has('Authorization')
         ).toBeFalse();
 
         expect(
@@ -199,20 +207,10 @@ describe('AutenticacaoInterceptor', () => {
                 .intercept(request, httpHandlerMock)
                 .subscribe();
 
-            const requestEncaminhada =
-                httpHandlerMock.handle.calls
-                    .mostRecent()
-                    .args[0] as HttpRequest<unknown>;
-
             expect(
-                requestEncaminhada.headers.has(
-                    'Authorization'
-                )
+                obterRequestDaChamada(0)
+                    .headers.has('Authorization')
             ).toBeFalse();
-
-            expect(
-                tokenServiceMock.retornarToken
-            ).not.toHaveBeenCalled();
 
             expect(
                 autenticacaoServiceMock.renovarToken
@@ -230,20 +228,10 @@ describe('AutenticacaoInterceptor', () => {
             .intercept(request, httpHandlerMock)
             .subscribe();
 
-        const requestEncaminhada =
-            httpHandlerMock.handle.calls
-                .mostRecent()
-                .args[0] as HttpRequest<unknown>;
-
         expect(
-            requestEncaminhada.headers.has(
-                'Authorization'
-            )
+            obterRequestDaChamada(0)
+                .headers.has('Authorization')
         ).toBeFalse();
-
-        expect(
-            tokenServiceMock.retornarToken
-        ).not.toHaveBeenCalled();
 
         expect(
             autenticacaoServiceMock.renovarToken
@@ -251,32 +239,21 @@ describe('AutenticacaoInterceptor', () => {
     });
 
     it('deve renovar o token e repetir a requisição após 401', () => {
-        const erro401 = new HttpErrorResponse({
-            status: 401,
-            statusText: 'Unauthorized',
-            url: `${environment.api}/perfil`
-        });
-
-        httpHandlerMock.handle.and.returnValues(
-            throwError(() => erro401),
-            of(
-                new HttpResponse({
-                    status: 200,
-                    body: {
-                        id: 1,
-                        nome: 'Administrador'
-                    }
-                })
-            )
-        );
-
-        const request = new HttpRequest(
-            'GET',
+        const erro401 = criarErroHttp(
+            401,
             `${environment.api}/perfil`
         );
 
+        httpHandlerMock.handle.and.returnValues(
+            throwError(() => erro401),
+            of(new HttpResponse({status: 200}))
+        );
+
         interceptor
-            .intercept(request, httpHandlerMock)
+            .intercept(
+                criarRequestProtegida('/perfil'),
+                httpHandlerMock
+            )
             .subscribe((response) => {
                 expect(response).toBeInstanceOf(
                     HttpResponse
@@ -291,18 +268,21 @@ describe('AutenticacaoInterceptor', () => {
             httpHandlerMock.handle
         ).toHaveBeenCalledTimes(2);
 
-        const requestRepetida =
-            httpHandlerMock.handle.calls
-                .argsFor(1)[0] as HttpRequest<unknown>;
-
         expect(
-            requestRepetida.headers.get(
-                'Authorization'
-            )
+            obterRequestDaChamada(1)
+                .headers.get('Authorization')
         ).toBe('Bearer novo-access-token');
 
         expect(
             usuarioAutenticadoServiceMock.logout
+        ).not.toHaveBeenCalled();
+
+        expect(
+            toastrMock.warning
+        ).not.toHaveBeenCalled();
+
+        expect(
+            toastrMock.error
         ).not.toHaveBeenCalled();
 
         expect(
@@ -311,22 +291,13 @@ describe('AutenticacaoInterceptor', () => {
     });
 
     it('deve encerrar a sessão quando o refresh for inválido', () => {
-        const erroAccessToken = new HttpErrorResponse({
-            status: 401,
-            statusText: 'Unauthorized',
-            url: `${environment.api}/perfil`
-        });
+        const erroAccessToken = criarErroHttp(
+            401,
+            `${environment.api}/perfil`
+        );
 
-        const erroRefreshToken = new HttpErrorResponse({
-            status: 401,
-            statusText: 'Unauthorized',
-            url: `${environment.api}/login/refresh`,
-            error: {
-                status: 401,
-                erro: 'REFRESH_TOKEN_INVALIDO',
-                mensagem: 'Refresh token inválido'
-            }
-        });
+        const erroRefreshToken =
+            criarErroRefreshInvalido();
 
         httpHandlerMock.handle.and.returnValue(
             throwError(() => erroAccessToken)
@@ -336,18 +307,14 @@ describe('AutenticacaoInterceptor', () => {
             throwError(() => erroRefreshToken)
         );
 
-        const request = new HttpRequest(
-            'GET',
-            `${environment.api}/perfil`
-        );
-
         interceptor
-            .intercept(request, httpHandlerMock)
+            .intercept(
+                criarRequestProtegida('/perfil'),
+                httpHandlerMock
+            )
             .subscribe({
                 next: () => {
-                    fail(
-                        'A requisição deveria falhar'
-                    );
+                    fail('A requisição deveria falhar');
                 },
                 error: (erro) => {
                     expect(erro).toBe(
@@ -356,29 +323,15 @@ describe('AutenticacaoInterceptor', () => {
                 }
             });
 
-        expect(
-            autenticacaoServiceMock.renovarToken
-        ).toHaveBeenCalledTimes(1);
-
-        expect(
-            httpHandlerMock.handle
-        ).toHaveBeenCalledTimes(1);
-
-        expect(
-            usuarioAutenticadoServiceMock.logout
-        ).toHaveBeenCalledTimes(1);
-
-        expect(
-            routerMock.navigate
-        ).toHaveBeenCalledOnceWith(['/login']);
+        expectEncerramentoUnico();
+        expect(toastrMock.error).not.toHaveBeenCalled();
     });
 
     it('deve encerrar a sessão quando não houver refresh token', () => {
-        const erro401 = new HttpErrorResponse({
-            status: 401,
-            statusText: 'Unauthorized',
-            url: `${environment.api}/perfil`
-        });
+        const erro401 = criarErroHttp(
+            401,
+            `${environment.api}/perfil`
+        );
 
         tokenServiceMock.possuiRefreshToken.and.returnValue(
             false
@@ -388,18 +341,14 @@ describe('AutenticacaoInterceptor', () => {
             throwError(() => erro401)
         );
 
-        const request = new HttpRequest(
-            'GET',
-            `${environment.api}/perfil`
-        );
-
         interceptor
-            .intercept(request, httpHandlerMock)
+            .intercept(
+                criarRequestProtegida('/perfil'),
+                httpHandlerMock
+            )
             .subscribe({
                 next: () => {
-                    fail(
-                        'A requisição deveria falhar'
-                    );
+                    fail('A requisição deveria falhar');
                 },
                 error: (erro) => {
                     expect(erro).toBe(erro401);
@@ -410,17 +359,8 @@ describe('AutenticacaoInterceptor', () => {
             autenticacaoServiceMock.renovarToken
         ).not.toHaveBeenCalled();
 
-        expect(
-            httpHandlerMock.handle
-        ).toHaveBeenCalledTimes(1);
-
-        expect(
-            usuarioAutenticadoServiceMock.logout
-        ).toHaveBeenCalledTimes(1);
-
-        expect(
-            routerMock.navigate
-        ).toHaveBeenCalledOnceWith(['/login']);
+        expectEncerramentoUnico();
+        expect(toastrMock.error).not.toHaveBeenCalled();
     });
 
     it('não deve renovar token nem encerrar sessão após 403', () => {
@@ -439,18 +379,14 @@ describe('AutenticacaoInterceptor', () => {
             throwError(() => erro403)
         );
 
-        const request = new HttpRequest(
-            'GET',
-            `${environment.api}/perfil`
-        );
-
         interceptor
-            .intercept(request, httpHandlerMock)
+            .intercept(
+                criarRequestProtegida('/perfil'),
+                httpHandlerMock
+            )
             .subscribe({
                 next: () => {
-                    fail(
-                        'A requisição deveria falhar'
-                    );
+                    fail('A requisição deveria falhar');
                 },
                 error: (erro) => {
                     expect(erro).toBe(erro403);
@@ -466,19 +402,30 @@ describe('AutenticacaoInterceptor', () => {
         ).not.toHaveBeenCalled();
 
         expect(
-            routerMock.navigate
+            mensagemAutenticacaoServiceMock
+                .obterMensagemAcessoNegado
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            toastrMock.error
+        ).toHaveBeenCalledOnceWith(
+            'Você não possui permissão para executar esta ação.'
+        );
+
+        expect(
+            toastrMock.warning
         ).not.toHaveBeenCalled();
 
         expect(
-            httpHandlerMock.handle
-        ).toHaveBeenCalledTimes(1);
+            routerMock.navigate
+        ).not.toHaveBeenCalled();
     });
 
     it('deve compartilhar um único refresh entre requisições simultâneas', () => {
-        const erro401 = new HttpErrorResponse({
-            status: 401,
-            statusText: 'Unauthorized'
-        });
+        const erro401 = criarErroHttp(
+            401,
+            `${environment.api}/recurso`
+        );
 
         const refreshSubject =
             new Subject<TokenJwt>();
@@ -496,33 +443,19 @@ describe('AutenticacaoInterceptor', () => {
                 return throwError(() => erro401);
             }
 
-            return of(
-                new HttpResponse({
-                    status: 200
-                })
-            );
+            return of(new HttpResponse({status: 200}));
         });
-
-        const primeiraRequest = new HttpRequest(
-            'GET',
-            `${environment.api}/perfil`
-        );
-
-        const segundaRequest = new HttpRequest(
-            'GET',
-            `${environment.api}/permissao`
-        );
 
         interceptor
             .intercept(
-                primeiraRequest,
+                criarRequestProtegida('/perfil'),
                 httpHandlerMock
             )
             .subscribe();
 
         interceptor
             .intercept(
-                segundaRequest,
+                criarRequestProtegida('/permissao'),
                 httpHandlerMock
             )
             .subscribe();
@@ -533,8 +466,7 @@ describe('AutenticacaoInterceptor', () => {
 
         refreshSubject.next({
             token: 'token-compartilhado',
-            refreshToken:
-                'novo-refresh-compartilhado'
+            refreshToken: 'refresh-compartilhado'
         });
 
         refreshSubject.complete();
@@ -543,24 +475,14 @@ describe('AutenticacaoInterceptor', () => {
             httpHandlerMock.handle
         ).toHaveBeenCalledTimes(4);
 
-        const primeiraRepeticao =
-            httpHandlerMock.handle.calls
-                .argsFor(2)[0] as HttpRequest<unknown>;
-
-        const segundaRepeticao =
-            httpHandlerMock.handle.calls
-                .argsFor(3)[0] as HttpRequest<unknown>;
-
         expect(
-            primeiraRepeticao.headers.get(
-                'Authorization'
-            )
+            obterRequestDaChamada(2)
+                .headers.get('Authorization')
         ).toBe('Bearer token-compartilhado');
 
         expect(
-            segundaRepeticao.headers.get(
-                'Authorization'
-            )
+            obterRequestDaChamada(3)
+                .headers.get('Authorization')
         ).toBe('Bearer token-compartilhado');
 
         expect(
@@ -568,7 +490,131 @@ describe('AutenticacaoInterceptor', () => {
         ).not.toHaveBeenCalled();
 
         expect(
+            toastrMock.warning
+        ).not.toHaveBeenCalled();
+
+        expect(
+            toastrMock.error
+        ).not.toHaveBeenCalled();
+
+        expect(
             routerMock.navigate
         ).not.toHaveBeenCalled();
     });
+
+    it('deve encerrar a sessão uma única vez quando o refresh compartilhado falhar', () => {
+        const erro401 = criarErroHttp(
+            401,
+            `${environment.api}/recurso`
+        );
+
+        const erroRefresh =
+            criarErroRefreshInvalido();
+
+        const refreshSubject =
+            new Subject<TokenJwt>();
+
+        autenticacaoServiceMock.renovarToken.and.returnValue(
+            refreshSubject.asObservable()
+        );
+
+        httpHandlerMock.handle.and.returnValue(
+            throwError(() => erro401)
+        );
+
+        interceptor
+            .intercept(
+                criarRequestProtegida('/perfil'),
+                httpHandlerMock
+            )
+            .subscribe({
+                error: (erro) => {
+                    expect(erro).toBe(erroRefresh);
+                }
+            });
+
+        interceptor
+            .intercept(
+                criarRequestProtegida('/permissao'),
+                httpHandlerMock
+            )
+            .subscribe({
+                error: (erro) => {
+                    expect(erro).toBe(erroRefresh);
+                }
+            });
+
+        expect(
+            autenticacaoServiceMock.renovarToken
+        ).toHaveBeenCalledTimes(1);
+
+        refreshSubject.error(erroRefresh);
+
+        expectEncerramentoUnico();
+    });
+
+    function criarRequestProtegida(
+        rota: string
+    ): HttpRequest<unknown> {
+        return new HttpRequest(
+            'GET',
+            `${environment.api}${rota}`
+        );
+    }
+
+    function criarErroHttp(
+        status: number,
+        url: string
+    ): HttpErrorResponse {
+        return new HttpErrorResponse({
+            status,
+            statusText:
+                status === 401
+                    ? 'Unauthorized'
+                    : 'Erro',
+            url
+        });
+    }
+
+    function criarErroRefreshInvalido():
+        HttpErrorResponse {
+        return new HttpErrorResponse({
+            status: 401,
+            statusText: 'Unauthorized',
+            url: `${environment.api}/login/refresh`,
+            error: {
+                status: 401,
+                erro: 'REFRESH_TOKEN_INVALIDO',
+                mensagem: 'Refresh token inválido'
+            }
+        });
+    }
+
+    function obterRequestDaChamada(
+        indice: number
+    ): HttpRequest<unknown> {
+        return httpHandlerMock.handle.calls
+            .argsFor(indice)[0] as HttpRequest<unknown>;
+    }
+
+    function expectEncerramentoUnico(): void {
+        expect(
+            usuarioAutenticadoServiceMock.logout
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            mensagemAutenticacaoServiceMock
+                .obterMensagemSessaoExpirada
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            toastrMock.warning
+        ).toHaveBeenCalledOnceWith(
+            'Sua sessão expirou. Entre novamente.'
+        );
+
+        expect(
+            routerMock.navigate
+        ).toHaveBeenCalledOnceWith(['/login']);
+    }
 });

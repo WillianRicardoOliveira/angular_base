@@ -1,12 +1,14 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { finalize, Observable, tap } from 'rxjs';
-import { Login } from '@/core/autenticacao/models/login.model';
-import { TokenJwt } from '@/core/autenticacao/models/token-jwt.model';
-import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
-import { environment } from 'environments/environment';
-import { RefreshToken } from '@/core/autenticacao/models/refresh-token.model';
-import { TokenService } from '@/core/autenticacao/services/token.service';
+import {HttpClient} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {finalize, Observable, tap} from 'rxjs';
+
+import {Login} from '@/core/autenticacao/models/login.model';
+import {RefreshToken} from '@/core/autenticacao/models/refresh-token.model';
+import {SsoLogin} from '@/core/autenticacao/models/sso-login.model';
+import {TokenJwt} from '@/core/autenticacao/models/token-jwt.model';
+import {TokenService} from '@/core/autenticacao/services/token.service';
+import {UsuarioAutenticadoService} from '@/core/autenticacao/services/usuario-autenticado.service';
+import {environment} from 'environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -32,18 +34,30 @@ export class AutenticacaoService {
             );
     }
 
-    renovarToken(): Observable<TokenJwt> {
-      const dados: RefreshToken = {
-          refreshToken: this.tokenService.retornarRefreshToken()
-      };
+    loginSso(token: string): Observable<TokenJwt> {
+        const dados: SsoLogin = {token};
 
-      return this.http
-          .post<TokenJwt>(`${this.api}/login/refresh`, dados)
-          .pipe(
-              tap((tokens) => {
-                  this.usuarioAutenticadoService.salvarTokens(tokens);
-              })
-          );
+        return this.http
+            .post<TokenJwt>(`${this.api}/login/sso`, dados)
+            .pipe(
+                tap((tokens) => {
+                    this.usuarioAutenticadoService.salvarTokens(tokens);
+                })
+            );
+    }
+
+    renovarToken(): Observable<TokenJwt> {
+        const dados: RefreshToken = {
+            refreshToken: this.tokenService.retornarRefreshToken()
+        };
+
+        return this.http
+            .post<TokenJwt>(`${this.api}/login/refresh`, dados)
+            .pipe(
+                tap((tokens) => {
+                    this.usuarioAutenticadoService.salvarTokens(tokens);
+                })
+            );
     }
 
     logout(): Observable<void> {

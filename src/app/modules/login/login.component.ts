@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
     FormBuilder,
     FormGroup,
     Validators
 } from '@angular/forms';
-import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
-import { finalize } from 'rxjs';
+import {Router} from '@angular/router';
+import {ToastrService} from 'ngx-toastr';
+import {finalize, switchMap} from 'rxjs';
 
-import { AutenticacaoService } from '@/core/autenticacao/services/autenticacao.service';
-import { MensagemAutenticacaoService } from '@/core/autenticacao/services/mensagem-autenticacao.service';
+import {AutenticacaoService} from '@/core/autenticacao/services/autenticacao.service';
+import {MensagemAutenticacaoService} from '@/core/autenticacao/services/mensagem-autenticacao.service';
+import {MicrosoftSsoService} from '@/core/autenticacao/services/microsoft-sso.service';
 
 @Component({
     selector: 'app-login',
@@ -25,6 +26,7 @@ export class LoginComponent implements OnInit {
     constructor(
         private formBuilder: FormBuilder,
         private service: AutenticacaoService,
+        private microsoftSsoService: MicrosoftSsoService,
         private router: Router,
         private toastr: ToastrService,
         private mensagemAutenticacaoService:
@@ -96,8 +98,33 @@ export class LoginComponent implements OnInit {
     }
 
     loginWithMicrosoft(): void {
-        this.toastr.info(
-            'Acesso com Microsoft ainda não configurado.'
-        );
+        if (this.isAuthLoading) {
+            return;
+        }
+
+        this.isAuthLoading = true;
+
+        this.microsoftSsoService
+            .login()
+            .pipe(
+                switchMap((tokenMicrosoft) =>
+                    this.service.loginSso(tokenMicrosoft)
+                ),
+                finalize(() => {
+                    this.isAuthLoading = false;
+                })
+            )
+            .subscribe({
+                next: () => {
+                    this.router.navigateByUrl('/');
+                },
+                error: (erro: unknown) => {
+                    const mensagem =
+                        this.mensagemAutenticacaoService
+                            .obterMensagemSso(erro);
+
+                    this.toastr.error(mensagem);
+                }
+            });
     }
 }

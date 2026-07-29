@@ -10,6 +10,7 @@ import {
     Injector
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import {
     catchError,
     finalize,
@@ -21,17 +22,25 @@ import {
 
 import { TokenJwt } from '@/core/autenticacao/models/token-jwt.model';
 import { AutenticacaoService } from '@/core/autenticacao/services/autenticacao.service';
+import { MensagemAutenticacaoService } from '@/core/autenticacao/services/mensagem-autenticacao.service';
 import { TokenService } from '@/core/autenticacao/services/token.service';
 import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
 import { environment } from 'environments/environment';
 
 @Injectable()
 export class AutenticacaoInterceptor implements HttpInterceptor {
-    private refreshEmAndamento$: Observable<TokenJwt> | null = null;
+    private refreshEmAndamento$:
+        Observable<TokenJwt> | null = null;
+
+    private sessaoEncerrada = false;
 
     constructor(
         private tokenService: TokenService,
-        private usuarioAutenticadoService: UsuarioAutenticadoService,
+        private usuarioAutenticadoService:
+            UsuarioAutenticadoService,
+        private mensagemAutenticacaoService:
+            MensagemAutenticacaoService,
+        private toastr: ToastrService,
         private router: Router,
         private injector: Injector
     ) {}
@@ -49,12 +58,22 @@ export class AutenticacaoInterceptor implements HttpInterceptor {
 
         return next.handle(requestPreparada).pipe(
             catchError((erro: unknown) => {
+                if (this.ehErroAcessoNegado(erro)) {
+                    this.notificarAcessoNegado();
+
+                    return throwError(() => erro);
+                }
+
                 if (!this.ehErroNaoAutenticado(erro)) {
                     return throwError(() => erro);
                 }
 
-                if (!this.tokenService.possuiRefreshToken()) {
+                if (
+                    !this.tokenService
+                        .possuiRefreshToken()
+                ) {
                     this.encerrarSessaoLocal();
+
                     return throwError(() => erro);
                 }
 
@@ -73,11 +92,15 @@ export class AutenticacaoInterceptor implements HttpInterceptor {
             environment.api
         );
 
-        const pertenceAutenticacao = request.url.startsWith(
-            `${environment.api}/login`
-        );
+        const pertenceAutenticacao =
+            request.url.startsWith(
+                `${environment.api}/login`
+            );
 
-        return pertenceApi && !pertenceAutenticacao;
+        return (
+            pertenceApi &&
+            !pertenceAutenticacao
+        );
     }
 
     private adicionarTokenSeDisponivel(
@@ -86,6 +109,8 @@ export class AutenticacaoInterceptor implements HttpInterceptor {
         if (!this.tokenService.possuiToken()) {
             return request;
         }
+
+        this.sessaoEncerrada = false;
 
         return this.adicionarToken(
             request,
@@ -113,49 +138,86 @@ export class AutenticacaoInterceptor implements HttpInterceptor {
         );
     }
 
+    private ehErroAcessoNegado(
+        erro: unknown
+    ): erro is HttpErrorResponse {
+        return (
+            erro instanceof HttpErrorResponse &&
+            erro.status === 403
+        );
+    }
+
     private renovarERepetir(
         request: HttpRequest<unknown>,
         next: HttpHandler
     ): Observable<HttpEvent<unknown>> {
         return this.obterRefreshCompartilhado().pipe(
             switchMap((tokens) => {
-                const requestRenovada = this.adicionarToken(
-                    request,
-                    tokens.token
-                );
+                const requestRenovada =
+                    this.adicionarToken(
+                        request,
+                        tokens.token
+                    );
 
-                return next.handle(requestRenovada);
+                return next.handle(
+                    requestRenovada
+                );
             }),
             catchError((erro: unknown) => {
                 this.encerrarSessaoLocal();
+
                 return throwError(() => erro);
             })
         );
     }
 
-    private obterRefreshCompartilhado(): Observable<TokenJwt> {
+    private obterRefreshCompartilhado():
+        Observable<TokenJwt> {
         if (!this.refreshEmAndamento$) {
-            const autenticacaoService = this.injector.get(
-                AutenticacaoService
-            );
+            const autenticacaoService =
+                this.injector.get(
+                    AutenticacaoService
+                );
 
             this.refreshEmAndamento$ =
-                autenticacaoService.renovarToken().pipe(
-                    finalize(() => {
-                        this.refreshEmAndamento$ = null;
-                    }),
-                    shareReplay({
-                        bufferSize: 1,
-                        refCount: false
-                    })
-                );
+                autenticacaoService
+                    .renovarToken()
+                    .pipe(
+                        finalize(() => {
+                            this.refreshEmAndamento$ =
+                                null;
+                        }),
+                        shareReplay({
+                            bufferSize: 1,
+                            refCount: false
+                        })
+                    );
         }
 
         return this.refreshEmAndamento$;
     }
 
     private encerrarSessaoLocal(): void {
+        if (this.sessaoEncerrada) {
+            return;
+        }
+
+        this.sessaoEncerrada = true;
+
         this.usuarioAutenticadoService.logout();
+
+        this.toastr.warning(
+            this.mensagemAutenticacaoService
+                .obterMensagemSessaoExpirada()
+        );
+
         this.router.navigate(['/login']);
+    }
+
+    private notificarAcessoNegado(): void {
+        this.toastr.error(
+            this.mensagemAutenticacaoService
+                .obterMensagemAcessoNegado()
+        );
     }
 }

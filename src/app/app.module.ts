@@ -3,7 +3,12 @@ import { CommonModule, CurrencyPipe, registerLocaleData } from '@angular/common'
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import localePt from '@angular/common/locales/pt';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, LOCALE_ID } from '@angular/core';
+import {
+    inject,
+    LOCALE_ID,
+    NgModule,
+    provideAppInitializer
+} from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -11,10 +16,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { NgChartsModule } from 'ng2-charts';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
+import {
+    MSAL_INSTANCE,
+    MsalService
+} from '@azure/msal-angular';
 
 /* STORE */
 import { StoreModule } from '@ngrx/store';
-import { authReducer } from './store/auth/reducer';
 import { uiReducer } from './store/ui/reducer';
 
 /* ANGULAR MATERIAL */
@@ -40,6 +48,9 @@ import { MatSelectModule } from '@angular/material/select';
 /* SECURITY */
 import { AutenticacaoInterceptor } from './core/autenticacao/interceptors/autenticacao.interceptor';
 import { LoginComponent } from '@modules/login/login.component';
+import {
+    criarInstanciaMsal
+} from '@/core/autenticacao/configuracoes/msal.config';
 
 /* APP */
 import { AppRoutingModule } from '@/app-routing.module';
@@ -215,7 +226,9 @@ registerLocaleData(localePt);
         NgChartsModule,
 
         /* STORE */
-        StoreModule.forRoot({ auth: authReducer, ui: uiReducer }),
+        StoreModule.forRoot({
+            ui: uiReducer
+        }),
 
         /* ANGULAR MATERIAL */
         MatToolbarModule,
@@ -260,11 +273,24 @@ registerLocaleData(localePt);
         /* COMPONENTE OUTROS */
     ],
     providers: [
-        { provide: LOCALE_ID, useValue: 'pt-BR' },
+        {
+            provide: LOCALE_ID,
+            useValue: 'pt-BR'
+        },
+        {
+            provide: MSAL_INSTANCE,
+            useFactory: criarInstanciaMsal
+        },
+        provideAppInitializer(() => {
+            const instanciaMsal = inject(MSAL_INSTANCE);
+
+            return instanciaMsal.initialize();
+        }),
+        MsalService,
         {
             provide: HTTP_INTERCEPTORS,
             multi: true,
-            useClass: AutenticacaoInterceptor,
+            useClass: AutenticacaoInterceptor
         },
         provideNgxMask(),
         provideHttpClient(withInterceptorsFromDi())

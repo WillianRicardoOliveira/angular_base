@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {Router} from '@angular/router';
 import {ToastrService} from 'ngx-toastr';
 
 @Injectable({
@@ -8,10 +7,10 @@ import {ToastrService} from 'ngx-toastr';
 export class AppService {
     public user: any = null;
 
-    constructor(private router: Router, private toastr: ToastrService) {}
+    constructor(private toastr: ToastrService) {}
 
     async loginByAuth({email, password}) {
-    this.toastr.error('Login legado desativado.');
+        this.toastr.error('Login legado desativado.');
     }
 
     async registerByAuth({email, password}) {
@@ -36,11 +35,5 @@ export class AppService {
 
     async getProfile() {
         return this.user;
-    }
-
-    logout() {
-        localStorage.removeItem('token');
-        this.user = null;
-        this.router.navigate(['/login']);
     }
 }

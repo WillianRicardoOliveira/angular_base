@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ToastrService} from 'ngx-toastr';
-import {AppService} from '@services/app.service';
 
 @Component({
     selector: 'app-recover-password',
@@ -23,8 +22,7 @@ export class RecoverPasswordComponent implements OnInit, OnDestroy {
 
     constructor(
         private renderer: Renderer2,
-        private toastr: ToastrService,
-        private appService: AppService
+        private toastr: ToastrService
     ) {}
 
     ngOnInit(): void {
@@ -32,6 +30,7 @@ export class RecoverPasswordComponent implements OnInit, OnDestroy {
             document.querySelector('app-root'),
             'login-page'
         );
+
         this.recoverPasswordForm = new UntypedFormGroup({
             password: new UntypedFormControl(null, Validators.required),
             confirmPassword: new UntypedFormControl(null, Validators.required)

@@ -326,9 +326,20 @@
     font-size: 25px;
 }
 
-.microsoft-button:hover {
+.microsoft-button:not(:disabled):hover {
     border-color: #bfc8cf;
     background: #f8faf9;
+}
+
+.microsoft-button:disabled {
+    border-color: #e1e4e8;
+    color: #8a8f94;
+    background: #f4f5f6;
+    cursor: not-allowed;
+}
+
+.microsoft-button:disabled i {
+    color: #8a8f94;
 }
 
 .login-card__help {

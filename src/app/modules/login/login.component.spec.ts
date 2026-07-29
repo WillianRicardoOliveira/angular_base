@@ -2,29 +2,26 @@ import {
     ComponentFixture,
     TestBed
 } from '@angular/core/testing';
-import {
-    ReactiveFormsModule
-} from '@angular/forms';
-import { Router } from '@angular/router';
+import {ReactiveFormsModule} from '@angular/forms';
+import {Router} from '@angular/router';
 import {
     NoopAnimationsModule
 } from '@angular/platform-browser/animations';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import {
-    MatFormFieldModule
-} from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { ToastrService } from 'ngx-toastr';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {ToastrService} from 'ngx-toastr';
 import {
     of,
     throwError
 } from 'rxjs';
 
-import { AutenticacaoService } from '@/core/autenticacao/services/autenticacao.service';
-import { MensagemAutenticacaoService } from '@/core/autenticacao/services/mensagem-autenticacao.service';
+import {AutenticacaoService} from '@/core/autenticacao/services/autenticacao.service';
+import {MensagemAutenticacaoService} from '@/core/autenticacao/services/mensagem-autenticacao.service';
+import {MicrosoftSsoService} from '@/core/autenticacao/services/microsoft-sso.service';
 
-import { LoginComponent } from './login.component';
+import {LoginComponent} from './login.component';
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
@@ -33,12 +30,26 @@ describe('LoginComponent', () => {
     const autenticacaoServiceMock = {
         login: jasmine
             .createSpy('login')
+            .and.returnValue(of({})),
+        loginSso: jasmine
+            .createSpy('loginSso')
             .and.returnValue(of({}))
+    };
+
+    const microsoftSsoServiceMock = {
+        login: jasmine
+            .createSpy('login')
+            .and.returnValue(
+                of('access-token-microsoft')
+            )
     };
 
     const mensagemAutenticacaoServiceMock = {
         obterMensagemLogin: jasmine.createSpy(
             'obterMensagemLogin'
+        ),
+        obterMensagemSso: jasmine.createSpy(
+            'obterMensagemSso'
         )
     };
 
@@ -61,6 +72,12 @@ describe('LoginComponent', () => {
                 'Verifique suas credenciais.'
             );
 
+        mensagemAutenticacaoServiceMock
+            .obterMensagemSso
+            .and.returnValue(
+                'Não foi possível acessar com a Microsoft.'
+            );
+
         await TestBed.configureTestingModule({
             declarations: [
                 LoginComponent
@@ -79,10 +96,12 @@ describe('LoginComponent', () => {
                     useValue: autenticacaoServiceMock
                 },
                 {
-                    provide:
-                        MensagemAutenticacaoService,
-                    useValue:
-                        mensagemAutenticacaoServiceMock
+                    provide: MicrosoftSsoService,
+                    useValue: microsoftSsoServiceMock
+                },
+                {
+                    provide: MensagemAutenticacaoService,
+                    useValue: mensagemAutenticacaoServiceMock
                 },
                 {
                     provide: Router,
@@ -106,9 +125,18 @@ describe('LoginComponent', () => {
 
     afterEach(() => {
         autenticacaoServiceMock.login.calls.reset();
-
         autenticacaoServiceMock.login.and.returnValue(
             of({})
+        );
+
+        autenticacaoServiceMock.loginSso.calls.reset();
+        autenticacaoServiceMock.loginSso.and.returnValue(
+            of({})
+        );
+
+        microsoftSsoServiceMock.login.calls.reset();
+        microsoftSsoServiceMock.login.and.returnValue(
+            of('access-token-microsoft')
         );
 
         mensagemAutenticacaoServiceMock
@@ -120,6 +148,16 @@ describe('LoginComponent', () => {
             .and.returnValue(
                 'Não foi possível acessar o sistema. ' +
                 'Verifique suas credenciais.'
+            );
+
+        mensagemAutenticacaoServiceMock
+            .obterMensagemSso
+            .calls.reset();
+
+        mensagemAutenticacaoServiceMock
+            .obterMensagemSso
+            .and.returnValue(
+                'Não foi possível acessar com a Microsoft.'
             );
 
         routerMock.navigateByUrl.calls.reset();
@@ -309,13 +347,129 @@ describe('LoginComponent', () => {
         );
     });
 
-    it('deve informar quando o login Microsoft não estiver configurado', () => {
+    it('deve autenticar pela Microsoft e redirecionar', () => {
         component.loginWithMicrosoft();
 
         expect(
-            toastrMock.info
+            microsoftSsoServiceMock.login
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            autenticacaoServiceMock.loginSso
         ).toHaveBeenCalledOnceWith(
-            'Acesso com Microsoft ainda não configurado.'
+            'access-token-microsoft'
         );
+
+        expect(
+            routerMock.navigateByUrl
+        ).toHaveBeenCalledOnceWith('/');
+    });
+
+    it('não deve iniciar outro login Microsoft enquanto houver autenticação em andamento', () => {
+        component.isAuthLoading = true;
+
+        component.loginWithMicrosoft();
+
+        expect(
+            microsoftSsoServiceMock.login
+        ).not.toHaveBeenCalled();
+
+        expect(
+            autenticacaoServiceMock.loginSso
+        ).not.toHaveBeenCalled();
+
+        expect(
+            routerMock.navigateByUrl
+        ).not.toHaveBeenCalled();
+    });
+
+    it('deve tratar erro ao autenticar com a Microsoft', () => {
+        const erroMicrosoft = new Error(
+            'Falha interna do provedor'
+        );
+
+        microsoftSsoServiceMock.login.and.returnValue(
+            throwError(() => erroMicrosoft)
+        );
+
+        mensagemAutenticacaoServiceMock
+            .obterMensagemSso
+            .and.returnValue(
+                'Não foi possível acessar com a Microsoft.'
+            );
+
+        component.loginWithMicrosoft();
+
+        expect(
+            autenticacaoServiceMock.loginSso
+        ).not.toHaveBeenCalled();
+
+        expect(
+            mensagemAutenticacaoServiceMock
+                .obterMensagemSso
+        ).toHaveBeenCalledOnceWith(erroMicrosoft);
+
+        expect(
+            toastrMock.error
+        ).toHaveBeenCalledOnceWith(
+            'Não foi possível acessar com a Microsoft.'
+        );
+
+        expect(component.isAuthLoading).toBeFalse();
+
+        expect(
+            routerMock.navigateByUrl
+        ).not.toHaveBeenCalled();
+    });
+
+    it('deve tratar token SSO rejeitado pelo backend', () => {
+        const erroBackend = {
+            status: 401,
+            error: {
+                status: 401,
+                erro: 'SSO_INVALIDO',
+                mensagem:
+                    'Detalhe interno que não deve ser exibido'
+            }
+        };
+
+        autenticacaoServiceMock.loginSso.and.returnValue(
+            throwError(() => erroBackend)
+        );
+
+        mensagemAutenticacaoServiceMock
+            .obterMensagemSso
+            .and.returnValue(
+                'Não foi possível validar o acesso corporativo.'
+            );
+
+        component.loginWithMicrosoft();
+
+        expect(
+            microsoftSsoServiceMock.login
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            autenticacaoServiceMock.loginSso
+        ).toHaveBeenCalledOnceWith(
+            'access-token-microsoft'
+        );
+
+        expect(
+            mensagemAutenticacaoServiceMock
+                .obterMensagemSso
+        ).toHaveBeenCalledOnceWith(erroBackend);
+
+        expect(
+            toastrMock.error
+        ).toHaveBeenCalledOnceWith(
+            'Não foi possível validar o acesso corporativo.'
+        );
+
+        expect(component.isAuthLoading).toBeFalse();
+
+        expect(
+            routerMock.navigateByUrl
+        ).not.toHaveBeenCalled();
     });
 });

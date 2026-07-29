@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import {UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
 import {ToastrService} from 'ngx-toastr';
-import {AppService} from '@services/app.service';
 
 @Component({
     selector: 'app-forgot-password',
@@ -17,13 +16,13 @@ import {AppService} from '@services/app.service';
 })
 export class ForgotPasswordComponent implements OnInit, OnDestroy {
     @HostBinding('class') class = 'login-box';
+
     public forgotPasswordForm: UntypedFormGroup;
     public isAuthLoading = false;
 
     constructor(
         private renderer: Renderer2,
-        private toastr: ToastrService,
-        private appService: AppService
+        private toastr: ToastrService
     ) {}
 
     ngOnInit(): void {
@@ -31,6 +30,7 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
             document.querySelector('app-root'),
             'login-page'
         );
+
         this.forgotPasswordForm = new UntypedFormGroup({
             email: new UntypedFormControl(null, Validators.required)
         });

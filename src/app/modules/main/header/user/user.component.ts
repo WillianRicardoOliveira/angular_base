@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import {Component} from '@angular/core';
+import {Router} from '@angular/router';
 
-import { AutenticacaoService } from '@/core/autenticacao/services/autenticacao.service';
+import {AutenticacaoService} from '@/core/autenticacao/services/autenticacao.service';
+import {MicrosoftSsoService} from '@/core/autenticacao/services/microsoft-sso.service';
 
 @Component({
     selector: 'app-user',
@@ -15,6 +16,7 @@ export class UserComponent {
 
     constructor(
         private autenticacaoService: AutenticacaoService,
+        private microsoftSsoService: MicrosoftSsoService,
         private router: Router
     ) {}
 
@@ -23,22 +25,32 @@ export class UserComponent {
             .split(' ')
             .filter(Boolean)
             .slice(0, 2)
-            .map((name) => name.charAt(0).toUpperCase())
+            .map((name) =>
+                name.charAt(0).toUpperCase()
+            )
             .join('');
     }
 
     logout(): void {
         this.autenticacaoService.logout().subscribe({
             next: () => {
-                this.navegarParaLogin();
+                void this.finalizarLogout();
             },
             error: () => {
-                this.navegarParaLogin();
+                void this.finalizarLogout();
             }
         });
     }
 
-    private navegarParaLogin(): void {
+    private async finalizarLogout(): Promise<void> {
+        try {
+            await this.microsoftSsoService
+                .limparCacheLocal();
+        } catch {
+            // A sessão interna já foi encerrada.
+            // Uma falha no cache MSAL não deve impedir a saída.
+        }
+
         this.router.navigate(['/login']);
     }
 }

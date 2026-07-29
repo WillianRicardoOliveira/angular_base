@@ -1,16 +1,16 @@
-import { provideHttpClient } from '@angular/common/http';
+import {provideHttpClient} from '@angular/common/http';
 import {
     HttpTestingController,
     provideHttpClientTesting
 } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { TokenJwt } from '@/core/autenticacao/models/token-jwt.model';
-import { TokenService } from '@/core/autenticacao/services/token.service';
-import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
-import { environment } from 'environments/environment';
+import {TokenJwt} from '@/core/autenticacao/models/token-jwt.model';
+import {TokenService} from '@/core/autenticacao/services/token.service';
+import {UsuarioAutenticadoService} from '@/core/autenticacao/services/usuario-autenticado.service';
+import {environment} from 'environments/environment';
 
-import { AutenticacaoService } from './autenticacao.service';
+import {AutenticacaoService} from './autenticacao.service';
 
 describe('AutenticacaoService', () => {
     let service: AutenticacaoService;
@@ -90,6 +90,34 @@ describe('AutenticacaoService', () => {
         expect(request.request.body).toEqual({
             email: 'usuario@empresa.com',
             senha: 'senha'
+        });
+
+        request.flush(tokens);
+
+        expect(
+            usuarioAutenticadoServiceMock.salvarTokens
+        ).toHaveBeenCalledOnceWith(tokens);
+    });
+
+    it('deve autenticar por SSO e salvar os tokens recebidos', () => {
+        const tokens: TokenJwt = {
+            token: 'access-token-sso',
+            refreshToken: 'refresh-token-sso'
+        };
+
+        service
+            .loginSso('token-do-provedor-sso')
+            .subscribe((response) => {
+                expect(response).toEqual(tokens);
+            });
+
+        const request = httpTestingController.expectOne(
+            `${environment.api}/login/sso`
+        );
+
+        expect(request.request.method).toBe('POST');
+        expect(request.request.body).toEqual({
+            token: 'token-do-provedor-sso'
         });
 
         request.flush(tokens);
