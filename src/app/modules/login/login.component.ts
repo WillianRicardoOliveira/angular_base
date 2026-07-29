@@ -1,9 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+    FormBuilder,
+    FormGroup,
+    Validators
+} from '@angular/forms';
 import { Router } from '@angular/router';
-import { AutenticacaoService } from '@/core/autenticacao/services/autenticacao.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs';
+
+import { AutenticacaoService } from '@/core/autenticacao/services/autenticacao.service';
+import { MensagemAutenticacaoService } from '@/core/autenticacao/services/mensagem-autenticacao.service';
 
 @Component({
     selector: 'app-login',
@@ -20,23 +26,40 @@ export class LoginComponent implements OnInit {
         private formBuilder: FormBuilder,
         private service: AutenticacaoService,
         private router: Router,
-        private toastr: ToastrService
+        private toastr: ToastrService,
+        private mensagemAutenticacaoService:
+            MensagemAutenticacaoService
     ) {}
 
     ngOnInit(): void {
         this.loginForm = this.formBuilder.group({
-            email: [null, [Validators.required, Validators.email]],
-            senha: [null, Validators.required]
+            email: [
+                null,
+                [
+                    Validators.required,
+                    Validators.email
+                ]
+            ],
+            senha: [
+                null,
+                Validators.required
+            ]
         });
     }
 
     login(): void {
-        if (this.loginForm.invalid || this.isAuthLoading) {
+        if (
+            this.loginForm.invalid ||
+            this.isAuthLoading
+        ) {
             this.loginForm.markAllAsTouched();
             return;
         }
 
-        const { email, senha } = this.loginForm.getRawValue();
+        const {
+            email,
+            senha
+        } = this.loginForm.getRawValue();
 
         this.isAuthLoading = true;
 
@@ -51,16 +74,19 @@ export class LoginComponent implements OnInit {
                 next: () => {
                     this.router.navigateByUrl('/');
                 },
-                error: () => {
-                    this.toastr.error(
-                        'Não foi possível acessar o sistema. Verifique suas credenciais.'
-                    );
+                error: (erro: unknown) => {
+                    const mensagem =
+                        this.mensagemAutenticacaoService
+                            .obterMensagemLogin(erro);
+
+                    this.toastr.error(mensagem);
                 }
             });
     }
 
     togglePasswordVisibility(): void {
-        this.isPasswordVisible = !this.isPasswordVisible;
+        this.isPasswordVisible =
+            !this.isPasswordVisible;
     }
 
     recoverPassword(): void {
