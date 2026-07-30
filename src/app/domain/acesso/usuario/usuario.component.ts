@@ -4,12 +4,12 @@ import { Validators } from '@angular/forms';
 import { Base } from '@components/grid/base/base';
 
 @Component({
-    selector: 'app-fornecedor',
-    templateUrl: './fornecedor.component.html',
-    styleUrls: ['./fornecedor.component.scss'],
+    selector: 'app-usuario',
+    templateUrl: './usuario.component.html',
+    styleUrls: ['./usuario.component.scss'],
     standalone: false
 })
-export class FornecedorComponent extends Base {
+export class UsuarioComponent extends Base {
 
   pagina: string = "Fornecedor"
 

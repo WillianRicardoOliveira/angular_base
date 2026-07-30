@@ -1,16 +1,39 @@
-import {Component, OnInit} from '@angular/core';
+import {
+    Component,
+    OnInit
+} from '@angular/core';
 import {
     FormBuilder,
     FormGroup,
     Validators
 } from '@angular/forms';
-import {Router} from '@angular/router';
-import {ToastrService} from 'ngx-toastr';
-import {finalize, switchMap} from 'rxjs';
+import {
+    Router
+} from '@angular/router';
+import {
+    ToastrService
+} from 'ngx-toastr';
+import {
+    catchError,
+    finalize,
+    Observable,
+    of,
+    switchMap,
+    throwError
+} from 'rxjs';
 
-import {AutenticacaoService} from '@/core/autenticacao/services/autenticacao.service';
-import {MensagemAutenticacaoService} from '@/core/autenticacao/services/mensagem-autenticacao.service';
-import {MicrosoftSsoService} from '@/core/autenticacao/services/microsoft-sso.service';
+import {
+    AutenticacaoService
+} from '@/core/autenticacao/services/autenticacao.service';
+import {
+    MensagemAutenticacaoService
+} from '@/core/autenticacao/services/mensagem-autenticacao.service';
+import {
+    MicrosoftSsoService
+} from '@/core/autenticacao/services/microsoft-sso.service';
+import {
+    PermissoesUsuarioService
+} from '@/core/autorizacao/services/permissoes-usuario.service';
 
 @Component({
     selector: 'app-login',
@@ -20,13 +43,19 @@ import {MicrosoftSsoService} from '@/core/autenticacao/services/microsoft-sso.se
 })
 export class LoginComponent implements OnInit {
     loginForm!: FormGroup;
+
     isAuthLoading = false;
+
     isPasswordVisible = false;
 
     constructor(
         private formBuilder: FormBuilder,
-        private service: AutenticacaoService,
-        private microsoftSsoService: MicrosoftSsoService,
+        private service:
+            AutenticacaoService,
+        private permissoesUsuarioService:
+            PermissoesUsuarioService,
+        private microsoftSsoService:
+            MicrosoftSsoService,
         private router: Router,
         private toastr: ToastrService,
         private mensagemAutenticacaoService:
@@ -34,19 +63,20 @@ export class LoginComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.loginForm = this.formBuilder.group({
-            email: [
-                null,
-                [
-                    Validators.required,
-                    Validators.email
+        this.loginForm =
+            this.formBuilder.group({
+                email: [
+                    null,
+                    [
+                        Validators.required,
+                        Validators.email
+                    ]
+                ],
+                senha: [
+                    null,
+                    Validators.required
                 ]
-            ],
-            senha: [
-                null,
-                Validators.required
-            ]
-        });
+            });
     }
 
     login(): void {
@@ -61,27 +91,39 @@ export class LoginComponent implements OnInit {
         const {
             email,
             senha
-        } = this.loginForm.getRawValue();
+        } =
+            this.loginForm.getRawValue();
 
         this.isAuthLoading = true;
 
         this.service
-            .login(email, senha)
+            .login(
+                email,
+                senha
+            )
             .pipe(
+                switchMap(() =>
+                    this.carregarPermissoesAposLogin()
+                ),
                 finalize(() => {
                     this.isAuthLoading = false;
                 })
             )
             .subscribe({
                 next: () => {
-                    this.router.navigateByUrl('/');
+                    this.router
+                        .navigateByUrl('/');
                 },
                 error: (erro: unknown) => {
                     const mensagem =
                         this.mensagemAutenticacaoService
-                            .obterMensagemLogin(erro);
+                            .obterMensagemLogin(
+                                erro
+                            );
 
-                    this.toastr.error(mensagem);
+                    this.toastr.error(
+                        mensagem
+                    );
                 }
             });
     }
@@ -107,8 +149,15 @@ export class LoginComponent implements OnInit {
         this.microsoftSsoService
             .login()
             .pipe(
-                switchMap((tokenMicrosoft) =>
-                    this.service.loginSso(tokenMicrosoft)
+                switchMap(
+                    (tokenMicrosoft) =>
+                        this.service
+                            .loginSso(
+                                tokenMicrosoft
+                            )
+                ),
+                switchMap(() =>
+                    this.carregarPermissoesAposLogin()
                 ),
                 finalize(() => {
                     this.isAuthLoading = false;
@@ -116,15 +165,43 @@ export class LoginComponent implements OnInit {
             )
             .subscribe({
                 next: () => {
-                    this.router.navigateByUrl('/');
+                    this.router
+                        .navigateByUrl('/');
                 },
                 error: (erro: unknown) => {
                     const mensagem =
                         this.mensagemAutenticacaoService
-                            .obterMensagemSso(erro);
+                            .obterMensagemSso(
+                                erro
+                            );
 
-                    this.toastr.error(mensagem);
+                    this.toastr.error(
+                        mensagem
+                    );
                 }
             });
+    }
+
+    private carregarPermissoesAposLogin():
+        Observable<void> {
+        return this.permissoesUsuarioService
+            .carregarPermissoes()
+            .pipe(
+                catchError(
+                    (erro: unknown) =>
+                        this.service
+                            .logout()
+                            .pipe(
+                                catchError(() =>
+                                    of(undefined)
+                                ),
+                                switchMap(() =>
+                                    throwError(
+                                        () => erro
+                                    )
+                                )
+                            )
+                )
+            );
     }
 }

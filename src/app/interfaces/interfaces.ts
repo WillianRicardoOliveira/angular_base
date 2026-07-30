@@ -1,3 +1,14 @@
+export type Status =
+    | 'ATIVO'
+    | 'INATIVO'
+    | 'REMOVIDO';
+
+export interface Usuario {
+    id?: number;
+    email: string;
+    senha?: string;
+    status?: Status;
+}
 
 export interface Fornecedor {
     id?: number,
@@ -148,7 +159,3 @@ export interface Estado {
     sigla: string;
 }
 */
-export interface Usuario {
-    email: string;
-    senha: string;
-}

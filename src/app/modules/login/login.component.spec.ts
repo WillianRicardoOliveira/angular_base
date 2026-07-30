@@ -2,26 +2,51 @@ import {
     ComponentFixture,
     TestBed
 } from '@angular/core/testing';
-import {ReactiveFormsModule} from '@angular/forms';
-import {Router} from '@angular/router';
+import {
+    ReactiveFormsModule
+} from '@angular/forms';
+import {
+    Router
+} from '@angular/router';
 import {
     NoopAnimationsModule
 } from '@angular/platform-browser/animations';
-import {MatButtonModule} from '@angular/material/button';
-import {MatCardModule} from '@angular/material/card';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {ToastrService} from 'ngx-toastr';
+import {
+    MatButtonModule
+} from '@angular/material/button';
+import {
+    MatCardModule
+} from '@angular/material/card';
+import {
+    MatFormFieldModule
+} from '@angular/material/form-field';
+import {
+    MatInputModule
+} from '@angular/material/input';
+import {
+    ToastrService
+} from 'ngx-toastr';
 import {
     of,
     throwError
 } from 'rxjs';
 
-import {AutenticacaoService} from '@/core/autenticacao/services/autenticacao.service';
-import {MensagemAutenticacaoService} from '@/core/autenticacao/services/mensagem-autenticacao.service';
-import {MicrosoftSsoService} from '@/core/autenticacao/services/microsoft-sso.service';
+import {
+    AutenticacaoService
+} from '@/core/autenticacao/services/autenticacao.service';
+import {
+    MensagemAutenticacaoService
+} from '@/core/autenticacao/services/mensagem-autenticacao.service';
+import {
+    MicrosoftSsoService
+} from '@/core/autenticacao/services/microsoft-sso.service';
+import {
+    PermissoesUsuarioService
+} from '@/core/autorizacao/services/permissoes-usuario.service';
 
-import {LoginComponent} from './login.component';
+import {
+    LoginComponent
+} from './login.component';
 
 describe('LoginComponent', () => {
     let component: LoginComponent;
@@ -30,10 +55,27 @@ describe('LoginComponent', () => {
     const autenticacaoServiceMock = {
         login: jasmine
             .createSpy('login')
-            .and.returnValue(of({})),
+            .and.returnValue(
+                of({})
+            ),
         loginSso: jasmine
             .createSpy('loginSso')
-            .and.returnValue(of({}))
+            .and.returnValue(
+                of({})
+            ),
+        logout: jasmine
+            .createSpy('logout')
+            .and.returnValue(
+                of(undefined)
+            )
+    };
+
+    const permissoesUsuarioServiceMock = {
+        carregarPermissoes: jasmine
+            .createSpy('carregarPermissoes')
+            .and.returnValue(
+                of(undefined)
+            )
     };
 
     const microsoftSsoServiceMock = {
@@ -96,12 +138,19 @@ describe('LoginComponent', () => {
                     useValue: autenticacaoServiceMock
                 },
                 {
+                    provide: PermissoesUsuarioService,
+                    useValue:
+                        permissoesUsuarioServiceMock
+                },
+                {
                     provide: MicrosoftSsoService,
                     useValue: microsoftSsoServiceMock
                 },
                 {
-                    provide: MensagemAutenticacaoService,
-                    useValue: mensagemAutenticacaoServiceMock
+                    provide:
+                        MensagemAutenticacaoService,
+                    useValue:
+                        mensagemAutenticacaoServiceMock
                 },
                 {
                     provide: Router,
@@ -114,34 +163,77 @@ describe('LoginComponent', () => {
             ]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(
-            LoginComponent
-        );
+        fixture =
+            TestBed.createComponent(
+                LoginComponent
+            );
 
-        component = fixture.componentInstance;
+        component =
+            fixture.componentInstance;
 
         fixture.detectChanges();
     });
 
     afterEach(() => {
-        autenticacaoServiceMock.login.calls.reset();
-        autenticacaoServiceMock.login.and.returnValue(
-            of({})
-        );
+        autenticacaoServiceMock
+            .login
+            .calls
+            .reset();
 
-        autenticacaoServiceMock.loginSso.calls.reset();
-        autenticacaoServiceMock.loginSso.and.returnValue(
-            of({})
-        );
+        autenticacaoServiceMock
+            .login
+            .and.returnValue(
+                of({})
+            );
 
-        microsoftSsoServiceMock.login.calls.reset();
-        microsoftSsoServiceMock.login.and.returnValue(
-            of('access-token-microsoft')
-        );
+        autenticacaoServiceMock
+            .loginSso
+            .calls
+            .reset();
+
+        autenticacaoServiceMock
+            .loginSso
+            .and.returnValue(
+                of({})
+            );
+
+        autenticacaoServiceMock
+            .logout
+            .calls
+            .reset();
+
+        autenticacaoServiceMock
+            .logout
+            .and.returnValue(
+                of(undefined)
+            );
+
+        permissoesUsuarioServiceMock
+            .carregarPermissoes
+            .calls
+            .reset();
+
+        permissoesUsuarioServiceMock
+            .carregarPermissoes
+            .and.returnValue(
+                of(undefined)
+            );
+
+        microsoftSsoServiceMock
+            .login
+            .calls
+            .reset();
+
+        microsoftSsoServiceMock
+            .login
+            .and.returnValue(
+                of('access-token-microsoft')
+            );
 
         mensagemAutenticacaoServiceMock
             .obterMensagemLogin
-            .calls.reset();
+            .calls
+            .reset();
 
         mensagemAutenticacaoServiceMock
             .obterMensagemLogin
@@ -152,7 +244,8 @@ describe('LoginComponent', () => {
 
         mensagemAutenticacaoServiceMock
             .obterMensagemSso
-            .calls.reset();
+            .calls
+            .reset();
 
         mensagemAutenticacaoServiceMock
             .obterMensagemSso
@@ -160,16 +253,27 @@ describe('LoginComponent', () => {
                 'Não foi possível acessar com a Microsoft.'
             );
 
-        routerMock.navigateByUrl.calls.reset();
-        toastrMock.error.calls.reset();
-        toastrMock.info.calls.reset();
+        routerMock
+            .navigateByUrl
+            .calls
+            .reset();
+
+        toastrMock
+            .error
+            .calls
+            .reset();
+
+        toastrMock
+            .info
+            .calls
+            .reset();
     });
 
     it('deve ser criado', () => {
         expect(component).toBeTruthy();
     });
 
-    it('deve autenticar e redirecionar quando o formulário for válido', () => {
+    it('deve autenticar, carregar permissões e redirecionar quando o formulário for válido', () => {
         component.loginForm.setValue({
             email: 'usuario@teste.com',
             senha: '123456'
@@ -185,8 +289,156 @@ describe('LoginComponent', () => {
         );
 
         expect(
+            permissoesUsuarioServiceMock
+                .carregarPermissoes
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
             routerMock.navigateByUrl
         ).toHaveBeenCalledOnceWith('/');
+    });
+
+    it('deve encerrar a sessão quando as permissões falharem após o login comum', () => {
+        const erroPermissoes =
+            new Error(
+                'Falha ao carregar permissões'
+            );
+
+        permissoesUsuarioServiceMock
+            .carregarPermissoes
+            .and.returnValue(
+                throwError(
+                    () => erroPermissoes
+                )
+            );
+
+        mensagemAutenticacaoServiceMock
+            .obterMensagemLogin
+            .and.returnValue(
+                'Não foi possível concluir o acesso ao sistema.'
+            );
+
+        component.loginForm.setValue({
+            email: 'usuario@teste.com',
+            senha: '123456'
+        });
+
+        component.login();
+
+        expect(
+            autenticacaoServiceMock.login
+        ).toHaveBeenCalledOnceWith(
+            'usuario@teste.com',
+            '123456'
+        );
+
+        expect(
+            permissoesUsuarioServiceMock
+                .carregarPermissoes
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            autenticacaoServiceMock.logout
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            mensagemAutenticacaoServiceMock
+                .obterMensagemLogin
+        ).toHaveBeenCalledOnceWith(
+            erroPermissoes
+        );
+
+        expect(
+            toastrMock.error
+        ).toHaveBeenCalledOnceWith(
+            'Não foi possível concluir o acesso ao sistema.'
+        );
+
+        expect(
+            routerMock.navigateByUrl
+        ).not.toHaveBeenCalled();
+
+        expect(
+            component.isAuthLoading
+        ).toBeFalse();
+    });
+
+    it('deve preservar o erro das permissões quando o logout compensatório falhar', () => {
+        const erroPermissoes =
+            new Error(
+                'Falha ao carregar permissões'
+            );
+
+        const erroLogout =
+            new Error(
+                'Falha ao revogar sessão'
+            );
+
+        permissoesUsuarioServiceMock
+            .carregarPermissoes
+            .and.returnValue(
+                throwError(
+                    () => erroPermissoes
+                )
+            );
+
+        autenticacaoServiceMock
+            .logout
+            .and.returnValue(
+                throwError(
+                    () => erroLogout
+                )
+            );
+
+        mensagemAutenticacaoServiceMock
+            .obterMensagemLogin
+            .and.returnValue(
+                'Não foi possível concluir o acesso ao sistema.'
+            );
+
+        component.loginForm.setValue({
+            email: 'usuario@teste.com',
+            senha: '123456'
+        });
+
+        component.login();
+
+        expect(
+            permissoesUsuarioServiceMock
+                .carregarPermissoes
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            autenticacaoServiceMock.logout
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            mensagemAutenticacaoServiceMock
+                .obterMensagemLogin
+        ).toHaveBeenCalledOnceWith(
+            erroPermissoes
+        );
+
+        expect(
+            mensagemAutenticacaoServiceMock
+                .obterMensagemLogin
+        ).not.toHaveBeenCalledWith(
+            erroLogout
+        );
+
+        expect(
+            toastrMock.error
+        ).toHaveBeenCalledOnceWith(
+            'Não foi possível concluir o acesso ao sistema.'
+        );
+
+        expect(
+            routerMock.navigateByUrl
+        ).not.toHaveBeenCalled();
+
+        expect(
+            component.isAuthLoading
+        ).toBeFalse();
     });
 
     it('não deve autenticar quando o formulário for inválido', () => {
@@ -199,6 +451,11 @@ describe('LoginComponent', () => {
 
         expect(
             autenticacaoServiceMock.login
+        ).not.toHaveBeenCalled();
+
+        expect(
+            permissoesUsuarioServiceMock
+                .carregarPermissoes
         ).not.toHaveBeenCalled();
 
         expect(
@@ -219,16 +476,24 @@ describe('LoginComponent', () => {
         expect(
             autenticacaoServiceMock.login
         ).not.toHaveBeenCalled();
+
+        expect(
+            permissoesUsuarioServiceMock
+                .carregarPermissoes
+        ).not.toHaveBeenCalled();
     });
 
     it('deve exibir a mensagem segura retornada pelo serviço', () => {
-        const erroLogin = new Error(
-            'Erro interno que não deve ser exibido'
-        );
+        const erroLogin =
+            new Error(
+                'Erro interno que não deve ser exibido'
+            );
 
-        autenticacaoServiceMock.login.and.returnValue(
-            throwError(() => erroLogin)
-        );
+        autenticacaoServiceMock
+            .login
+            .and.returnValue(
+                throwError(() => erroLogin)
+            );
 
         mensagemAutenticacaoServiceMock
             .obterMensagemLogin
@@ -245,9 +510,16 @@ describe('LoginComponent', () => {
         component.login();
 
         expect(
+            permissoesUsuarioServiceMock
+                .carregarPermissoes
+        ).not.toHaveBeenCalled();
+
+        expect(
             mensagemAutenticacaoServiceMock
                 .obterMensagemLogin
-        ).toHaveBeenCalledOnceWith(erroLogin);
+        ).toHaveBeenCalledOnceWith(
+            erroLogin
+        );
 
         expect(
             toastrMock.error
@@ -258,13 +530,14 @@ describe('LoginComponent', () => {
     });
 
     it('deve exibir mensagem de login temporariamente bloqueado', () => {
-        const erroBloqueio = new Error(
-            'Login bloqueado'
-        );
+        const erroBloqueio =
+            new Error('Login bloqueado');
 
-        autenticacaoServiceMock.login.and.returnValue(
-            throwError(() => erroBloqueio)
-        );
+        autenticacaoServiceMock
+            .login
+            .and.returnValue(
+                throwError(() => erroBloqueio)
+            );
 
         mensagemAutenticacaoServiceMock
             .obterMensagemLogin
@@ -281,9 +554,16 @@ describe('LoginComponent', () => {
         component.login();
 
         expect(
+            permissoesUsuarioServiceMock
+                .carregarPermissoes
+        ).not.toHaveBeenCalled();
+
+        expect(
             mensagemAutenticacaoServiceMock
                 .obterMensagemLogin
-        ).toHaveBeenCalledOnceWith(erroBloqueio);
+        ).toHaveBeenCalledOnceWith(
+            erroBloqueio
+        );
 
         expect(
             toastrMock.error
@@ -301,13 +581,19 @@ describe('LoginComponent', () => {
 
         component.login();
 
-        expect(component.isAuthLoading).toBeFalse();
+        expect(
+            component.isAuthLoading
+        ).toBeFalse();
     });
 
     it('deve restaurar o estado de carregamento após erro', () => {
-        autenticacaoServiceMock.login.and.returnValue(
-            throwError(() => new Error('Erro'))
-        );
+        autenticacaoServiceMock
+            .login
+            .and.returnValue(
+                throwError(
+                    () => new Error('Erro')
+                )
+            );
 
         component.loginForm.setValue({
             email: 'usuario@teste.com',
@@ -316,7 +602,9 @@ describe('LoginComponent', () => {
 
         component.login();
 
-        expect(component.isAuthLoading).toBeFalse();
+        expect(
+            component.isAuthLoading
+        ).toBeFalse();
     });
 
     it('deve alternar a visibilidade da senha', () => {
@@ -347,7 +635,7 @@ describe('LoginComponent', () => {
         );
     });
 
-    it('deve autenticar pela Microsoft e redirecionar', () => {
+    it('deve autenticar pela Microsoft, carregar permissões e redirecionar', () => {
         component.loginWithMicrosoft();
 
         expect(
@@ -361,8 +649,76 @@ describe('LoginComponent', () => {
         );
 
         expect(
+            permissoesUsuarioServiceMock
+                .carregarPermissoes
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
             routerMock.navigateByUrl
         ).toHaveBeenCalledOnceWith('/');
+    });
+
+    it('deve encerrar a sessão quando as permissões falharem após o login Microsoft', () => {
+        const erroPermissoes =
+            new Error(
+                'Falha ao carregar permissões'
+            );
+
+        permissoesUsuarioServiceMock
+            .carregarPermissoes
+            .and.returnValue(
+                throwError(
+                    () => erroPermissoes
+                )
+            );
+
+        mensagemAutenticacaoServiceMock
+            .obterMensagemSso
+            .and.returnValue(
+                'Não foi possível concluir o acesso corporativo.'
+            );
+
+        component.loginWithMicrosoft();
+
+        expect(
+            microsoftSsoServiceMock.login
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            autenticacaoServiceMock.loginSso
+        ).toHaveBeenCalledOnceWith(
+            'access-token-microsoft'
+        );
+
+        expect(
+            permissoesUsuarioServiceMock
+                .carregarPermissoes
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            autenticacaoServiceMock.logout
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            mensagemAutenticacaoServiceMock
+                .obterMensagemSso
+        ).toHaveBeenCalledOnceWith(
+            erroPermissoes
+        );
+
+        expect(
+            toastrMock.error
+        ).toHaveBeenCalledOnceWith(
+            'Não foi possível concluir o acesso corporativo.'
+        );
+
+        expect(
+            routerMock.navigateByUrl
+        ).not.toHaveBeenCalled();
+
+        expect(
+            component.isAuthLoading
+        ).toBeFalse();
     });
 
     it('não deve iniciar outro login Microsoft enquanto houver autenticação em andamento', () => {
@@ -384,13 +740,18 @@ describe('LoginComponent', () => {
     });
 
     it('deve tratar erro ao autenticar com a Microsoft', () => {
-        const erroMicrosoft = new Error(
-            'Falha interna do provedor'
-        );
+        const erroMicrosoft =
+            new Error(
+                'Falha interna do provedor'
+            );
 
-        microsoftSsoServiceMock.login.and.returnValue(
-            throwError(() => erroMicrosoft)
-        );
+        microsoftSsoServiceMock
+            .login
+            .and.returnValue(
+                throwError(
+                    () => erroMicrosoft
+                )
+            );
 
         mensagemAutenticacaoServiceMock
             .obterMensagemSso
@@ -407,7 +768,9 @@ describe('LoginComponent', () => {
         expect(
             mensagemAutenticacaoServiceMock
                 .obterMensagemSso
-        ).toHaveBeenCalledOnceWith(erroMicrosoft);
+        ).toHaveBeenCalledOnceWith(
+            erroMicrosoft
+        );
 
         expect(
             toastrMock.error
@@ -415,7 +778,9 @@ describe('LoginComponent', () => {
             'Não foi possível acessar com a Microsoft.'
         );
 
-        expect(component.isAuthLoading).toBeFalse();
+        expect(
+            component.isAuthLoading
+        ).toBeFalse();
 
         expect(
             routerMock.navigateByUrl
@@ -433,9 +798,13 @@ describe('LoginComponent', () => {
             }
         };
 
-        autenticacaoServiceMock.loginSso.and.returnValue(
-            throwError(() => erroBackend)
-        );
+        autenticacaoServiceMock
+            .loginSso
+            .and.returnValue(
+                throwError(
+                    () => erroBackend
+                )
+            );
 
         mensagemAutenticacaoServiceMock
             .obterMensagemSso
@@ -458,7 +827,9 @@ describe('LoginComponent', () => {
         expect(
             mensagemAutenticacaoServiceMock
                 .obterMensagemSso
-        ).toHaveBeenCalledOnceWith(erroBackend);
+        ).toHaveBeenCalledOnceWith(
+            erroBackend
+        );
 
         expect(
             toastrMock.error
@@ -466,7 +837,9 @@ describe('LoginComponent', () => {
             'Não foi possível validar o acesso corporativo.'
         );
 
-        expect(component.isAuthLoading).toBeFalse();
+        expect(
+            component.isAuthLoading
+        ).toBeFalse();
 
         expect(
             routerMock.navigateByUrl

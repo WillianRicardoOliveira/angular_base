@@ -1,67 +1,136 @@
-import {Component, HostBinding, Input, OnInit} from '@angular/core';
-import {NavigationEnd, Router} from '@angular/router';
-import {filter} from 'rxjs/operators';
-import {openCloseAnimation, rotateAnimation} from './menu-item.animations';
+import {
+    Component,
+    HostBinding,
+    Input,
+    OnInit
+} from '@angular/core';
+import {
+    NavigationEnd,
+    Router
+} from '@angular/router';
+import {
+    filter
+} from 'rxjs/operators';
+
+import {
+    MenuItem
+} from './models/menu-item.model';
+import {
+    openCloseAnimation,
+    rotateAnimation
+} from './menu-item.animations';
 
 @Component({
     selector: 'app-menu-item',
     templateUrl: './menu-item.component.html',
     styleUrls: ['./menu-item.component.scss'],
-    animations: [openCloseAnimation, rotateAnimation],
+    animations: [
+        openCloseAnimation,
+        rotateAnimation
+    ],
     standalone: false
 })
 export class MenuItemComponent implements OnInit {
-    @Input() menuItem: any = null;
-    public isExpandable: boolean = false;
-    @HostBinding('class.nav-item') isNavItem: boolean = true;
-    @HostBinding('class.menu-open') isMenuExtended: boolean = false;
-    public isMainActive: boolean = false;
-    public isOneOfChildrenActive: boolean = false;
+    @Input()
+    menuItem: MenuItem | null = null;
 
-    constructor(private router: Router) {}
+    @HostBinding('class.nav-item')
+    isNavItem = true;
+
+    @HostBinding('class.menu-open')
+    isMenuExtended = false;
+
+    isExpandable = false;
+
+    isMainActive = false;
+
+    isOneOfChildrenActive = false;
+
+    constructor(
+        private router: Router
+    ) {}
 
     ngOnInit(): void {
-        if (
-            this.menuItem &&
-            this.menuItem.children &&
-            this.menuItem.children.length > 0
-        ) {
-            this.isExpandable = true;
+        if (!this.menuItem) {
+            return;
         }
-        this.calculateIsActive(this.router.url);
+
+        this.isExpandable =
+            (this.menuItem.children?.length ?? 0) > 0;
+
+        this.calculateIsActive(
+            this.router.url
+        );
+
         this.router.events
-            .pipe(filter((event) => event instanceof NavigationEnd))
-            .subscribe((event: NavigationEnd) => {
-                this.calculateIsActive(event.url);
-            });
+            .pipe(
+                filter(
+                    (event) =>
+                        event instanceof NavigationEnd
+                )
+            )
+            .subscribe(
+                (event) => {
+                    this.calculateIsActive(
+                        event.url
+                    );
+                }
+            );
     }
 
-    public handleMainMenuAction() {
+    handleMainMenuAction(): void {
+        if (!this.menuItem) {
+            return;
+        }
+
         if (this.isExpandable) {
             this.toggleMenu();
             return;
         }
-        this.router.navigate(this.menuItem.path);
+
+        if (this.menuItem.path) {
+            this.router.navigate(
+                this.menuItem.path
+            );
+        }
     }
 
-    public toggleMenu() {
-        this.isMenuExtended = !this.isMenuExtended;
+    toggleMenu(): void {
+        this.isMenuExtended =
+            !this.isMenuExtended;
     }
 
-    public calculateIsActive(url: string) {
+    calculateIsActive(
+        url: string
+    ): void {
         this.isMainActive = false;
         this.isOneOfChildrenActive = false;
-        if (this.isExpandable) {
-            this.menuItem.children.forEach((item) => {
-                if (item.path[0] === url) {
-                    this.isOneOfChildrenActive = true;
-                    this.isMenuExtended = true;
-                }
-            });
-        } else if (this.menuItem.path[0] === url) {
-            this.isMainActive = true;
+
+        if (!this.menuItem) {
+            this.isMenuExtended = false;
+            return;
         }
-        if (!this.isMainActive && !this.isOneOfChildrenActive) {
+
+        if (this.isExpandable) {
+            this.isOneOfChildrenActive =
+                this.menuItem.children
+                    ?.some(
+                        (item) =>
+                            item.path?.[0] === url
+                    ) ?? false;
+
+            if (this.isOneOfChildrenActive) {
+                this.isMenuExtended = true;
+            }
+        } else {
+            this.isMainActive =
+                this.menuItem.path?.[0] === url;
+        }
+
+        if (
+            !this.isMainActive &&
+            !this.isOneOfChildrenActive
+        ) {
             this.isMenuExtended = false;
         }
     }

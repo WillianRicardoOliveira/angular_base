@@ -1,9 +1,27 @@
-import { AppState } from '@/store/state';
-import { UiState } from '@/store/ui/state';
-import { Component, HostBinding, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
+import {
+    Component,
+    HostBinding,
+    OnInit
+} from '@angular/core';
+import {
+    Store
+} from '@ngrx/store';
 
-const BASE_CLASSES = 'main-sidebar elevation-4';
+import {
+    MenuItem
+} from '@/components/menu-item/models/menu-item.model';
+import {
+    AutorizacaoService
+} from '@/core/autorizacao/services/autorizacao.service';
+import {
+    AppState
+} from '@/store/state';
+import {
+    UiState
+} from '@/store/ui/state';
+
+const BASE_CLASSES =
+    'main-sidebar elevation-4';
 
 @Component({
     selector: 'app-menu-sidebar',
@@ -11,30 +29,90 @@ const BASE_CLASSES = 'main-sidebar elevation-4';
     styleUrls: ['./menu-sidebar.component.scss'],
     standalone: false
 })
-export class MenuSidebarComponent implements OnInit {
+export class MenuSidebarComponent
+    implements OnInit {
+    @HostBinding('class')
+    classes: string = BASE_CLASSES;
 
-    @HostBinding('class') classes: string = BASE_CLASSES;
+    menu: MenuItem[] = [];
 
-    public menu = MENU;
-
-    public menuConfiguracoes = MENU_CONFIGURACOES;
+    menuConfiguracoes: MenuItem[] = [];
 
     constructor(
-        private store: Store<AppState>
-    ) { }
+        private store: Store<AppState>,
+        private autorizacaoService:
+            AutorizacaoService
+    ) {}
 
     ngOnInit(): void {
-        this.store.select('ui').subscribe((state: UiState) => {
-            this.classes = `${BASE_CLASSES} ${state.sidebarSkin}`;
-        });
+        this.menu =
+            this.filtrarMenu(MENU);
+
+        this.menuConfiguracoes =
+            this.filtrarMenu(
+                MENU_CONFIGURACOES
+            );
+
+        this.store
+            .select('ui')
+            .subscribe(
+                (state: UiState) => {
+                    this.classes =
+                        `${BASE_CLASSES} ` +
+                        `${state.sidebarSkin}`;
+                }
+            );
     }
 
+    private filtrarMenu(
+        itens: readonly MenuItem[]
+    ): MenuItem[] {
+        return itens.reduce<MenuItem[]>(
+            (itensVisiveis, item) => {
+                if (
+                    item.permissao &&
+                    !this.autorizacaoService
+                        .possuiPermissao(
+                            item.permissao
+                        )
+                ) {
+                    return itensVisiveis;
+                }
+
+                if (!item.children) {
+                    return [
+                        ...itensVisiveis,
+                        item
+                    ];
+                }
+
+                const children =
+                    this.filtrarMenu(
+                        item.children
+                    );
+
+                if (children.length === 0) {
+                    return itensVisiveis;
+                }
+
+                return [
+                    ...itensVisiveis,
+                    {
+                        ...item,
+                        children
+                    }
+                ];
+            },
+            []
+        );
+    }
 }
 
-export const MENU = [
+export const MENU: MenuItem[] = [
     {
         name: 'Dashboard',
-        iconClasses: 'fas fa-tachometer-alt',
+        iconClasses:
+            'fas fa-tachometer-alt',
         path: ['/dashboard']
     },
     {
@@ -43,96 +121,131 @@ export const MENU = [
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-circle',
-                path: ['/comercial/menu-1']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/comercial/menu-1'
+                ]
             }
         ]
     },
     {
         name: 'Compras',
-        iconClasses: 'fas fa-shopping-cart',
+        iconClasses:
+            'fas fa-shopping-cart',
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-circle',
-                path: ['/compras/menu-1']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/compras/menu-1'
+                ]
             }
         ]
     },
     {
         name: 'Contabilidade',
-        iconClasses: 'far fa-list-alt',
+        iconClasses:
+            'far fa-list-alt',
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-circle',
-                path: ['/contabilidade/menu-1']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/contabilidade/menu-1'
+                ]
             }
         ]
     },
     {
         name: 'Controladoria',
-        iconClasses: 'fas fa-chart-line',
+        iconClasses:
+            'fas fa-chart-line',
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-circle',
-                path: ['/controladoria/menu-1']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/controladoria/menu-1'
+                ]
             }
         ]
     },
     {
         name: 'Crédito',
-        iconClasses: 'far fa-credit-card',
+        iconClasses:
+            'far fa-credit-card',
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-circle',
-                path: ['/credito/menu-1']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/credito/menu-1'
+                ]
             }
         ]
     },
     {
         name: 'Estoque',
-        iconClasses: 'fas fa-warehouse',
+        iconClasses:
+            'fas fa-warehouse',
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-circle',
-                path: ['/estoque/menu-1']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/estoque/menu-1'
+                ]
             }
         ]
     },
     {
         name: 'Faturamento',
-        iconClasses: 'fas fa-file-invoice-dollar',
+        iconClasses:
+            'fas fa-file-invoice-dollar',
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-circle',
-                path: ['/faturamento/menu-1']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/faturamento/menu-1'
+                ]
             }
         ]
     },
     {
         name: 'Financeiro',
-        iconClasses: 'fas fa-dollar-sign',
+        iconClasses:
+            'fas fa-dollar-sign',
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-circle',
-                path: ['/financeiro/menu-1']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/financeiro/menu-1'
+                ]
             }
         ]
     },
     {
         name: 'Fiscal',
-        iconClasses: 'far fa-file-alt',
+        iconClasses:
+            'far fa-file-alt',
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-circle',
-                path: ['/fiscal/menu-1']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/fiscal/menu-1'
+                ]
             }
         ]
     },
@@ -142,13 +255,19 @@ export const MENU = [
         children: [
             {
                 name: 'Internacional',
-                iconClasses: 'fas fa-circle',
-                path: ['/logistica/internacional']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/logistica/internacional'
+                ]
             },
             {
                 name: 'Nacional',
-                iconClasses: 'fas fa-circle',
-                path: ['/logistica/nacional']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/logistica/nacional'
+                ]
             }
         ]
     },
@@ -158,39 +277,51 @@ export const MENU = [
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-circle',
-                path: ['/supply/menu-1']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/supply/menu-1'
+                ]
             }
         ]
     },
     {
         name: 'Relatórios',
-        iconClasses: 'far fa-chart-bar',
+        iconClasses:
+            'far fa-chart-bar',
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-circle',
-                path: ['/relatorios/menu-1']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/relatorios/menu-1'
+                ]
             }
         ]
     },
     {
         name: 'Cadastros',
-        iconClasses: 'far fa-address-book',
+        iconClasses:
+            'far fa-address-book',
         children: [
             {
                 name: 'Menu 1',
-                iconClasses: 'fas fa-circle',
-                path: ['/cadastros/menu-1']
+                iconClasses:
+                    'fas fa-circle',
+                path: [
+                    '/cadastros/menu-1'
+                ]
             }
         ]
     }
 ];
 
-export const MENU_CONFIGURACOES = [
-    {
-        name: 'Configurações',
-        iconClasses: 'fas fa-cog',
-        path: ['/configuracoes']
-    }
-];
+export const MENU_CONFIGURACOES:
+    MenuItem[] = [
+        {
+            name: 'Configurações',
+            iconClasses: 'fas fa-cog',
+            path: ['/configuracoes']
+        }
+    ];

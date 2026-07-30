@@ -4,7 +4,13 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 
-import {AppSharedSelectComponent} from './app-shared-select/app-shared-select.component';
+import {
+    TemPermissaoDirective
+} from '@/core/autorizacao/directives/tem-permissao.directive';
+
+import {
+    AppSharedSelectComponent
+} from './app-shared-select/app-shared-select.component';
 
 @NgModule({
     declarations: [
@@ -14,10 +20,12 @@ import {AppSharedSelectComponent} from './app-shared-select/app-shared-select.co
         CommonModule,
         ReactiveFormsModule,
         MatFormFieldModule,
-        MatSelectModule
+        MatSelectModule,
+        TemPermissaoDirective
     ],
     exports: [
-        AppSharedSelectComponent
+        AppSharedSelectComponent,
+        TemPermissaoDirective
     ]
 })
 export class SharedModule {}

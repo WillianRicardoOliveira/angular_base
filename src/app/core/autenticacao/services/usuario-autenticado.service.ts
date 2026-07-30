@@ -1,50 +1,83 @@
-import { PessoaUsuario } from '@/interfaces/interfaces';
-import { TokenJwt } from '@/core/autenticacao/models/token-jwt.model';
-import { Injectable } from '@angular/core';
-import { TokenService } from '@/core/autenticacao/services/token.service';
-import { BehaviorSubject } from 'rxjs';
-import jwt_decode from 'jwt-decode'
+import {Injectable} from '@angular/core';
+import {
+    BehaviorSubject,
+    Observable
+} from 'rxjs';
+import jwt_decode from 'jwt-decode';
+
+import {TokenJwt} from '@/core/autenticacao/models/token-jwt.model';
+import {TokenPayload} from '@/core/autenticacao/models/token-payload.model';
+import {TokenService} from '@/core/autenticacao/services/token.service';
+import {AutorizacaoService} from '@/core/autorizacao/services/autorizacao.service';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class UsuarioAutenticadoService {
+    private readonly usuarioSubject =
+        new BehaviorSubject<TokenPayload | null>(
+            null
+        );
 
-  private userSubject = new BehaviorSubject<PessoaUsuario | null>(null)
-
-  constructor(private tokenService: TokenService) { 
-    if(this.tokenService.possuiToken()) {
-      this.decodificarJWT()
+    constructor(
+        private tokenService: TokenService,
+        private autorizacaoService:
+            AutorizacaoService
+    ) {
+        if (this.tokenService.possuiToken()) {
+            this.decodificarJWT();
+        }
     }
-  }
 
-  decodificarJWT() {
-    const token = this.tokenService.retornarToken()
-    const user = jwt_decode(token) as PessoaUsuario
-    this.userSubject.next(user)
-  }
+    decodificarJWT(): void {
+        const token =
+            this.tokenService.retornarToken();
 
-  retornarUser() {
-    return this.userSubject.asObservable()
-  }
+        if (!token) {
+            this.usuarioSubject.next(null);
+            return;
+        }
 
-  retornarToken() {
-    return this.tokenService.retornarToken()
-  }
+        try {
+            const usuario =
+                jwt_decode<TokenPayload>(token);
 
-  salvarTokens(tokens: TokenJwt): void {
-    this.tokenService.salvarToken(tokens.token);
-    this.tokenService.salvarRefreshToken(tokens.refreshToken);
-    this.decodificarJWT();
-  }
+            this.usuarioSubject.next(usuario);
+        } catch {
+            this.tokenService.excluirTokens();
+            this.autorizacaoService.limpar();
+            this.usuarioSubject.next(null);
+        }
+    }
 
-  logout(): void {
-    this.tokenService.excluirTokens();
-    this.userSubject.next(null);
-  }
+    retornarUser():
+        Observable<TokenPayload | null> {
+        return this.usuarioSubject.asObservable();
+    }
 
-  estaLogado() {
-    return this.tokenService.possuiToken()
-  }
+    retornarToken(): string {
+        return this.tokenService.retornarToken();
+    }
 
+    salvarTokens(tokens: TokenJwt): void {
+        this.tokenService.salvarToken(
+            tokens.token
+        );
+
+        this.tokenService.salvarRefreshToken(
+            tokens.refreshToken
+        );
+
+        this.decodificarJWT();
+    }
+
+    logout(): void {
+        this.tokenService.excluirTokens();
+        this.autorizacaoService.limpar();
+        this.usuarioSubject.next(null);
+    }
+
+    estaLogado(): boolean {
+        return this.tokenService.possuiToken();
+    }
 }

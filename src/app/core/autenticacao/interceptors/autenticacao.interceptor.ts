@@ -88,18 +88,35 @@ export class AutenticacaoInterceptor implements HttpInterceptor {
     private ehRequisicaoProtegida(
         request: HttpRequest<unknown>
     ): boolean {
-        const pertenceApi = request.url.startsWith(
-            environment.api
-        );
-
-        const pertenceAutenticacao =
-            request.url.startsWith(
-                `${environment.api}/login`
+        const api =
+            environment.api.replace(
+                /\/+$/,
+                ''
             );
 
-        return (
-            pertenceApi &&
-            !pertenceAutenticacao
+        const pertenceApi =
+            request.url === api ||
+            request.url.startsWith(
+                `${api}/`
+            );
+
+        if (!pertenceApi) {
+            return false;
+        }
+
+        const urlSemParametros =
+            request.url.split('?')[0];
+
+        const rotasPublicas =
+            new Set<string>([
+                `${api}/login`,
+                `${api}/login/refresh`,
+                `${api}/login/logout`,
+                `${api}/login/sso`
+            ]);
+
+        return !rotasPublicas.has(
+            urlSemParametros
         );
     }
 

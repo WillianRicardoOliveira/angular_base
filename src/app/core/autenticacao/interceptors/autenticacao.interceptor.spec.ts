@@ -169,6 +169,43 @@ describe('AutenticacaoInterceptor', () => {
         ).toHaveBeenCalled();
     });
 
+    it('deve adicionar bearer ao consultar permissões do usuário', () => {
+        const request = new HttpRequest(
+            'GET',
+            `${environment.api}/login/permissoes`
+        );
+
+        interceptor
+            .intercept(
+                request,
+                httpHandlerMock
+            )
+            .subscribe();
+
+        const requestEnviada =
+            obterRequestDaChamada(0);
+
+        expect(
+            requestEnviada.headers.get(
+                'Authorization'
+            )
+        ).toBe(
+            'Bearer access-token'
+        );
+
+        expect(
+            tokenServiceMock.possuiToken
+        ).toHaveBeenCalled();
+
+        expect(
+            tokenServiceMock.retornarToken
+        ).toHaveBeenCalled();
+
+        expect(
+            autenticacaoServiceMock.renovarToken
+        ).not.toHaveBeenCalled();
+    });
+
     it('não deve adicionar bearer quando não houver token', () => {
         tokenServiceMock.possuiToken.and.returnValue(false);
 
@@ -235,6 +272,42 @@ describe('AutenticacaoInterceptor', () => {
 
         expect(
             autenticacaoServiceMock.renovarToken
+        ).not.toHaveBeenCalled();
+    });
+
+    it('não deve adicionar bearer em domínio externo parecido com a API', () => {
+        const request = new HttpRequest(
+            'GET',
+            `${environment.api}.evil.com/dados`
+        );
+
+        interceptor
+            .intercept(
+                request,
+                httpHandlerMock
+            )
+            .subscribe();
+
+        const requestEnviada =
+            obterRequestDaChamada(0);
+
+        expect(
+            requestEnviada.headers.has(
+                'Authorization'
+            )
+        ).toBeFalse();
+
+        expect(
+            tokenServiceMock.possuiToken
+        ).not.toHaveBeenCalled();
+
+        expect(
+            tokenServiceMock.retornarToken
+        ).not.toHaveBeenCalled();
+
+        expect(
+            autenticacaoServiceMock
+                .renovarToken
         ).not.toHaveBeenCalled();
     });
 
