@@ -2,9 +2,11 @@
   <mat-card class="card">
     <mat-card-header class="card-header">
       <mat-card-title class="card-title">
+        @if (b_adicionar) {
         <button mat-stroked-button color="primary"
           (click)="botaoAdicionar()">
           <mat-icon>add</mat-icon>Adicionar</button>
+        }
         </mat-card-title>
         <mat-card-actions class="card-tools search">
           <input

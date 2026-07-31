@@ -20,6 +20,10 @@ import {
     UiState
 } from '@/store/ui/state';
 
+import {
+    ChavePermissao
+} from '@/core/autorizacao/models/chave-permissao';
+
 const BASE_CLASSES =
     'main-sidebar elevation-4';
 
@@ -323,5 +327,22 @@ export const MENU_CONFIGURACOES:
             name: 'Configurações',
             iconClasses: 'fas fa-cog',
             path: ['/configuracoes']
+        },
+        {
+            name: 'Acesso e Segurança',
+            iconClasses:
+                'fas fa-shield-alt',
+            children: [
+                {
+                    name: 'Usuários',
+                    iconClasses:
+                        'fas fa-users',
+                    path: [
+                        '/acesso/usuarios'
+                    ],
+                    permissao:
+                        ChavePermissao.UsuarioListar
+                }
+            ]
         }
     ];

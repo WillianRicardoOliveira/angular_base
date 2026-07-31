@@ -25,6 +25,8 @@ export class GridComponent implements OnInit {
 
   @Input() coluna: any
 
+  @Input() b_adicionar = true;
+
   @Input() b_chamar: boolean = false
 
   @Input() b_editar: boolean = true

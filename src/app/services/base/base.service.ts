@@ -76,7 +76,12 @@ export class BaseService {
 
     salvar(endPoint: string, formulario: FormGroup) {
         if (formulario.valid) {
-            if (formulario.value.id != '') {
+            const id = formulario.get('id')?.value;
+            if (
+                id !== null &&
+                id !== undefined &&
+                id !== ''
+            ) {
                 return this.atualizar(
                     endPoint,
                     formulario.value

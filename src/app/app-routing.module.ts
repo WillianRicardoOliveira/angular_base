@@ -38,6 +38,17 @@ import { AutenticacaoGuard } from '@/core/autenticacao/guards/autenticacao.guard
 
 import { LoginComponent } from '@modules/login/login.component';
 
+
+import {
+    UsuarioComponent
+} from '@/domain/acesso/usuario/usuario.component';
+import {
+    PermissaoGuard
+} from '@/core/autorizacao/guards/permissao.guard';
+import {
+    ChavePermissao
+} from '@/core/autorizacao/models/chave-permissao';
+
 //import {RegisterComponent} from '@modules/register/register.component';
 //import {DashboardComponent} from '@pages/dashboard/dashboard.component';
 //import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
@@ -64,10 +75,24 @@ const routes: Routes = [
         //pathMatch: "full"
 
         component: MainComponent,
-        //component: HomeSiteComponent,
-        //canActivate: [AuthGuard],
-        canActivateChild: [AutenticacaoGuard],
+        canActivate: [
+            AutenticacaoGuard
+        ],
+        canActivateChild: [
+            AutenticacaoGuard
+        ],
         children: [
+            {
+                path: 'acesso/usuarios',
+                component: UsuarioComponent,
+                canActivate: [
+                    PermissaoGuard
+                ],
+                data: {
+                    permissao:
+                        ChavePermissao.UsuarioListar
+                }
+            },
 
             //{ path: ''                  , component: DashboardComponent },
             /* ESTOQUE */

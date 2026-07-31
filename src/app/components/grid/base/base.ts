@@ -15,6 +15,7 @@ export class Base implements OnInit {
   lista: any[] = []
   isLista = true
   isFormulario = false
+  isVisualizacao = false
   endPoint: string
   totalRegistros: number
   builder: FormBuilder
@@ -63,16 +64,30 @@ export class Base implements OnInit {
    * Todo : Colocar o NEXT
    */
   carregarFormulario(id?: number) {
-    this.resetForm()
-    this.isLista = false
-    this.isFormulario = true
-    if(id != null) {
-      this.service.detalhar(this.endPoint, id).subscribe((dados) => {
-        this.formulario = this.campos(dados)
-      })
-    } else {
-      this.formulario = this.campos()
-    } 
+    this.resetForm();
+    this.isLista = false;
+    this.isFormulario = true;
+
+    if (id != null) {
+        this.service
+            .detalhar(
+                this.endPoint,
+                id
+            )
+            .subscribe((dados) => {
+                this.formulario =
+                    this.campos(dados);
+
+                if (this.isVisualizacao) {
+                    this.formulario.disable();
+                }
+            });
+
+        return;
+    }
+
+    this.formulario =
+        this.campos();
   }
 
   /*
@@ -105,23 +120,20 @@ export class Base implements OnInit {
    * Todo :
    */
   cancelar() {
-    this.isFormulario = false
-    this.isLista = true
-    this.resetForm()
+    this.isFormulario = false;
+    this.isLista = true;
+    this.isVisualizacao = false;
+    this.resetForm();
   }
 
-  /*
-   * Todo :
-   */
   botaoAdicionar() {
-    this.carregarFormulario()
+      this.isVisualizacao = false;
+      this.carregarFormulario();
   }
 
-  /*
-   * Todo :
-   */
   botaoEditar(id: number) {
-    this.carregarFormulario(id)
+      this.isVisualizacao = false;
+      this.carregarFormulario(id);
   }
 
   /*
@@ -139,11 +151,9 @@ export class Base implements OnInit {
     })
   }
 
-  /*
-   * Todo :
-   */
   botaoVisualizar(id: number) {
-
+      this.isVisualizacao = true;
+      this.carregarFormulario(id);
   }
 
   /*

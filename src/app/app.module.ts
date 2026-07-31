@@ -52,6 +52,11 @@ import {
     criarInstanciaMsal
 } from '@/core/autenticacao/configuracoes/msal.config';
 
+/* DOMAIN ACESSO */
+import {
+    UsuarioComponent
+} from '@/domain/acesso/usuario/usuario.component';
+
 /* APP */
 import { AppRoutingModule } from '@/app-routing.module';
 import { AppComponent } from './app.component';
@@ -93,7 +98,8 @@ import { BannerComponent } from './components/site/banner/banner.component';
 //import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
 //import {RecoverPasswordComponent} from '@modules/recover-password/recover-password.component';
 
-//import { CabecalhoPaginaComponent } from './components/cabecalho-pagina/cabecalho-pagina.component';
+import { CabecalhoPaginaComponent } from './components/cabecalho-pagina/cabecalho-pagina.component';
+
 //import { InformacaoComponent } from './components/dashboard/informacao/informacao.component';
 //import { SucessoComponent } from './components/dashboard/sucesso/sucesso.component';
 //import { AvisoComponent } from './components/dashboard/aviso/aviso.component';
@@ -119,7 +125,9 @@ import { BannerComponent } from './components/site/banner/banner.component';
 //import { CompraComponent } from './pages/estoque/compra/compra.component';
 //import { CompraItemComponent } from './pages/estoque/compra/compra-item/compra-item.component';
 //import { MovimentacaoComponent } from './pages/estoque/movimentacao/movimentacao.component';
-//import { GridComponent } from './components/grid/grid.component';
+import {
+    GridComponent
+} from './components/grid/grid.component';
 //import { DropdownComponent } from './components/dropdown/dropdown.component';
 //import { BarchartComponent } from './components/barchart/barchart.component';
 //import { PiechartComponent } from './components/piechart/piechart.component';
@@ -150,6 +158,9 @@ registerLocaleData(localePt);
         /* SECURITY */
         LoginComponent,
 
+        /* DOMAIN ACESSO */
+        UsuarioComponent,
+
         /* COMPONENTE SITE */
         BannerComponent,
 
@@ -158,6 +169,8 @@ registerLocaleData(localePt);
         /* PAGES FINANCEIRO */
 
         /* COMPONENTE OUTROS */
+        CabecalhoPaginaComponent,
+        GridComponent,
 
         //MainMenuComponent,
         //RegisterComponent,
