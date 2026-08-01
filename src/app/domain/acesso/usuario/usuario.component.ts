@@ -91,6 +91,10 @@ export class UsuarioComponent extends Base {
     }
 
     get podeSalvar(): boolean {
+        if (this.isAlteracaoSenha) {
+            return this.podeAlterarSenha;
+        }
+
         const possuiId =
             !!this.formulario
                 ?.get('id')
