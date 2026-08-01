@@ -2,16 +2,20 @@ import {
     ComponentFixture,
     TestBed
 } from '@angular/core/testing';
+
 import {
     FormBuilder
 } from '@angular/forms';
+
 import {
     ActivatedRoute,
     Router
 } from '@angular/router';
+
 import {
     ToastrService
 } from 'ngx-toastr';
+
 import {
     of
 } from 'rxjs';
@@ -19,12 +23,18 @@ import {
 import {
     ChavePermissao
 } from '@/core/autorizacao/models/chave-permissao';
+
 import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
+
 import {
     BaseService
 } from '@services/base/base.service';
+
+import {
+    UsuarioService
+} from './services/usuario.service';
 
 import {
     UsuarioComponent
@@ -38,6 +48,9 @@ describe('UsuarioComponent', () => {
 
     let baseServiceMock:
         jasmine.SpyObj<BaseService>;
+
+    let usuarioServiceMock:
+        jasmine.SpyObj<UsuarioService>;
 
     const autorizacaoServiceMock = {
         possuiPermissao: jasmine.createSpy(
@@ -101,6 +114,14 @@ describe('UsuarioComponent', () => {
                 ]
             );
 
+        usuarioServiceMock =
+            jasmine.createSpyObj<UsuarioService>(
+                'UsuarioService',
+                [
+                    'alterarSenha'
+                ]
+            );
+
         baseServiceMock
             .listar
             .and.returnValue(
@@ -121,6 +142,11 @@ describe('UsuarioComponent', () => {
                         provide: BaseService,
                         useValue:
                             baseServiceMock
+                    },
+                    {
+                        provide: UsuarioService,
+                        useValue:
+                            usuarioServiceMock
                     },
                     {
                         provide:
@@ -168,71 +194,100 @@ describe('UsuarioComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('deve configurar o endpoint e as colunas de usuário', () => {
-        expect(
-            component.endPoint
-        ).toBe('usuario');
+    it(
+        'deve configurar o endpoint e as colunas de usuário',
+        () => {
+            expect(
+                component.endPoint
+            ).toBe('usuario');
 
-        expect(
-            component.pagina
-        ).toBe('Usuários');
+            expect(
+                component.pagina
+            ).toBe('Usuários');
 
-        expect(
-            component.coluna
-        ).toEqual([
-            'E-mail',
-            'Status'
-        ]);
-    });
+            expect(
+                component.coluna
+            ).toEqual([
+                'E-mail',
+                'Status'
+            ]);
+        }
+    );
 
-    it('deve criar formulário de cadastro com e-mail e senha', () => {
+    it(
+        'deve criar formulário de cadastro com e-mail e senha',
+        () => {
+            const formulario =
+                component.campos();
+
+            expect(
+                formulario.contains('id')
+            ).toBeFalse();
+
+            expect(
+                formulario.contains('email')
+            ).toBeTrue();
+
+            expect(
+                formulario.contains('senha')
+            ).toBeTrue();
+
+            expect(
+                formulario.get('email')
+                    ?.hasError('required')
+            ).toBeTrue();
+
+            expect(
+                formulario.get('senha')
+                    ?.hasError('required')
+            ).toBeTrue();
+        }
+    );
+
+    it('deve exigir uma senha forte no cadastro', () => {
         const formulario =
             component.campos();
 
-        expect(
-            formulario.contains('id')
-        ).toBeFalse();
+        const senha =
+            formulario.get('senha');
+
+        senha?.setValue('senhafraca');
 
         expect(
-            formulario.contains('email')
+            senha?.hasError('pattern')
         ).toBeTrue();
 
-        expect(
-            formulario.contains('senha')
-        ).toBeTrue();
+        senha?.setValue('Senha@123');
 
         expect(
-            formulario.get('email')
-                ?.hasError('required')
-        ).toBeTrue();
-
-        expect(
-            formulario.get('senha')
-                ?.hasError('required')
+            senha?.valid
         ).toBeTrue();
     });
 
-    it('deve criar formulário de edição sem senha', () => {
-        const formulario =
-            component.campos({
+    it(
+        'deve criar formulário de edição sem senha',
+        () => {
+            const formulario =
+                component.campos({
+                    id: 10,
+                    email:
+                        'usuario@teste.com',
+                    status: 'ATIVO'
+                });
+
+            expect(
+                formulario.value
+            ).toEqual({
                 id: 10,
                 email:
-                    'usuario@teste.com',
-                status: 'ATIVO'
+                    'usuario@teste.com'
             });
 
-        expect(
-            formulario.value
-        ).toEqual({
-            id: 10,
-            email:
-                'usuario@teste.com'
-        });
-
-        expect(
-            formulario.contains('senha')
-        ).toBeFalse();
-    });
+            expect(
+                formulario.contains('senha')
+            ).toBeFalse();
+        }
+    );
 
     it('deve carregar a lista ao inicializar', () => {
         expect(
@@ -247,161 +302,315 @@ describe('UsuarioComponent', () => {
         );
     });
 
-    it('deve abrir o detalhamento em modo somente leitura', () => {
-        baseServiceMock
-            .detalhar
-            .and.returnValue(
-                of({
+    it(
+        'deve abrir o detalhamento em modo somente leitura',
+        () => {
+            baseServiceMock
+                .detalhar
+                .and.returnValue(
+                    of({
+                        id: 10,
+                        email:
+                            'usuario@teste.com',
+                        status: 'ATIVO'
+                    }) as never
+                );
+
+            component.botaoVisualizar(10);
+
+            expect(
+                baseServiceMock.detalhar
+            ).toHaveBeenCalledOnceWith(
+                'usuario',
+                10
+            );
+
+            expect(
+                component.isVisualizacao
+            ).toBeTrue();
+
+            expect(
+                component.isLista
+            ).toBeFalse();
+
+            expect(
+                component.isFormulario
+            ).toBeTrue();
+
+            expect(
+                component.formulario.disabled
+            ).toBeTrue();
+
+            expect(
+                component.formulario
+                    .getRawValue()
+            ).toEqual({
+                id: 10,
+                email:
+                    'usuario@teste.com'
+            });
+
+            expect(
+                component.formulario
+                    .contains('senha')
+            ).toBeFalse();
+        }
+    );
+
+    it(
+        'deve exigir a permissão correspondente para salvar',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.callFake(
+                    (
+                        permissao:
+                            ChavePermissao
+                    ) =>
+                        permissao ===
+                        ChavePermissao
+                            .UsuarioCriar
+                );
+
+            component.formulario =
+                component.campos();
+
+            expect(
+                component.podeSalvar
+            ).toBeTrue();
+
+            component.formulario =
+                component.campos({
                     id: 10,
                     email:
                         'usuario@teste.com',
                     status: 'ATIVO'
-                }) as never
+                });
+
+            expect(
+                component.podeSalvar
+            ).toBeFalse();
+
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.callFake(
+                    (
+                        permissao:
+                            ChavePermissao
+                    ) =>
+                        permissao ===
+                        ChavePermissao
+                            .UsuarioEditar
+                );
+
+            expect(
+                component.podeSalvar
+            ).toBeTrue();
+        }
+    );
+
+    it(
+        'deve controlar as ações conforme as permissões do usuário',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.callFake(
+                    (
+                        permissao:
+                            ChavePermissao
+                    ) =>
+                        [
+                            ChavePermissao
+                                .UsuarioCriar,
+                            ChavePermissao
+                                .UsuarioExcluir,
+                            ChavePermissao
+                                .UsuarioDetalhar
+                        ].includes(
+                            permissao
+                        )
+                );
+
+            expect(
+                component.podeCriar
+            ).toBeTrue();
+
+            expect(
+                component.podeEditar
+            ).toBeFalse();
+
+            expect(
+                component.podeExcluir
+            ).toBeTrue();
+
+            expect(
+                component.podeDetalhar
+            ).toBeTrue();
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledWith(
+                ChavePermissao.UsuarioCriar
             );
 
-        component.botaoVisualizar(10);
-
-        expect(
-            baseServiceMock.detalhar
-        ).toHaveBeenCalledOnceWith(
-            'usuario',
-            10
-        );
-
-        expect(
-            component.isVisualizacao
-        ).toBeTrue();
-
-        expect(
-            component.isLista
-        ).toBeFalse();
-
-        expect(
-            component.isFormulario
-        ).toBeTrue();
-
-        expect(
-            component.formulario.disabled
-        ).toBeTrue();
-
-        expect(
-            component.formulario
-                .getRawValue()
-        ).toEqual({
-            id: 10,
-            email:
-                'usuario@teste.com'
-        });
-
-        expect(
-            component.formulario
-                .contains('senha')
-        ).toBeFalse();
-    });
-
-    it('deve exigir a permissão correspondente para salvar', () => {
-        autorizacaoServiceMock
-            .possuiPermissao
-            .and.callFake(
-                (permissao: ChavePermissao) =>
-                    permissao ===
-                    ChavePermissao.UsuarioCriar
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledWith(
+                ChavePermissao.UsuarioEditar
             );
 
-        component.formulario =
-            component.campos();
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledWith(
+                ChavePermissao.UsuarioExcluir
+            );
 
-        expect(
-            component.podeSalvar
-        ).toBeTrue();
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledWith(
+                ChavePermissao.UsuarioDetalhar
+            );
+        }
+    );
 
-        component.formulario =
-            component.campos({
+    it(
+        'deve verificar a permissão para alterar senha',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.callFake(
+                    (
+                        permissao:
+                            ChavePermissao
+                    ) =>
+                        permissao ===
+                        ChavePermissao
+                            .UsuarioSenhaEditar
+                );
+
+            expect(
+                component.podeAlterarSenha
+            ).toBeTrue();
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledWith(
+                ChavePermissao
+                    .UsuarioSenhaEditar
+            );
+        }
+    );
+
+    it(
+        'deve abrir o formulário de alteração de senha',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.callFake(
+                    (
+                        permissao:
+                            ChavePermissao
+                    ) =>
+                        permissao ===
+                        ChavePermissao
+                            .UsuarioSenhaEditar
+                );
+
+            component.botaoAlterarSenha(10);
+
+            expect(
+                component.isAlteracaoSenha
+            ).toBeTrue();
+
+            expect(
+                component.isLista
+            ).toBeFalse();
+
+            expect(
+                component.isFormulario
+            ).toBeTrue();
+
+            expect(
+                component.formulario
+                    .getRawValue()
+            ).toEqual({
                 id: 10,
-                email:
-                    'usuario@teste.com',
-                status: 'ATIVO'
+                senha: ''
             });
 
-        expect(
-            component.podeSalvar
-        ).toBeFalse();
+            expect(
+                component.formulario
+                    .contains('email')
+            ).toBeFalse();
+        }
+    );
 
-        autorizacaoServiceMock
-            .possuiPermissao
-            .and.callFake(
-                (permissao: ChavePermissao) =>
-                    permissao ===
-                    ChavePermissao.UsuarioEditar
+    it(
+        'deve enviar a alteração de senha',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.callFake(
+                    (
+                        permissao:
+                            ChavePermissao
+                    ) =>
+                        permissao ===
+                        ChavePermissao
+                            .UsuarioSenhaEditar
+                );
+
+            usuarioServiceMock
+                .alterarSenha
+                .and.returnValue(
+                    of({
+                        id: 10,
+                        email:
+                            'usuario@teste.com',
+                        status: 'ATIVO'
+                    })
+                );
+
+            toastrMock.success.calls.reset();
+
+            component.botaoAlterarSenha(10);
+
+            component.formulario
+                .get('senha')
+                ?.setValue('Senha@123');
+
+            component.salvar();
+
+            expect(
+                usuarioServiceMock
+                    .alterarSenha
+            ).toHaveBeenCalledOnceWith({
+                id: 10,
+                senha: 'Senha@123'
+            });
+
+            expect(
+                component.isAlteracaoSenha
+            ).toBeFalse();
+
+            expect(
+                component.isLista
+            ).toBeTrue();
+
+            expect(
+                component.isFormulario
+            ).toBeFalse();
+
+            expect(
+                toastrMock.success
+            ).toHaveBeenCalledWith(
+                'Senha alterada com sucesso'
             );
-
-        expect(
-            component.podeSalvar
-        ).toBeTrue();
-    });
-
-    it('deve controlar as ações conforme as permissões do usuário', () => {
-        autorizacaoServiceMock
-            .possuiPermissao
-            .and.callFake(
-                (
-                    permissao:
-                        ChavePermissao
-                ) =>
-                    [
-                        ChavePermissao
-                            .UsuarioCriar,
-                        ChavePermissao
-                            .UsuarioExcluir,
-                        ChavePermissao
-                            .UsuarioDetalhar
-                    ].includes(
-                        permissao
-                    )
-            );
-
-        expect(
-            component.podeCriar
-        ).toBeTrue();
-
-        expect(
-            component.podeEditar
-        ).toBeFalse();
-
-        expect(
-            component.podeExcluir
-        ).toBeTrue();
-
-        expect(
-            component.podeDetalhar
-        ).toBeTrue();
-
-        expect(
-            autorizacaoServiceMock
-                .possuiPermissao
-        ).toHaveBeenCalledWith(
-            ChavePermissao.UsuarioCriar
-        );
-
-        expect(
-            autorizacaoServiceMock
-                .possuiPermissao
-        ).toHaveBeenCalledWith(
-            ChavePermissao.UsuarioEditar
-        );
-
-        expect(
-            autorizacaoServiceMock
-                .possuiPermissao
-        ).toHaveBeenCalledWith(
-            ChavePermissao.UsuarioExcluir
-        );
-
-        expect(
-            autorizacaoServiceMock
-                .possuiPermissao
-        ).toHaveBeenCalledWith(
-            ChavePermissao.UsuarioDetalhar
-        );
-    });
+        }
+    );
 });

@@ -66,6 +66,16 @@
                         </button>
                       }
                       &nbsp;&nbsp;
+                      @if (b_alterar_senha) {
+                          <button
+                              type="button"
+                              class="btn btn-tool"
+                              matTooltip="Alterar senha"
+                              (click)="botaoAlterarSenha(dado.id)">
+                              <mat-icon>vpn_key</mat-icon>
+                          </button>
+                      }
+                      &nbsp;&nbsp;
                       @if (b_excluir) {
                         <button class="btn btn-tool" (click)="botaoExcluir(dado.id)" matTooltip="Excluir">
                           <mat-icon>delete</mat-icon>

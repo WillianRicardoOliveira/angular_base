@@ -23,6 +23,15 @@ import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
 
+import {
+    AlterarSenhaUsuario,
+    UsuarioService
+} from './services/usuario.service';
+
+import {
+    ToastrService
+} from 'ngx-toastr';
+
 @Component({
     selector: 'app-usuario',
     templateUrl: './usuario.component.html',
@@ -34,6 +43,16 @@ export class UsuarioComponent extends Base {
     private readonly autorizacaoService =
     inject(
         AutorizacaoService
+    );
+
+    private readonly usuarioService =
+    inject(
+        UsuarioService
+    );
+
+    private readonly toastrUsuario =
+    inject(
+        ToastrService
     );
 
     get podeCriar(): boolean {
@@ -64,6 +83,13 @@ export class UsuarioComponent extends Base {
             );
     }
 
+    get podeAlterarSenha(): boolean {
+        return this.autorizacaoService
+            .possuiPermissao(
+                ChavePermissao.UsuarioSenhaEditar
+            );
+    }
+
     get podeSalvar(): boolean {
         const possuiId =
             !!this.formulario
@@ -75,6 +101,8 @@ export class UsuarioComponent extends Base {
             : this.podeCriar;
     }
 
+    isAlteracaoSenha = false;
+
     pagina = 'Usuários';
 
     endPoint = 'usuario';
@@ -83,6 +111,79 @@ export class UsuarioComponent extends Base {
         'E-mail',
         'Status'
     ];
+
+    override salvar(): void {
+        if (!this.isAlteracaoSenha) {
+            super.salvar();
+            return;
+        }
+
+        if (
+            !this.podeAlterarSenha ||
+            this.formulario.invalid
+        ) {
+            return;
+        }
+
+        const dados:
+            AlterarSenhaUsuario =
+                this.formulario.getRawValue();
+
+        this.usuarioService
+            .alterarSenha(dados)
+            .subscribe({
+                next: () => {
+                    this.cancelar();
+                    this.carregarLista();
+
+                    this.toastrUsuario.success(
+                        'Senha alterada com sucesso'
+                    );
+                },
+                error: () => {
+                    this.toastrUsuario.error(
+                        'Não foi possível alterar a senha'
+                    );
+                }
+            });
+    }
+
+    botaoAlterarSenha(id: number): void {
+        if (!this.podeAlterarSenha) {
+            return;
+        }
+
+        this.resetForm();
+
+        this.isAlteracaoSenha = true;
+        this.isVisualizacao = false;
+        this.isLista = false;
+        this.isFormulario = true;
+
+        this.formulario =
+            this.builder.group({
+                id: [
+                    id,
+                    Validators.required
+                ],
+                senha: [
+                    '',
+                    [
+                        Validators.required,
+                        Validators.minLength(8),
+                        Validators.pattern(
+                            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/
+                        )
+                    ]
+                ]
+            });
+    }
+
+    override cancelar(): void {
+        this.isAlteracaoSenha = false;
+
+        super.cancelar();
+    }
 
     campos(
         dados?: Usuario
@@ -114,7 +215,10 @@ export class UsuarioComponent extends Base {
                 '',
                 [
                     Validators.required,
-                    Validators.minLength(8)
+                    Validators.minLength(8),
+                    Validators.pattern(
+                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/
+                    )
                 ]
             ]
         });

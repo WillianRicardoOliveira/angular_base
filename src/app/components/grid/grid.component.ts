@@ -27,27 +27,31 @@ export class GridComponent implements OnInit {
 
   @Input() b_adicionar = true;
 
-  @Input() b_chamar: boolean = false
+  @Input() b_chamar: boolean = false;
 
-  @Input() b_editar: boolean = true
+  @Input() b_editar: boolean = true;
 
-  @Input() b_excluir: boolean = true
+  @Input() b_excluir: boolean = true;
 
-  @Input() b_visualizar: boolean = false
+  @Input() b_visualizar: boolean = false;
 
-  @Output() adicionar: EventEmitter<any> = new EventEmitter<any>()
+  @Input() b_alterar_senha = false;
 
-  @Output() editar: EventEmitter<any> = new EventEmitter<any>()
+  @Output() adicionar: EventEmitter<any> = new EventEmitter<any>();
 
-  @Output() excluir: EventEmitter<any> = new EventEmitter<any>()
+  @Output() editar: EventEmitter<any> = new EventEmitter<any>();
 
-  @Output() visualizar: EventEmitter<any> = new EventEmitter<any>()
+  @Output() excluir: EventEmitter<any> = new EventEmitter<any>();
 
-  @Output() pesquisa: EventEmitter<any> = new EventEmitter<any>()
+  @Output() visualizar: EventEmitter<any> = new EventEmitter<any>();
 
-  @Output() chamar: EventEmitter<any> = new EventEmitter<any>()
+  @Output() alterarSenha: EventEmitter<number> = new EventEmitter<number>();
 
-  @Output() p_paginacao: EventEmitter<any> = new EventEmitter<any>()
+  @Output() pesquisa: EventEmitter<any> = new EventEmitter<any>();
+
+  @Output() chamar: EventEmitter<any> = new EventEmitter<any>();
+
+  @Output() p_paginacao: EventEmitter<any> = new EventEmitter<any>();
 
   constructor(private intl: MatPaginatorIntl) {}
 
@@ -83,6 +87,10 @@ export class GridComponent implements OnInit {
 
   botaoVisualizar(id: number) {
     this.visualizar.emit(id)
+  }
+
+  botaoAlterarSenha(id: number): void {
+    this.alterarSenha.emit(id);
   }
 
   pesquisar() {
