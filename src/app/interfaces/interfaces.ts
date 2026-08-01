@@ -10,6 +10,13 @@ export interface Usuario {
     status?: Status;
 }
 
+export interface Perfil {
+    id?: number;
+    nome: string;
+    descricao?: string;
+    status?: Status;
+}
+
 export interface Fornecedor {
     id?: number,
     cnpj: string,

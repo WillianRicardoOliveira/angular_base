@@ -334,6 +334,16 @@ export const MENU_CONFIGURACOES:
                 'fas fa-shield-alt',
             children: [
                 {
+                    name: 'Perfis',
+                    iconClasses:
+                        'fas fa-user-shield',
+                    path: [
+                        '/acesso/perfis'
+                    ],
+                    permissao:
+                        ChavePermissao.PerfilListar
+                },
+                {
                     name: 'Usuários',
                     iconClasses:
                         'fas fa-users',

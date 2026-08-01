@@ -40,6 +40,10 @@ import { LoginComponent } from '@modules/login/login.component';
 
 
 import {
+    PerfilComponent
+} from '@/domain/acesso/perfil/perfil.component';
+
+import {
     UsuarioComponent
 } from '@/domain/acesso/usuario/usuario.component';
 import {
@@ -82,6 +86,17 @@ const routes: Routes = [
             AutenticacaoGuard
         ],
         children: [
+            {
+                path: 'acesso/perfis',
+                component: PerfilComponent,
+                canActivate: [
+                    PermissaoGuard
+                ],
+                data: {
+                    permissao:
+                        ChavePermissao.PerfilListar
+                }
+            },
             {
                 path: 'acesso/usuarios',
                 component: UsuarioComponent,

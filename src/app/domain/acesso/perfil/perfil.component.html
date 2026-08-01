@@ -1,0 +1,123 @@
+<app-cabecalho-pagina
+    [pagina]="pagina">
+</app-cabecalho-pagina>
+
+@if (isLista) {
+    <app-grid
+        [totalRegistros]="totalRegistros"
+        [lista]="lista"
+        [coluna]="coluna"
+        [b_adicionar]="podeCriar"
+        [b_editar]="podeEditar"
+        [b_excluir]="podeExcluir"
+        [b_visualizar]="podeDetalhar"
+        (pesquisa)="pesquisar($event)"
+        (adicionar)="botaoAdicionar()"
+        (editar)="botaoEditar($event)"
+        (excluir)="botaoExcluir($event)"
+        (visualizar)="botaoVisualizar($event)"
+        (p_paginacao)="quantidadePorPagina($event)">
+    </app-grid>
+}
+
+<div class="formulario">
+    <section class="content">
+        @if (isFormulario && formulario) {
+            <form
+                [formGroup]="formulario"
+                (ngSubmit)="salvar()">
+
+                <div class="row">
+                    <div
+                        class="col-md-12 titulo-formulario">
+                        @if (isVisualizacao) {
+                            Detalhes do perfil
+                        } @else if (formulario.get('id')?.value) {
+                            Editar perfil
+                        } @else {
+                            Novo perfil
+                        }
+                    </div>
+                </div>
+
+                @if (formulario.get('nome')) {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Nome
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    matInput
+                                    type="text"
+                                    formControlName="nome"
+                                    autocomplete="off">
+
+                                @if (
+                                    formulario
+                                        .get('nome')
+                                        ?.hasError('required')
+                                ) {
+                                    <mat-error>
+                                        O nome é obrigatório.
+                                    </mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </div>
+                }
+
+                @if (formulario.get('descricao')) {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Descrição
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <textarea
+                                    matInput
+                                    formControlName="descricao"
+                                    rows="4">
+                                </textarea>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                }
+
+                <div class="row">
+                    <div class="col-md-12 botao">
+                        @if (!isVisualizacao && podeSalvar) {
+                            <button
+                                type="submit"
+                                mat-stroked-button
+                                color="primary"
+                                [disabled]="formulario.invalid">
+                                Salvar
+                            </button>
+                        }
+
+                        <button
+                            type="button"
+                            mat-stroked-button
+                            color="primary"
+                            (click)="cancelar()">
+                            @if (isVisualizacao) {
+                                Fechar
+                            } @else {
+                                Cancelar
+                            }
+                        </button>
+                    </div>
+                </div>
+            </form>
+        }
+    </section>
+</div>

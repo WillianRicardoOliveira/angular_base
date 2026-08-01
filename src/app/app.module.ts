@@ -54,6 +54,10 @@ import {
 
 /* DOMAIN ACESSO */
 import {
+    PerfilComponent
+} from '@/domain/acesso/perfil/perfil.component';
+
+import {
     UsuarioComponent
 } from '@/domain/acesso/usuario/usuario.component';
 
@@ -117,7 +121,7 @@ import { CabecalhoPaginaComponent } from './components/cabecalho-pagina/cabecalh
 //import { DepoimentoSiteComponent } from './pages/site/depoimento-site/depoimento-site.component';
 //import { ConteudoSiteComponent } from './pages/site/conteudo-site/conteudo-site.component';
 //import { SeletorPassageiroComponent } from './components/site/seletor-passageiro/seletor-passageiro/seletor-passageiro.component';
-//import { PerfilComponent } from './pages/site/perfil/perfil.component';
+
 //import { CadastroComponent } from './pages/site/cadastro/cadastro.component';
 //import { FormBasePerfilComponent } from './components/site/form-base-perfil/form-base-perfil.component';
 //import { FornecedorComponent } from './pages/estoque/fornecedor/fornecedor.component';
@@ -159,6 +163,7 @@ registerLocaleData(localePt);
         LoginComponent,
 
         /* DOMAIN ACESSO */
+        PerfilComponent,
         UsuarioComponent,
 
         /* COMPONENTE SITE */
@@ -208,7 +213,6 @@ registerLocaleData(localePt);
         //DepoimentoSiteComponent,
         //ConteudoSiteComponent,
         //SeletorPassageiroComponent,
-        //PerfilComponent,
         //BarchartComponent,
         //PiechartComponent,
         //ContasPagarComponent,
