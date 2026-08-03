@@ -17,6 +17,24 @@ export interface Perfil {
     status?: Status;
 }
 
+export interface Permissao {
+    id?: number;
+    nome: string;
+    chave: string;
+    descricao?: string;
+    status?: Status;
+}
+
+export interface PerfilPermissao {
+    id?: number;
+    idPerfil?: number;
+    perfil?: string;
+    idPermissao: number;
+    permissao?: string;
+    chave?: string;
+    status?: Status;
+}
+
 export interface Fornecedor {
     id?: number,
     cnpj: string,

@@ -58,6 +58,10 @@ import {
 } from '@/domain/acesso/perfil/perfil.component';
 
 import {
+    PermissaoComponent
+} from '@/domain/acesso/permissao/permissao.component';
+
+import {
     UsuarioComponent
 } from '@/domain/acesso/usuario/usuario.component';
 
@@ -164,6 +168,7 @@ registerLocaleData(localePt);
 
         /* DOMAIN ACESSO */
         PerfilComponent,
+        PermissaoComponent,
         UsuarioComponent,
 
         /* COMPONENTE SITE */

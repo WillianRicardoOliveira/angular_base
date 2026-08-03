@@ -44,6 +44,10 @@ import {
 } from '@/domain/acesso/perfil/perfil.component';
 
 import {
+    PermissaoComponent
+} from '@/domain/acesso/permissao/permissao.component';
+
+import {
     UsuarioComponent
 } from '@/domain/acesso/usuario/usuario.component';
 import {
@@ -95,6 +99,17 @@ const routes: Routes = [
                 data: {
                     permissao:
                         ChavePermissao.PerfilListar
+                }
+            },
+            {
+                path: 'acesso/permissoes',
+                component: PermissaoComponent,
+                canActivate: [
+                    PermissaoGuard
+                ],
+                data: {
+                    permissao:
+                        ChavePermissao.PermissaoListar
                 }
             },
             {

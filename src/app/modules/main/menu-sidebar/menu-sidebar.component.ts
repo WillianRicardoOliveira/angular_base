@@ -344,6 +344,16 @@ export const MENU_CONFIGURACOES:
                         ChavePermissao.PerfilListar
                 },
                 {
+                    name: 'Permissões',
+                    iconClasses:
+                        'fas fa-key',
+                    path: [
+                        '/acesso/permissoes'
+                    ],
+                    permissao:
+                        ChavePermissao.PermissaoListar
+                },
+                {
                     name: 'Usuários',
                     iconClasses:
                         'fas fa-users',
