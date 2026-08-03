@@ -35,6 +35,20 @@ export interface PerfilPermissao {
     status?: Status;
 }
 
+export interface UsuarioPerfil {
+    id?: number;
+    idUsuario?: number;
+    usuario?: string;
+    idPerfil: number;
+    perfil?: string;
+    status?: Status;
+}
+
+
+
+
+
+
 export interface Fornecedor {
     id?: number,
     cnpj: string,

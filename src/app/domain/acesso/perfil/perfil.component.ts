@@ -24,6 +24,10 @@ import {
     Base
 } from '@components/grid/base/base';
 
+import {
+    Router
+} from '@angular/router';
+
 @Component({
     selector: 'app-perfil',
     templateUrl: './perfil.component.html',
@@ -36,6 +40,11 @@ export class PerfilComponent extends Base {
         inject(
             AutorizacaoService
         );
+
+    private readonly routerPerfil =
+    inject(
+        Router
+    );
 
     get podeCriar(): boolean {
         return this.autorizacaoService
@@ -65,6 +74,14 @@ export class PerfilComponent extends Base {
             );
     }
 
+    get podeGerenciarPermissoes(): boolean {
+        return this.autorizacaoService
+            .possuiPermissao(
+                ChavePermissao
+                    .PerfilPermissaoListar
+            );
+    }
+
     get podeSalvar(): boolean {
         const possuiId =
             !!this.formulario
@@ -85,6 +102,20 @@ export class PerfilComponent extends Base {
         'Descrição',
         'Status'
     ];
+
+    botaoPermissoes(
+        id: number
+    ): void {
+        if (!this.podeGerenciarPermissoes) {
+            return;
+        }
+
+        this.routerPerfil.navigate([
+            '/acesso/perfis',
+            id,
+            'permissoes'
+        ]);
+    }
 
     campos(
         dados?: Perfil

@@ -32,6 +32,10 @@ import {
     ToastrService
 } from 'ngx-toastr';
 
+import {
+    Router
+} from '@angular/router';
+
 @Component({
     selector: 'app-usuario',
     templateUrl: './usuario.component.html',
@@ -53,6 +57,11 @@ export class UsuarioComponent extends Base {
     private readonly toastrUsuario =
     inject(
         ToastrService
+    );
+
+    private readonly routerUsuario =
+    inject(
+        Router
     );
 
     get podeCriar(): boolean {
@@ -90,6 +99,14 @@ export class UsuarioComponent extends Base {
             );
     }
 
+    get podeGerenciarPerfis(): boolean {
+        return this.autorizacaoService
+            .possuiPermissao(
+                ChavePermissao
+                    .UsuarioPerfilListar
+            );
+    }
+
     get podeSalvar(): boolean {
         if (this.isAlteracaoSenha) {
             return this.podeAlterarSenha;
@@ -115,6 +132,20 @@ export class UsuarioComponent extends Base {
         'E-mail',
         'Status'
     ];
+
+    botaoPerfis(
+        id: number
+    ): void {
+        if (!this.podeGerenciarPerfis) {
+            return;
+        }
+
+        this.routerUsuario.navigate([
+            '/acesso/usuarios',
+            id,
+            'perfis'
+        ]);
+    }
 
     override salvar(): void {
         if (!this.isAlteracaoSenha) {

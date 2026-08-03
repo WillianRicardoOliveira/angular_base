@@ -44,12 +44,21 @@ import {
 } from '@/domain/acesso/perfil/perfil.component';
 
 import {
+    PerfilPermissaoComponent
+} from '@/domain/acesso/perfil-permissao/perfil-permissao.component';
+
+import {
     PermissaoComponent
 } from '@/domain/acesso/permissao/permissao.component';
 
 import {
     UsuarioComponent
 } from '@/domain/acesso/usuario/usuario.component';
+
+import {
+    UsuarioPerfilComponent
+} from '@/domain/acesso/usuario-perfil/usuario-perfil.component';
+
 import {
     PermissaoGuard
 } from '@/core/autorizacao/guards/permissao.guard';
@@ -102,6 +111,20 @@ const routes: Routes = [
                 }
             },
             {
+                path:
+                    'acesso/perfis/:idPerfil/permissoes',
+                component:
+                    PerfilPermissaoComponent,
+                canActivate: [
+                    PermissaoGuard
+                ],
+                data: {
+                    permissao:
+                        ChavePermissao
+                            .PerfilPermissaoListar
+                }
+            },
+            {
                 path: 'acesso/permissoes',
                 component: PermissaoComponent,
                 canActivate: [
@@ -121,6 +144,20 @@ const routes: Routes = [
                 data: {
                     permissao:
                         ChavePermissao.UsuarioListar
+                }
+            },
+            {
+                path:
+                    'acesso/usuarios/:idUsuario/perfis',
+                component:
+                    UsuarioPerfilComponent,
+                canActivate: [
+                    PermissaoGuard
+                ],
+                data: {
+                    permissao:
+                        ChavePermissao
+                            .UsuarioPerfilListar
                 }
             },
 

@@ -97,6 +97,11 @@ describe('PerfilComponent', () => {
             .possuiPermissao
             .and.returnValue(false);
 
+        routerMock
+            .navigate
+            .calls
+            .reset();
+
         baseServiceMock =
             jasmine.createSpyObj<BaseService>(
                 'BaseService',
@@ -435,6 +440,44 @@ describe('PerfilComponent', () => {
             ).toHaveBeenCalledWith(
                 ChavePermissao.PerfilDetalhar
             );
+        }
+    );
+
+    it(
+        'deve abrir as permissões do perfil quando autorizado',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.callFake(
+                    (
+                        permissao:
+                            ChavePermissao
+                    ) =>
+                        permissao ===
+                        ChavePermissao
+                            .PerfilPermissaoListar
+                );
+
+            component.botaoPermissoes(10);
+
+            expect(
+                routerMock.navigate
+            ).toHaveBeenCalledOnceWith([
+                '/acesso/perfis',
+                10,
+                'permissoes'
+            ]);
+        }
+    );
+
+    it(
+        'não deve abrir as permissões do perfil quando não autorizado',
+        () => {
+            component.botaoPermissoes(10);
+
+            expect(
+                routerMock.navigate
+            ).not.toHaveBeenCalled();
         }
     );
 });

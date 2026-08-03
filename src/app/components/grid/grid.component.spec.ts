@@ -81,4 +81,33 @@ describe('GridComponent', () => {
             adicionarSpy
         ).toHaveBeenCalledTimes(1);
     });
+
+    it(
+        'deve exibir pesquisa e paginação por padrão',
+        () => {
+            expect(
+                component.b_pesquisa
+            ).toBeTrue();
+
+            expect(
+                component.b_paginacao
+            ).toBeTrue();
+        }
+    );
+
+    it(
+        'deve permitir ocultar pesquisa e paginação',
+        () => {
+            component.b_pesquisa = false;
+            component.b_paginacao = false;
+
+            expect(
+                component.b_pesquisa
+            ).toBeFalse();
+
+            expect(
+                component.b_paginacao
+            ).toBeFalse();
+        }
+    );
 });

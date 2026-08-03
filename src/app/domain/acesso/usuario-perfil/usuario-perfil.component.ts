@@ -28,29 +28,29 @@ import {
 } from '@/core/autorizacao/services/autorizacao.service';
 
 import {
-    PerfilPermissao
+    UsuarioPerfil
 } from '@/interfaces/interfaces';
 
 import {
-    PerfilPermissaoService,
-    VincularPerfilPermissao
-} from './services/perfil-permissao.service';
+    UsuarioPerfilService,
+    VincularUsuarioPerfil
+} from './services/usuario-perfil.service';
 
 @Component({
-    selector: 'app-perfil-permissao',
+    selector: 'app-usuario-perfil',
     templateUrl:
-        './perfil-permissao.component.html',
+        './usuario-perfil.component.html',
     styleUrls: [
-        './perfil-permissao.component.scss'
+        './usuario-perfil.component.scss'
     ],
     standalone: false
 })
-export class PerfilPermissaoComponent
+export class UsuarioPerfilComponent
     implements OnInit {
 
     private readonly service =
         inject(
-            PerfilPermissaoService
+            UsuarioPerfilService
         );
 
     private readonly autorizacaoService =
@@ -78,20 +78,19 @@ export class PerfilPermissaoComponent
             ToastrService
         );
 
-    idPerfil = 0;
+    idUsuario = 0;
 
     pagina =
-        'Permissões do perfil';
+        'Perfis do usuário';
 
     coluna = [
-        'Código da permissão',
-        'Permissão',
-        'Chave',
+        'Código do perfil',
+        'Perfil',
         'Status'
     ];
 
     lista:
-        PerfilPermissao[] = [];
+        UsuarioPerfil[] = [];
 
     totalRegistros = 0;
 
@@ -107,7 +106,7 @@ export class PerfilPermissaoComponent
         return this.autorizacaoService
             .possuiPermissao(
                 ChavePermissao
-                    .PerfilPermissaoCriar
+                    .UsuarioPerfilCriar
             );
     }
 
@@ -115,7 +114,7 @@ export class PerfilPermissaoComponent
         return this.autorizacaoService
             .possuiPermissao(
                 ChavePermissao
-                    .PerfilPermissaoExcluir
+                    .UsuarioPerfilExcluir
             );
     }
 
@@ -123,15 +122,7 @@ export class PerfilPermissaoComponent
         return this.autorizacaoService
             .possuiPermissao(
                 ChavePermissao
-                    .PerfilPermissaoDetalhar
-            );
-    }
-
-    get podeGerenciarPermissoes(): boolean {
-        return this.autorizacaoService
-            .possuiPermissao(
-                ChavePermissao
-                    .PerfilPermissaoListar
+                    .UsuarioPerfilDetalhar
             );
     }
 
@@ -139,19 +130,19 @@ export class PerfilPermissaoComponent
         const parametro =
             this.route.snapshot
                 .paramMap
-                .get('idPerfil');
+                .get('idUsuario');
 
-        this.idPerfil =
+        this.idUsuario =
             Number(parametro);
 
         if (
             !Number.isInteger(
-                this.idPerfil
+                this.idUsuario
             ) ||
-            this.idPerfil <= 0
+            this.idUsuario <= 0
         ) {
             this.router.navigate([
-                '/acesso/perfis'
+                '/acesso/usuarios'
             ]);
 
             return;
@@ -160,27 +151,21 @@ export class PerfilPermissaoComponent
         this.carregarLista();
     }
 
-    carregarLista(
-        page?: number,
-        size?: number
-    ): void {
+    carregarLista(): void {
         this.service
-            .listarPorPerfil(
-                this.idPerfil,
-                page,
-                size
+            .listarPorUsuario(
+                this.idUsuario
             )
             .subscribe({
-                next: (pagina) => {
-                    this.lista =
-                        pagina.content;
+                next: (lista) => {
+                    this.lista = lista;
 
                     this.totalRegistros =
-                        pagina.totalElements;
+                        lista.length;
                 },
                 error: () => {
                     this.toastr.error(
-                        'Não foi possível carregar as permissões do perfil'
+                        'Não foi possível carregar os perfis do usuário'
                     );
                 }
             });
@@ -197,11 +182,11 @@ export class PerfilPermissaoComponent
 
         this.formulario =
             this.builder.group({
-                idPerfil: [
-                    this.idPerfil,
+                idUsuario: [
+                    this.idUsuario,
                     Validators.required
                 ],
-                idPermissao: [
+                idPerfil: [
                     null,
                     Validators.required
                 ]
@@ -228,20 +213,17 @@ export class PerfilPermissaoComponent
                             id: [
                                 dados.id
                             ],
+                            idUsuario: [
+                                dados.idUsuario
+                            ],
+                            usuario: [
+                                dados.usuario
+                            ],
                             idPerfil: [
                                 dados.idPerfil
                             ],
                             perfil: [
                                 dados.perfil
-                            ],
-                            idPermissao: [
-                                dados.idPermissao
-                            ],
-                            permissao: [
-                                dados.permissao
-                            ],
-                            chave: [
-                                dados.chave
                             ],
                             status: [
                                 dados.status
@@ -252,7 +234,7 @@ export class PerfilPermissaoComponent
                 },
                 error: () => {
                     this.toastr.error(
-                        'Não foi possível detalhar a permissão do perfil'
+                        'Não foi possível detalhar o perfil do usuário'
                     );
                 }
             });
@@ -267,7 +249,7 @@ export class PerfilPermissaoComponent
         }
 
         const dados:
-            VincularPerfilPermissao =
+            VincularUsuarioPerfil =
                 this.formulario
                     .getRawValue();
 
@@ -279,12 +261,12 @@ export class PerfilPermissaoComponent
                     this.carregarLista();
 
                     this.toastr.success(
-                        'Permissão vinculada com sucesso'
+                        'Perfil vinculado com sucesso'
                     );
                 },
                 error: () => {
                     this.toastr.error(
-                        'Não foi possível vincular a permissão'
+                        'Não foi possível vincular o perfil'
                     );
                 }
             });
@@ -304,27 +286,15 @@ export class PerfilPermissaoComponent
                     this.carregarLista();
 
                     this.toastr.info(
-                        'Permissão removida do perfil'
+                        'Perfil removido do usuário'
                     );
                 },
                 error: () => {
                     this.toastr.error(
-                        'Não foi possível remover a permissão do perfil'
+                        'Não foi possível remover o perfil do usuário'
                     );
                 }
             });
-    }
-
-    quantidadePorPagina(
-        parametros: {
-            page: number;
-            size: number;
-        }
-    ): void {
-        this.carregarLista(
-            parametros.page,
-            parametros.size
-        );
     }
 
     cancelar(): void {
@@ -339,7 +309,7 @@ export class PerfilPermissaoComponent
 
     voltar(): void {
         this.router.navigate([
-            '/acesso/perfis'
+            '/acesso/usuarios'
         ]);
     }
 }

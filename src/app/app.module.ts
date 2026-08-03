@@ -58,12 +58,20 @@ import {
 } from '@/domain/acesso/perfil/perfil.component';
 
 import {
+    PerfilPermissaoComponent
+} from '@/domain/acesso/perfil-permissao/perfil-permissao.component';
+
+import {
     PermissaoComponent
 } from '@/domain/acesso/permissao/permissao.component';
 
 import {
     UsuarioComponent
 } from '@/domain/acesso/usuario/usuario.component';
+
+import {
+    UsuarioPerfilComponent
+} from '@/domain/acesso/usuario-perfil/usuario-perfil.component';
 
 /* APP */
 import { AppRoutingModule } from '@/app-routing.module';
@@ -168,8 +176,10 @@ registerLocaleData(localePt);
 
         /* DOMAIN ACESSO */
         PerfilComponent,
+        PerfilPermissaoComponent,
         PermissaoComponent,
         UsuarioComponent,
+        UsuarioPerfilComponent,
 
         /* COMPONENTE SITE */
         BannerComponent,

@@ -41,7 +41,8 @@ import {
 } from './usuario.component';
 
 describe('UsuarioComponent', () => {
-    let component: UsuarioComponent;
+    let component:
+        UsuarioComponent;
 
     let fixture:
         ComponentFixture<UsuarioComponent>;
@@ -53,15 +54,17 @@ describe('UsuarioComponent', () => {
         jasmine.SpyObj<UsuarioService>;
 
     const autorizacaoServiceMock = {
-        possuiPermissao: jasmine.createSpy(
-            'possuiPermissao'
-        )
+        possuiPermissao:
+            jasmine.createSpy(
+                'possuiPermissao'
+            )
     };
 
     const routerMock = {
-        navigate: jasmine.createSpy(
-            'navigate'
-        ),
+        navigate:
+            jasmine.createSpy(
+                'navigate'
+            ),
         routeReuseStrategy: {
             shouldReuseRoute:
                 jasmine.createSpy(
@@ -82,15 +85,18 @@ describe('UsuarioComponent', () => {
     };
 
     const toastrMock = {
-        success: jasmine.createSpy(
-            'success'
-        ),
-        error: jasmine.createSpy(
-            'error'
-        ),
-        info: jasmine.createSpy(
-            'info'
-        )
+        success:
+            jasmine.createSpy(
+                'success'
+            ),
+        error:
+            jasmine.createSpy(
+                'error'
+            ),
+        info:
+            jasmine.createSpy(
+                'info'
+            )
     };
 
     beforeEach(async () => {
@@ -102,6 +108,26 @@ describe('UsuarioComponent', () => {
         autorizacaoServiceMock
             .possuiPermissao
             .and.returnValue(false);
+
+        routerMock
+            .navigate
+            .calls
+            .reset();
+
+        toastrMock
+            .success
+            .calls
+            .reset();
+
+        toastrMock
+            .error
+            .calls
+            .reset();
+
+        toastrMock
+            .info
+            .calls
+            .reset();
 
         baseServiceMock =
             jasmine.createSpyObj<BaseService>(
@@ -139,12 +165,14 @@ describe('UsuarioComponent', () => {
                 providers: [
                     FormBuilder,
                     {
-                        provide: BaseService,
+                        provide:
+                            BaseService,
                         useValue:
                             baseServiceMock
                     },
                     {
-                        provide: UsuarioService,
+                        provide:
+                            UsuarioService,
                         useValue:
                             usuarioServiceMock
                     },
@@ -156,16 +184,20 @@ describe('UsuarioComponent', () => {
                     },
                     {
                         provide: Router,
-                        useValue: routerMock
+                        useValue:
+                            routerMock
                     },
                     {
-                        provide: ActivatedRoute,
+                        provide:
+                            ActivatedRoute,
                         useValue:
                             activatedRouteMock
                     },
                     {
-                        provide: ToastrService,
-                        useValue: toastrMock
+                        provide:
+                            ToastrService,
+                        useValue:
+                            toastrMock
                     }
                 ]
             })
@@ -190,9 +222,14 @@ describe('UsuarioComponent', () => {
         fixture.detectChanges();
     });
 
-    it('deve ser criado', () => {
-        expect(component).toBeTruthy();
-    });
+    it(
+        'deve ser criado',
+        () => {
+            expect(
+                component
+            ).toBeTruthy();
+        }
+    );
 
     it(
         'deve configurar o endpoint e as colunas de usuário',
@@ -233,36 +270,45 @@ describe('UsuarioComponent', () => {
             ).toBeTrue();
 
             expect(
-                formulario.get('email')
+                formulario
+                    .get('email')
                     ?.hasError('required')
             ).toBeTrue();
 
             expect(
-                formulario.get('senha')
+                formulario
+                    .get('senha')
                     ?.hasError('required')
             ).toBeTrue();
         }
     );
 
-    it('deve exigir uma senha forte no cadastro', () => {
-        const formulario =
-            component.campos();
+    it(
+        'deve exigir uma senha forte no cadastro',
+        () => {
+            const formulario =
+                component.campos();
 
-        const senha =
-            formulario.get('senha');
+            const senha =
+                formulario.get('senha');
 
-        senha?.setValue('senhafraca');
+            senha?.setValue(
+                'senhafraca'
+            );
 
-        expect(
-            senha?.hasError('pattern')
-        ).toBeTrue();
+            expect(
+                senha?.hasError('pattern')
+            ).toBeTrue();
 
-        senha?.setValue('Senha@123');
+            senha?.setValue(
+                'Senha@123'
+            );
 
-        expect(
-            senha?.valid
-        ).toBeTrue();
-    });
+            expect(
+                senha?.valid
+            ).toBeTrue();
+        }
+    );
 
     it(
         'deve criar formulário de edição sem senha',
@@ -284,23 +330,27 @@ describe('UsuarioComponent', () => {
             });
 
             expect(
-                formulario.contains('senha')
+                formulario
+                    .contains('senha')
             ).toBeFalse();
         }
     );
 
-    it('deve carregar a lista ao inicializar', () => {
-        expect(
-            baseServiceMock.listar
-        ).toHaveBeenCalledWith(
-            'usuario',
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            NaN
-        );
-    });
+    it(
+        'deve carregar a lista ao inicializar',
+        () => {
+            expect(
+                baseServiceMock.listar
+            ).toHaveBeenCalledWith(
+                'usuario',
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                NaN
+            );
+        }
+    );
 
     it(
         'deve abrir o detalhamento em modo somente leitura',
@@ -316,7 +366,8 @@ describe('UsuarioComponent', () => {
                     }) as never
                 );
 
-            component.botaoVisualizar(10);
+            component
+                .botaoVisualizar(10);
 
             expect(
                 baseServiceMock.detalhar
@@ -338,7 +389,8 @@ describe('UsuarioComponent', () => {
             ).toBeTrue();
 
             expect(
-                component.formulario.disabled
+                component.formulario
+                    .disabled
             ).toBeTrue();
 
             expect(
@@ -360,17 +412,10 @@ describe('UsuarioComponent', () => {
     it(
         'deve exigir a permissão correspondente para salvar',
         () => {
-            autorizacaoServiceMock
-                .possuiPermissao
-                .and.callFake(
-                    (
-                        permissao:
-                            ChavePermissao
-                    ) =>
-                        permissao ===
-                        ChavePermissao
-                            .UsuarioCriar
-                );
+            autorizar(
+                ChavePermissao
+                    .UsuarioCriar
+            );
 
             component.formulario =
                 component.campos();
@@ -391,17 +436,10 @@ describe('UsuarioComponent', () => {
                 component.podeSalvar
             ).toBeFalse();
 
-            autorizacaoServiceMock
-                .possuiPermissao
-                .and.callFake(
-                    (
-                        permissao:
-                            ChavePermissao
-                    ) =>
-                        permissao ===
-                        ChavePermissao
-                            .UsuarioEditar
-                );
+            autorizar(
+                ChavePermissao
+                    .UsuarioEditar
+            );
 
             expect(
                 component.podeSalvar
@@ -451,28 +489,32 @@ describe('UsuarioComponent', () => {
                 autorizacaoServiceMock
                     .possuiPermissao
             ).toHaveBeenCalledWith(
-                ChavePermissao.UsuarioCriar
+                ChavePermissao
+                    .UsuarioCriar
             );
 
             expect(
                 autorizacaoServiceMock
                     .possuiPermissao
             ).toHaveBeenCalledWith(
-                ChavePermissao.UsuarioEditar
+                ChavePermissao
+                    .UsuarioEditar
             );
 
             expect(
                 autorizacaoServiceMock
                     .possuiPermissao
             ).toHaveBeenCalledWith(
-                ChavePermissao.UsuarioExcluir
+                ChavePermissao
+                    .UsuarioExcluir
             );
 
             expect(
                 autorizacaoServiceMock
                     .possuiPermissao
             ).toHaveBeenCalledWith(
-                ChavePermissao.UsuarioDetalhar
+                ChavePermissao
+                    .UsuarioDetalhar
             );
         }
     );
@@ -480,17 +522,10 @@ describe('UsuarioComponent', () => {
     it(
         'deve verificar a permissão para alterar senha',
         () => {
-            autorizacaoServiceMock
-                .possuiPermissao
-                .and.callFake(
-                    (
-                        permissao:
-                            ChavePermissao
-                    ) =>
-                        permissao ===
-                        ChavePermissao
-                            .UsuarioSenhaEditar
-                );
+            autorizar(
+                ChavePermissao
+                    .UsuarioSenhaEditar
+            );
 
             expect(
                 component.podeAlterarSenha
@@ -509,19 +544,13 @@ describe('UsuarioComponent', () => {
     it(
         'deve abrir o formulário de alteração de senha',
         () => {
-            autorizacaoServiceMock
-                .possuiPermissao
-                .and.callFake(
-                    (
-                        permissao:
-                            ChavePermissao
-                    ) =>
-                        permissao ===
-                        ChavePermissao
-                            .UsuarioSenhaEditar
-                );
+            autorizar(
+                ChavePermissao
+                    .UsuarioSenhaEditar
+            );
 
-            component.botaoAlterarSenha(10);
+            component
+                .botaoAlterarSenha(10);
 
             expect(
                 component.isAlteracaoSenha
@@ -551,19 +580,32 @@ describe('UsuarioComponent', () => {
     );
 
     it(
+        'não deve abrir a alteração de senha sem permissão',
+        () => {
+            component
+                .botaoAlterarSenha(10);
+
+            expect(
+                component.isAlteracaoSenha
+            ).toBeFalse();
+
+            expect(
+                component.isLista
+            ).toBeTrue();
+
+            expect(
+                component.isFormulario
+            ).toBeFalse();
+        }
+    );
+
+    it(
         'deve enviar a alteração de senha',
         () => {
-            autorizacaoServiceMock
-                .possuiPermissao
-                .and.callFake(
-                    (
-                        permissao:
-                            ChavePermissao
-                    ) =>
-                        permissao ===
-                        ChavePermissao
-                            .UsuarioSenhaEditar
-                );
+            autorizar(
+                ChavePermissao
+                    .UsuarioSenhaEditar
+            );
 
             usuarioServiceMock
                 .alterarSenha
@@ -576,13 +618,14 @@ describe('UsuarioComponent', () => {
                     })
                 );
 
-            toastrMock.success.calls.reset();
-
-            component.botaoAlterarSenha(10);
+            component
+                .botaoAlterarSenha(10);
 
             component.formulario
                 .get('senha')
-                ?.setValue('Senha@123');
+                ?.setValue(
+                    'Senha@123'
+                );
 
             component.salvar();
 
@@ -613,4 +656,108 @@ describe('UsuarioComponent', () => {
             );
         }
     );
+
+    it(
+        'não deve enviar senha inválida',
+        () => {
+            autorizar(
+                ChavePermissao
+                    .UsuarioSenhaEditar
+            );
+
+            component
+                .botaoAlterarSenha(10);
+
+            component.salvar();
+
+            expect(
+                usuarioServiceMock
+                    .alterarSenha
+            ).not.toHaveBeenCalled();
+        }
+    );
+
+    it(
+        'deve cancelar a alteração de senha',
+        () => {
+            autorizar(
+                ChavePermissao
+                    .UsuarioSenhaEditar
+            );
+
+            component
+                .botaoAlterarSenha(10);
+
+            component.cancelar();
+
+            expect(
+                component.isAlteracaoSenha
+            ).toBeFalse();
+
+            expect(
+                component.isLista
+            ).toBeTrue();
+
+            expect(
+                component.isFormulario
+            ).toBeFalse();
+        }
+    );
+
+    it(
+        'deve abrir os perfis do usuário quando autorizado',
+        () => {
+            autorizar(
+                ChavePermissao
+                    .UsuarioPerfilListar
+            );
+
+            expect(
+                component
+                    .podeGerenciarPerfis
+            ).toBeTrue();
+
+            component.botaoPerfis(10);
+
+            expect(
+                routerMock.navigate
+            ).toHaveBeenCalledOnceWith([
+                '/acesso/usuarios',
+                10,
+                'perfis'
+            ]);
+        }
+    );
+
+    it(
+        'não deve abrir os perfis do usuário sem permissão',
+        () => {
+            expect(
+                component
+                    .podeGerenciarPerfis
+            ).toBeFalse();
+
+            component.botaoPerfis(10);
+
+            expect(
+                routerMock.navigate
+            ).not.toHaveBeenCalled();
+        }
+    );
+
+    function autorizar(
+        permissaoAutorizada:
+            ChavePermissao
+    ): void {
+        autorizacaoServiceMock
+            .possuiPermissao
+            .and.callFake(
+                (
+                    permissao:
+                        ChavePermissao
+                ) =>
+                    permissao ===
+                    permissaoAutorizada
+            );
+    }
 });

@@ -1,0 +1,210 @@
+<app-cabecalho-pagina
+    [pagina]="pagina">
+</app-cabecalho-pagina>
+
+<div class="row">
+    <div class="col-md-12 botao">
+        <button
+            type="button"
+            mat-stroked-button
+            color="primary"
+            (click)="voltar()">
+            Voltar para Usuários
+        </button>
+    </div>
+</div>
+
+@if (isLista) {
+    <app-grid
+        [totalRegistros]="totalRegistros"
+        [lista]="lista"
+        [coluna]="coluna"
+        [b_adicionar]="podeCriar"
+        [b_editar]="false"
+        [b_excluir]="podeExcluir"
+        [b_visualizar]="podeDetalhar"
+        [b_pesquisa]="false"
+        [b_paginacao]="false"
+        (adicionar)="botaoAdicionar()"
+        (excluir)="botaoExcluir($event)"
+        (visualizar)="botaoVisualizar($event)">
+    </app-grid>
+}
+
+<div class="formulario">
+    <section class="content">
+        @if (isFormulario && formulario) {
+            <form
+                [formGroup]="formulario"
+                (ngSubmit)="salvar()">
+
+                <div class="row">
+                    <div
+                        class="col-md-12 titulo-formulario">
+                        @if (isVisualizacao) {
+                            Detalhes do perfil do usuário
+                        } @else {
+                            Vincular perfil ao usuário
+                        }
+                    </div>
+                </div>
+
+                @if (
+                    !isVisualizacao &&
+                    formulario.get('idPerfil')
+                ) {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Código do perfil
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    matInput
+                                    type="number"
+                                    min="1"
+                                    formControlName="idPerfil"
+                                    autocomplete="off">
+
+                                @if (
+                                    formulario
+                                        .get('idPerfil')
+                                        ?.hasError('required')
+                                ) {
+                                    <mat-error>
+                                        O código do perfil é obrigatório.
+                                    </mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+                    </div>
+                }
+
+                @if (
+                    isVisualizacao &&
+                    formulario.get('usuario')
+                ) {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Usuário
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    matInput
+                                    type="text"
+                                    formControlName="usuario">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                }
+
+                @if (
+                    isVisualizacao &&
+                    formulario.get('idPerfil')
+                ) {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Código do perfil
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    matInput
+                                    type="number"
+                                    formControlName="idPerfil">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                }
+
+                @if (
+                    isVisualizacao &&
+                    formulario.get('perfil')
+                ) {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Perfil
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    matInput
+                                    type="text"
+                                    formControlName="perfil">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                }
+
+                @if (
+                    isVisualizacao &&
+                    formulario.get('status')
+                ) {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Status
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    matInput
+                                    type="text"
+                                    formControlName="status">
+                            </mat-form-field>
+                        </div>
+                    </div>
+                }
+
+                <div class="row">
+                    <div class="col-md-12 botao">
+                        @if (
+                            !isVisualizacao &&
+                            podeCriar
+                        ) {
+                            <button
+                                type="submit"
+                                mat-stroked-button
+                                color="primary"
+                                [disabled]="formulario.invalid">
+                                Vincular
+                            </button>
+                        }
+
+                        <button
+                            type="button"
+                            mat-stroked-button
+                            color="primary"
+                            (click)="cancelar()">
+                            @if (isVisualizacao) {
+                                Fechar
+                            } @else {
+                                Cancelar
+                            }
+                        </button>
+                    </div>
+                </div>
+            </form>
+        }
+    </section>
+</div>

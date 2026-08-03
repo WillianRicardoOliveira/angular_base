@@ -11,11 +11,13 @@
         [b_editar]="podeEditar"
         [b_excluir]="podeExcluir"
         [b_visualizar]="podeDetalhar"
+        [b_chamar]="podeGerenciarPermissoes"
         (pesquisa)="pesquisar($event)"
         (adicionar)="botaoAdicionar()"
         (editar)="botaoEditar($event)"
         (excluir)="botaoExcluir($event)"
         (visualizar)="botaoVisualizar($event)"
+        (chamar)="botaoPermissoes($event)"
         (p_paginacao)="quantidadePorPagina($event)">
     </app-grid>
 }

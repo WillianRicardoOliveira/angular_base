@@ -11,12 +11,14 @@
         [b_editar]="podeEditar"
         [b_excluir]="podeExcluir"
         [b_visualizar]="podeDetalhar"
+        [b_chamar]="podeGerenciarPerfis"
         [b_alterar_senha]="podeAlterarSenha"
         (pesquisa)="pesquisar($event)"
         (adicionar)="botaoAdicionar()"
         (editar)="botaoEditar($event)"
         (excluir)="botaoExcluir($event)"
         (visualizar)="botaoVisualizar($event)"
+        (chamar)="botaoPerfis($event)"
         (alterarSenha)="botaoAlterarSenha($event)"
         (p_paginacao)="quantidadePorPagina($event)">
     </app-grid>

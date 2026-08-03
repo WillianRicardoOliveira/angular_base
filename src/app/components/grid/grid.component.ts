@@ -37,6 +37,10 @@ export class GridComponent implements OnInit {
 
   @Input() b_alterar_senha = false;
 
+  @Input() b_pesquisa = true;
+
+  @Input() b_paginacao = true;
+
   @Output() adicionar: EventEmitter<any> = new EventEmitter<any>();
 
   @Output() editar: EventEmitter<any> = new EventEmitter<any>();
