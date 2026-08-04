@@ -4,8 +4,20 @@ import {
 } from '@angular/core/testing';
 
 import {
+    MatDialog
+} from '@angular/material/dialog';
+
+import {
     MatPaginatorIntl
 } from '@angular/material/paginator';
+
+import {
+    of
+} from 'rxjs';
+
+import {
+    AppSharedConfirmacaoComponent
+} from '@components/shared/app-shared-confirmacao/app-shared-confirmacao.component';
 
 import {
     GridComponent
@@ -18,14 +30,39 @@ describe('GridComponent', () => {
     let fixture:
         ComponentFixture<GridComponent>;
 
+    const dialogMock = {
+        open:
+            jasmine.createSpy(
+                'open'
+            )
+    };
+
     beforeEach(async () => {
+        dialogMock
+            .open
+            .calls
+            .reset();
+
+        dialogMock
+            .open
+            .and.returnValue({
+                afterClosed: () =>
+                    of(false)
+            } as never);
+
         await TestBed
             .configureTestingModule({
                 declarations: [
                     GridComponent
                 ],
                 providers: [
-                    MatPaginatorIntl
+                    MatPaginatorIntl,
+                    {
+                        provide:
+                            MatDialog,
+                        useValue:
+                            dialogMock
+                    }
                 ]
             })
             .overrideComponent(
@@ -136,11 +173,15 @@ describe('GridComponent', () => {
 
             expect(
                 component.iconeChamar
-            ).toBe('list_alt_add');
+            ).toBe(
+                'list_alt_add'
+            );
 
             expect(
                 component.tooltipChamar
-            ).toBe('Abrir opções');
+            ).toBe(
+                'Abrir opções'
+            );
         }
     );
 
@@ -193,6 +234,131 @@ describe('GridComponent', () => {
             ).toHaveBeenCalledOnceWith(
                 10
             );
+        }
+    );
+
+    it(
+        'deve usar os textos padrão da exclusão',
+        () => {
+            expect(
+                component.tituloExclusao
+            ).toBe(
+                'Excluir registro'
+            );
+
+            expect(
+                component.mensagemExclusao
+            ).toBe(
+                'Deseja realmente excluir este registro?'
+            );
+
+            expect(
+                component
+                    .textoConfirmarExclusao
+            ).toBe('Excluir');
+        }
+    );
+
+    it(
+        'deve permitir configurar os textos da exclusão',
+        () => {
+            component.tituloExclusao =
+                'Remover perfil';
+
+            component.mensagemExclusao =
+                'Deseja remover este perfil do usuário?';
+
+            component
+                .textoConfirmarExclusao =
+                    'Remover';
+
+            expect(
+                component.tituloExclusao
+            ).toBe('Remover perfil');
+
+            expect(
+                component.mensagemExclusao
+            ).toBe(
+                'Deseja remover este perfil do usuário?'
+            );
+
+            expect(
+                component
+                    .textoConfirmarExclusao
+            ).toBe('Remover');
+        }
+    );
+
+    it(
+        'deve emitir exclusão após confirmação',
+        () => {
+            dialogMock
+                .open
+                .and.returnValue({
+                    afterClosed: () =>
+                        of(true)
+                } as never);
+
+            const excluirSpy =
+                jasmine.createSpy(
+                    'excluir'
+                );
+
+            component.excluir.subscribe(
+                excluirSpy
+            );
+
+            component.botaoExcluir(10);
+
+            expect(
+                dialogMock.open
+            ).toHaveBeenCalledOnceWith(
+                AppSharedConfirmacaoComponent,
+                {
+                    data: {
+                        titulo:
+                            'Excluir registro',
+                        mensagem:
+                            'Deseja realmente excluir este registro?',
+                        textoConfirmar:
+                            'Excluir',
+                        textoCancelar:
+                            'Cancelar',
+                        tipo:
+                            'perigo'
+                    }
+                }
+            );
+
+            expect(
+                excluirSpy
+            ).toHaveBeenCalledOnceWith(
+                10
+            );
+        }
+    );
+
+    it(
+        'não deve emitir exclusão após cancelamento',
+        () => {
+            const excluirSpy =
+                jasmine.createSpy(
+                    'excluir'
+                );
+
+            component.excluir.subscribe(
+                excluirSpy
+            );
+
+            component.botaoExcluir(10);
+
+            expect(
+                dialogMock.open
+            ).toHaveBeenCalledTimes(1);
+
+            expect(
+                excluirSpy
+            ).not.toHaveBeenCalled();
         }
     );
 

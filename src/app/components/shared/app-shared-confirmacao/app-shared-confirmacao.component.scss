@@ -1,0 +1,208 @@
+:host {
+    --confirmacao-texto: #1e293b;
+    --confirmacao-texto-secundario: #64748b;
+    --confirmacao-borda: #e2e8f0;
+    --confirmacao-destaque: #08979c;
+
+    display: block;
+}
+
+.confirmacao {
+    width: min(
+        440px,
+        calc(100vw - 32px)
+    );
+
+    padding: 24px;
+
+    color:
+        var(--confirmacao-texto);
+
+    background-color: #ffffff;
+}
+
+.confirmacao-cabecalho {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.confirmacao-icone {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+
+    border-radius: 12px;
+}
+
+.confirmacao-icone mat-icon {
+    width: 24px;
+    height: 24px;
+
+    font-size: 24px;
+    line-height: 24px;
+}
+
+.confirmacao-textos {
+    flex: 1 1 auto;
+
+    min-width: 0;
+}
+
+.confirmacao-textos h2 {
+    margin: 0;
+    padding: 0;
+
+    color:
+        var(--confirmacao-texto);
+
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.confirmacao-textos
+mat-dialog-content {
+    max-height: none;
+
+    margin: 8px 0 0;
+    padding: 0;
+
+    color:
+        var(--confirmacao-texto-secundario);
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.confirmacao-textos
+mat-dialog-content p {
+    margin: 0;
+
+    overflow-wrap: anywhere;
+}
+
+.confirmacao-acoes {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+
+    min-height: auto;
+    margin: 24px 0 0;
+    padding: 16px 0 0;
+
+    border-top: 1px solid
+        var(--confirmacao-borda);
+}
+
+.confirmacao-acoes button {
+    min-width: 104px;
+    min-height: 40px;
+    padding: 0 16px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    border-radius: 8px;
+}
+
+.confirmacao-cancelar {
+    color:
+        var(--confirmacao-texto-secundario);
+
+    border-color:
+        var(--confirmacao-borda);
+}
+
+.confirmacao-cancelar:hover {
+    color:
+        var(--confirmacao-texto);
+
+    background-color: #f8fafc;
+}
+
+.confirmacao-confirmar {
+    color: #ffffff;
+
+    box-shadow: none;
+}
+
+.confirmacao--padrao
+.confirmacao-icone {
+    color: #0f766e;
+
+    background-color: #f0fdfa;
+}
+
+.confirmacao-confirmar--padrao {
+    background-color:
+        var(--confirmacao-destaque);
+}
+
+.confirmacao--atencao
+.confirmacao-icone {
+    color: #a16207;
+
+    background-color: #fffbeb;
+}
+
+.confirmacao-confirmar--atencao {
+    background-color: #d97706;
+}
+
+.confirmacao--perigo
+.confirmacao-icone {
+    color: #dc2626;
+
+    background-color: #fef2f2;
+}
+
+.confirmacao-confirmar--perigo {
+    background-color: #dc2626;
+}
+
+.confirmacao-confirmar--padrao:hover {
+    background-color: #087f83;
+}
+
+.confirmacao-confirmar--atencao:hover {
+    background-color: #b45309;
+}
+
+.confirmacao-confirmar--perigo:hover {
+    background-color: #b91c1c;
+}
+
+.confirmacao-acoes
+button:focus-visible {
+    outline: none;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(8, 151, 156, 0.2);
+}
+
+@media (max-width: 480px) {
+    .confirmacao {
+        width: calc(100vw - 24px);
+
+        padding: 20px;
+    }
+
+    .confirmacao-cabecalho {
+        gap: 12px;
+    }
+
+    .confirmacao-acoes {
+        flex-direction: column-reverse;
+    }
+
+    .confirmacao-acoes button {
+        width: 100%;
+    }
+}

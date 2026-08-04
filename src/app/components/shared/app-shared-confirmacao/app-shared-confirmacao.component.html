@@ -1,0 +1,70 @@
+<div
+    class="confirmacao"
+    [ngClass]="
+        'confirmacao--' + tipo
+    ">
+
+    <div class="confirmacao-cabecalho">
+        <div
+            class="confirmacao-icone"
+            aria-hidden="true">
+
+            @switch (tipo) {
+                @case ('perigo') {
+                    <mat-icon>
+                        delete_outline
+                    </mat-icon>
+                }
+
+                @case ('atencao') {
+                    <mat-icon>
+                        warning_amber
+                    </mat-icon>
+                }
+
+                @default {
+                    <mat-icon>
+                        help_outline
+                    </mat-icon>
+                }
+            }
+        </div>
+
+        <div class="confirmacao-textos">
+            <h2 mat-dialog-title>
+                {{ titulo }}
+            </h2>
+
+            <mat-dialog-content>
+                <p>
+                    {{ dados.mensagem }}
+                </p>
+            </mat-dialog-content>
+        </div>
+    </div>
+
+    <mat-dialog-actions
+        align="end"
+        class="confirmacao-acoes">
+
+        <button
+            type="button"
+            mat-stroked-button
+            class="confirmacao-cancelar"
+            (click)="cancelar()">
+            {{ textoCancelar }}
+        </button>
+
+        <button
+            type="button"
+            mat-flat-button
+            class="confirmacao-confirmar"
+            [ngClass]="
+                'confirmacao-confirmar--' +
+                tipo
+            "
+            (click)="confirmar()">
+            {{ textoConfirmar }}
+        </button>
+    </mat-dialog-actions>
+</div>

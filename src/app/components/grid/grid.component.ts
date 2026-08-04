@@ -1,6 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 
+import {
+    MatDialog
+} from '@angular/material/dialog';
+
+import {
+    AppSharedConfirmacaoComponent
+} from '@components/shared/app-shared-confirmacao/app-shared-confirmacao.component';
+
 @Component({
     selector: 'app-grid',
     templateUrl: './grid.component.html',
@@ -35,6 +43,15 @@ export class GridComponent implements OnInit {
 
   @Input() b_excluir: boolean = true;
 
+  @Input() tituloExclusao =
+    'Excluir registro';
+
+  @Input() mensagemExclusao =
+      'Deseja realmente excluir este registro?';
+
+  @Input() textoConfirmarExclusao =
+      'Excluir';
+
   @Input() b_visualizar: boolean = false;
 
   @Input() b_alterar_senha = false;
@@ -59,7 +76,13 @@ export class GridComponent implements OnInit {
 
   @Output() p_paginacao: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(private intl: MatPaginatorIntl) {}
+  constructor(
+    private readonly intl:
+        MatPaginatorIntl,
+
+    private readonly dialog:
+        MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.intl.itemsPerPageLabel = 'Itens por página';
@@ -87,8 +110,40 @@ export class GridComponent implements OnInit {
     this.editar.emit(id)
   }
 
-  botaoExcluir(id: number) {
-    this.excluir.emit(id)
+  botaoExcluir(
+      id: number
+  ): void {
+      const referencia =
+          this.dialog.open(
+              AppSharedConfirmacaoComponent,
+              {
+                  data: {
+                      titulo:
+                          this.tituloExclusao,
+                      mensagem:
+                          this.mensagemExclusao,
+                      textoConfirmar:
+                          this
+                              .textoConfirmarExclusao,
+                      textoCancelar:
+                          'Cancelar',
+                      tipo:
+                          'perigo'
+                  }
+              }
+          );
+
+      referencia
+          .afterClosed()
+          .subscribe(
+              (confirmou) => {
+                  if (confirmou) {
+                      this.excluir.emit(
+                          id
+                      );
+                  }
+              }
+          );
   }
 
   botaoVisualizar(id: number) {
