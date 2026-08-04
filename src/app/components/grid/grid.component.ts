@@ -1,4 +1,3 @@
-import { triggerDestaque } from '@/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
 
@@ -6,12 +5,9 @@ import { MatPaginatorIntl, PageEvent } from '@angular/material/paginator';
     selector: 'app-grid',
     templateUrl: './grid.component.html',
     styleUrls: ['./grid.component.scss'],
-    animations: [triggerDestaque],
     standalone: false
 })
 export class GridComponent implements OnInit {
-
-  indexTarefa = -1
 
   filtro: string
 
@@ -27,7 +23,13 @@ export class GridComponent implements OnInit {
 
   @Input() b_adicionar = true;
 
+  @Input() textoAdicionar = 'Adicionar';
+
   @Input() b_chamar: boolean = false;
+
+  @Input() iconeChamar = 'list_alt_add';
+
+  @Input() tooltipChamar = 'Abrir opções';
 
   @Input() b_editar: boolean = true;
 
@@ -107,6 +109,51 @@ export class GridComponent implements OnInit {
 
   quantidadePorPagina(e: PageEvent) {
     this.p_paginacao.emit({"page": e.pageIndex, "size": e.pageSize})
+  }
+
+  ehStatus(
+      valor: unknown
+  ): boolean {
+      if (typeof valor !== 'string') {
+          return false;
+      }
+
+      return [
+          'ATIVO',
+          'INATIVO',
+          'REMOVIDO'
+      ].includes(
+          valor.toUpperCase()
+      );
+  }
+
+  classeStatus(
+      valor: unknown
+  ): string {
+      if (!this.ehStatus(valor)) {
+          return '';
+      }
+
+      return (
+          'grid-status--' +
+          String(valor).toLowerCase()
+      );
+  }
+
+  textoStatus(
+      valor: unknown
+  ): string {
+      if (!this.ehStatus(valor)) {
+          return String(valor ?? '');
+      }
+
+      const texto =
+          String(valor).toLowerCase();
+
+      return (
+          texto.charAt(0).toUpperCase() +
+          texto.slice(1)
+      );
   }
 
   deveFormatarComoMoeda(campo: any): boolean {

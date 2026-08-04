@@ -5,18 +5,30 @@
         @if (b_adicionar) {
         <button mat-stroked-button color="primary"
           (click)="botaoAdicionar()">
-          <mat-icon>add</mat-icon>Adicionar</button>
+          <mat-icon>
+            add
+          </mat-icon>
+
+          {{ textoAdicionar }}
+          </button>
         }
         </mat-card-title>
         @if (b_pesquisa) {
         <mat-card-actions class="card-tools search">
-          <input
-            type="search"
-            class="form-control"
-            placeholder="O que você procura ?"
-            autofocus
-            [(ngModel)]="filtro"
-            (keyup)="pesquisar()">
+          <div class="grid-search-field">
+            <mat-icon aria-hidden="true">
+              search
+            </mat-icon>
+
+            <input
+              type="search"
+              class="form-control"
+              placeholder="Pesquisar..."
+              aria-label="Pesquisar registros"
+              autofocus
+              [(ngModel)]="filtro"
+              (keyup)="pesquisar()">
+          </div>
         </mat-card-actions>
         }
         </mat-card-header>
@@ -28,21 +40,37 @@
                 @for (item of coluna | keyvalue; track item) {
                   <th>{{ item.value }}</th>
                 }
-                <th></th>
+                <th class="grid-actions-header">
+                  Ações
+                </th>
               </tr>
             </thead>
             @if (lista.length > 0) {
               <tbody>
                 @for (dado of lista; track dado; let i = $index) {
-                  <tr (mouseover)="indexTarefa = i" [@trigger-destaque]="indexTarefa === i ? 'fim' : 'inicio'">
+                  <tr>
                     @for (key of objectKeys(dado); track key) {
                       <td>
                         @if (deveFormatarComoMoeda(key)) {
                           <div>
-                            {{ dado[key] | currency:'BRL':'symbol':'1.2-2' }}
+                            {{
+                              dado[key]
+                                | currency:'BRL':'symbol':'1.2-2'
+                            }}
                           </div>
-                        }
-                        @if (!deveFormatarComoMoeda(key)) {
+                        } @else if (ehStatus(dado[key])) {
+                          <span
+                            class="grid-status"
+                            [ngClass]="classeStatus(dado[key])">
+
+                            <span
+                              class="grid-status-dot"
+                              aria-hidden="true">
+                            </span>
+
+                            {{ textoStatus(dado[key]) }}
+                          </span>
+                        } @else {
                           <div>
                             {{ dado[key] }}
                           </div>
@@ -50,39 +78,77 @@
                       </td>
                     }
                     <td>
-                      @if (b_chamar) {
-                        <button class="btn btn-tool" (click)="botaoChamar(dado.id)" matTooltip="Mostrar">
-                          <mat-icon>list_alt_add</mat-icon>
-                        </button>
-                      }
-                      &nbsp;&nbsp;
-                      @if (b_visualizar) {
-                        <button class="btn btn-tool" (click)="botaoVisualizar(dado.id)" matTooltip="Visualizar">
-                          <mat-icon>visibility</mat-icon>
-                        </button>
-                      }
-                      &nbsp;&nbsp;
-                      @if (b_editar) {
-                        <button class="btn btn-tool" (click)="botaoEditar(dado.id)" matTooltip="Editar">
-                          <mat-icon>edit</mat-icon>
-                        </button>
-                      }
-                      &nbsp;&nbsp;
-                      @if (b_alterar_senha) {
+                      <div class="grid-actions">
+                        @if (b_chamar) {
                           <button
-                              type="button"
-                              class="btn btn-tool"
-                              matTooltip="Alterar senha"
-                              (click)="botaoAlterarSenha(dado.id)">
-                              <mat-icon>vpn_key</mat-icon>
+                            type="button"
+                            class="btn btn-tool"
+                            [matTooltip]="tooltipChamar"
+                            [attr.aria-label]="tooltipChamar"
+                            (click)="botaoChamar(dado.id)">
+
+                            <mat-icon>
+                              {{ iconeChamar }}
+                            </mat-icon>
                           </button>
-                      }
-                      &nbsp;&nbsp;
-                      @if (b_excluir) {
-                        <button class="btn btn-tool" (click)="botaoExcluir(dado.id)" matTooltip="Excluir">
-                          <mat-icon>delete</mat-icon>
-                        </button>
-                      }
+                        }
+
+                        @if (b_visualizar) {
+                          <button
+                            type="button"
+                            class="btn btn-tool"
+                            matTooltip="Visualizar"
+                            aria-label="Visualizar"
+                            (click)="botaoVisualizar(dado.id)">
+
+                            <mat-icon>
+                              visibility
+                            </mat-icon>
+                          </button>
+                        }
+
+                        @if (b_editar) {
+                          <button
+                            type="button"
+                            class="btn btn-tool"
+                            matTooltip="Editar"
+                            aria-label="Editar"
+                            (click)="botaoEditar(dado.id)">
+
+                            <mat-icon>
+                              edit
+                            </mat-icon>
+                          </button>
+                        }
+
+                        @if (b_alterar_senha) {
+                          <button
+                            type="button"
+                            class="btn btn-tool"
+                            matTooltip="Alterar senha"
+                            aria-label="Alterar senha"
+                            (click)="botaoAlterarSenha(dado.id)">
+
+                            <mat-icon>
+                              vpn_key
+                            </mat-icon>
+                          </button>
+                        }
+
+                        @if (b_excluir) {
+                          <button
+                            type="button"
+                            class="btn btn-tool grid-action-danger"
+                            matTooltip="Excluir"
+                            aria-label="Excluir"
+                            (click)="botaoExcluir(dado.id)">
+
+                            <mat-icon>
+                              delete
+                            </mat-icon>
+                          </button>
+                        }
+                      </div>
                     </td>
                   </tr>
                 }
@@ -90,14 +156,28 @@
             } @else {
               <tbody>
                 <tr>
-                  <td [attr.colspan]="coluna.length+2" align="center">
-                    Ainda não há registros cadastrados!
+                  <td
+                    class="grid-empty-cell"
+                    [attr.colspan]="coluna.length + 2">
+
+                    <div class="grid-empty-state">
+                      <mat-icon>
+                        inventory_2
+                      </mat-icon>
+
+                      <strong>
+                        Nenhum registro encontrado
+                      </strong>
+
+                      <span>
+                        Ainda não há registros para exibir.
+                      </span>
+                    </div>
                   </td>
                 </tr>
               </tbody>
             }
           </table>
-          &nbsp;&nbsp;
         </mat-card-content>
         @if (b_paginacao) {
         <mat-card-actions class="card-footer centraliza-paginator">
