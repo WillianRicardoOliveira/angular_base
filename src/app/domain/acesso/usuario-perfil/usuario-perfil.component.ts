@@ -36,6 +36,10 @@ import {
     VincularUsuarioPerfil
 } from './services/usuario-perfil.service';
 
+import {
+    ItemBreadcrumbPagina
+} from '@components/cabecalho-pagina/cabecalho-pagina.component';
+
 @Component({
     selector: 'app-usuario-perfil',
     templateUrl:
@@ -82,6 +86,19 @@ export class UsuarioPerfilComponent
 
     pagina =
         'Perfis do usuário';
+
+    descricao =
+        'Gerencie os perfis vinculados ao usuário';
+
+    breadcrumb: ItemBreadcrumbPagina[] = [
+        {
+            titulo: 'Acesso e Segurança'
+        },
+        {
+            titulo: 'Usuários',
+            rota: '/acesso/usuarios'
+        }
+    ];
 
     coluna = [
         'Código do perfil',

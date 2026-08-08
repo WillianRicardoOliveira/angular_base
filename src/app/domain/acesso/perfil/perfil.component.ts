@@ -28,6 +28,10 @@ import {
     Router
 } from '@angular/router';
 
+import {
+    ItemBreadcrumbPagina
+} from '@components/cabecalho-pagina/cabecalho-pagina.component';
+
 @Component({
     selector: 'app-perfil',
     templateUrl: './perfil.component.html',
@@ -94,6 +98,15 @@ export class PerfilComponent extends Base {
     }
 
     pagina = 'Perfis';
+
+    descricao =
+        'Gerencie os perfis de acesso do sistema';
+
+    breadcrumb: ItemBreadcrumbPagina[] = [
+        {
+            titulo: 'Acesso e Segurança'
+        }
+    ];
 
     endPoint = 'perfil';
 

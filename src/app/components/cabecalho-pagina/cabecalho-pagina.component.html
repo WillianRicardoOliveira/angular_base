@@ -1,30 +1,56 @@
-
 <section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <div class="cabecalho-titulo">
+                    <h1>
+                        {{ pagina }}
+                    </h1>
 
-  <div class="container-fluid">
+                    @if (descricao) {
+                        <p>
+                            {{ descricao }}
+                        </p>
+                    }
+                </div>
+            </div>
 
-    <div class="row mb-2">
+            <div class="col-sm-6">
+                <nav
+                    aria-label="Navegação estrutural">
 
-          <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item">
+                            <a routerLink="/">
+                                Início
+                            </a>
+                        </li>
 
-              <h1></h1>
+                        @for (
+                            item of breadcrumb;
+                            track item.titulo
+                        ) {
+                            <li class="breadcrumb-item">
+                                @if (item.rota) {
+                                    <a [routerLink]="item.rota">
+                                        {{ item.titulo }}
+                                    </a>
+                                } @else {
+                                    <span>
+                                        {{ item.titulo }}
+                                    </span>
+                                }
+                            </li>
+                        }
 
-          </div>
-
-          <div class="col-sm-6">
-
-              <ol class="breadcrumb float-sm-right">
-
-                  <li class="breadcrumb-item"><a href="#">Início</a></li>
-
-                  <li class="breadcrumb-item active">{{ pagina }}</li>
-
-              </ol>
-
-          </div>
-
+                        <li
+                            class="breadcrumb-item active"
+                            aria-current="page">
+                            {{ pagina }}
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
     </div>
-
-  </div>
-
 </section>

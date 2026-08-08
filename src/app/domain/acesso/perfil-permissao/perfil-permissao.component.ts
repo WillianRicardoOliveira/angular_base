@@ -36,6 +36,10 @@ import {
     VincularPerfilPermissao
 } from './services/perfil-permissao.service';
 
+import {
+    ItemBreadcrumbPagina
+} from '@components/cabecalho-pagina/cabecalho-pagina.component';
+
 @Component({
     selector: 'app-perfil-permissao',
     templateUrl:
@@ -82,6 +86,19 @@ export class PerfilPermissaoComponent
 
     pagina =
         'Permissões do perfil';
+
+    descricao =
+        'Gerencie as permissões vinculadas ao perfil';
+
+    breadcrumb: ItemBreadcrumbPagina[] = [
+        {
+            titulo: 'Acesso e Segurança'
+        },
+        {
+            titulo: 'Perfis',
+            rota: '/acesso/perfis'
+        }
+    ];
 
     coluna = [
         'Código da permissão',

@@ -23,8 +23,8 @@
             <input
               type="search"
               class="form-control"
-              placeholder="Pesquisar..."
-              aria-label="Pesquisar registros"
+              [placeholder]="placeholderPesquisa"
+              [attr.aria-label]="ariaLabelPesquisa"
               autofocus
               [(ngModel)]="filtro"
               (keyup)="pesquisar()">

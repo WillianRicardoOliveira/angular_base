@@ -1,18 +1,8 @@
 <app-cabecalho-pagina
-    [pagina]="pagina">
+    [pagina]="pagina"
+    [descricao]="descricao"
+    [breadcrumb]="breadcrumb">
 </app-cabecalho-pagina>
-
-<div class="row">
-    <div class="col-md-12 botao">
-        <button
-            type="button"
-            mat-stroked-button
-            color="primary"
-            (click)="voltar()">
-            Voltar para Usuários
-        </button>
-    </div>
-</div>
 
 @if (isLista) {
     <app-grid

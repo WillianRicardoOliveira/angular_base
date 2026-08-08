@@ -58,6 +58,10 @@ export class GridComponent implements OnInit {
 
   @Input() b_pesquisa = true;
 
+  @Input() placeholderPesquisa = 'Pesquisar...';
+
+  @Input() ariaLabelPesquisa = 'Pesquisar registros';
+
   @Input() b_paginacao = true;
 
   @Output() adicionar: EventEmitter<any> = new EventEmitter<any>();

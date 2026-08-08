@@ -1,5 +1,7 @@
 <app-cabecalho-pagina
-    [pagina]="pagina">
+    [pagina]="pagina"
+    [descricao]="descricao"
+    [breadcrumb]="breadcrumb">
 </app-cabecalho-pagina>
 
 @if (isLista) {
@@ -7,6 +9,8 @@
         [totalRegistros]="totalRegistros"
         [lista]="lista"
         [coluna]="coluna"
+        [placeholderPesquisa]="'Pesquisar permissões...'"
+        [ariaLabelPesquisa]="'Pesquisar permissões'"
         [b_adicionar]="podeCriar"
         [textoAdicionar]="'Nova permissão'"
         [b_editar]="podeEditar"

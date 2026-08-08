@@ -1,4 +1,12 @@
-import { Component, Input } from '@angular/core';
+import {
+    Component,
+    Input
+} from '@angular/core';
+
+export interface ItemBreadcrumbPagina {
+    titulo: string;
+    rota?: string;
+}
 
 @Component({
     selector: 'app-cabecalho-pagina',
@@ -8,6 +16,13 @@ import { Component, Input } from '@angular/core';
 })
 export class CabecalhoPaginaComponent {
 
-  @Input() pagina: string = ""
+    @Input()
+    pagina = '';
+
+    @Input()
+    descricao = '';
+
+    @Input()
+    breadcrumb: ItemBreadcrumbPagina[] = [];
 
 }

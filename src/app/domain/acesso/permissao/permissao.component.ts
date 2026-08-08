@@ -24,6 +24,10 @@ import {
     Base
 } from '@components/grid/base/base';
 
+import {
+    ItemBreadcrumbPagina
+} from '@components/cabecalho-pagina/cabecalho-pagina.component';
+
 @Component({
     selector: 'app-permissao',
     templateUrl: './permissao.component.html',
@@ -77,6 +81,15 @@ export class PermissaoComponent extends Base {
     }
 
     pagina = 'Permissões';
+
+    descricao =
+        'Gerencie as permissões de acesso do sistema';
+
+    breadcrumb: ItemBreadcrumbPagina[] = [
+        {
+            titulo: 'Acesso e Segurança'
+        }
+    ];
 
     endPoint = 'permissao';
 

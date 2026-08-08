@@ -36,6 +36,10 @@ import {
     Router
 } from '@angular/router';
 
+import {
+    ItemBreadcrumbPagina
+} from '@components/cabecalho-pagina/cabecalho-pagina.component';
+
 @Component({
     selector: 'app-usuario',
     templateUrl: './usuario.component.html',
@@ -125,6 +129,14 @@ export class UsuarioComponent extends Base {
     isAlteracaoSenha = false;
 
     pagina = 'Usuários';
+
+    descricao = 'Gerencie usuários, acessos e perfis do sistema';
+
+    breadcrumb: ItemBreadcrumbPagina[] = [
+        {
+            titulo: 'Acesso e Segurança'
+        }
+    ];
 
     endPoint = 'usuario';
 
