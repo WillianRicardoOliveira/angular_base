@@ -1,37 +1,183 @@
 :host {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block;
+    width: 100%;
 }
 
 app-dropdown {
     --pf-dropdown-width: 100%;
     --pf-dropdown-border: none;
     --pf-dropdown-menu-min-width: 100%;
-    --pf-dropdown-menu-margin-top: 0px;
+    --pf-dropdown-menu-margin-top: 6px;
 
-    .menu {
-        background-color: #454d55;
-    }
+    display: block;
+    width: 100%;
+}
 
-    .dropdown-item {
-        padding: 0.5rem 1rem;
-    }
+.input-group {
+    flex-wrap: nowrap;
+    overflow: hidden;
+
+    min-height: 40px;
+
+    background-color:
+        rgba(255, 255, 255, 0.08);
+
+    border: 1px solid
+        rgba(255, 255, 255, 0.16);
+
+    border-radius: 8px;
+
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.input-group:hover {
+    background-color:
+        rgba(255, 255, 255, 0.11);
+
+    border-color:
+        rgba(255, 255, 255, 0.24);
+}
+
+.input-group:focus-within {
+    background-color:
+        rgba(255, 255, 255, 0.12);
+
+    border-color: #22c1c7;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(34, 193, 199, 0.16);
+}
+
+.form-control-sidebar {
+    height: 40px;
+    padding: 0 12px;
+
+    color: #f8fafc;
+
+    font-size: 13px;
+
+    background-color: transparent;
+    border: 0;
+    outline: 0;
+    box-shadow: none;
+}
+
+.form-control-sidebar:focus {
+    color: #ffffff;
+
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+}
+
+.form-control-sidebar::placeholder {
+    color:
+        rgba(244, 251, 251, 0.62);
+}
+
+.input-group-append {
+    display: flex;
+}
+
+.btn-sidebar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+    padding: 0;
+
+    color:
+        rgba(244, 251, 251, 0.8);
+
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
+
+    transition:
+        color 150ms ease,
+        background-color 150ms ease;
+}
+
+.btn-sidebar:hover,
+.btn-sidebar:focus-visible {
+    color: #ffffff;
+
+    background-color:
+        rgba(34, 193, 199, 0.16);
+
+    outline: none;
+}
+
+.menu {
+    overflow: hidden;
+
+    max-height: 320px;
+
+    background-color: #ffffff;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+
+    box-shadow:
+        0 12px 28px
+        rgba(15, 23, 42, 0.18);
 }
 
 .nothing-found {
-    color: #c2c7d0;
-    padding: 0.25rem 0.5rem;
+    padding: 14px 16px;
+
+    color: #64748b;
+
+    font-size: 13px;
+    text-align: center;
 }
 
 .list-group {
-    .list-group-item {
-        padding: 0.5rem 0.75rem;
-        cursor: pointer;
-    }
+    max-height: 320px;
+    overflow-y: auto;
+}
 
-    .search-path {
-        font-size: 80%;
-        color: #adb5bd;
-    }
+.list-group-item {
+    padding: 12px 14px;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    background-color: #ffffff;
+
+    border: 0;
+    border-bottom: 1px solid #edf2f7;
+
+    cursor: pointer;
+
+    transition:
+        color 150ms ease,
+        background-color 150ms ease;
+}
+
+.list-group-item:last-child {
+    border-bottom: 0;
+}
+
+.list-group-item:hover,
+.list-group-item:focus-visible {
+    color: #087f83;
+
+    background-color: #ecfeff;
+
+    text-decoration: none;
+    outline: none;
+}
+
+:host ::ng-deep
+.search-title strong.text-light {
+    color: #08979c !important;
 }

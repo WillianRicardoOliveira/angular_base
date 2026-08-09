@@ -1,51 +1,82 @@
-<app-dropdown #dropdown hide-arrow [openOnButtonClick]="false">
+<app-dropdown
+  #dropdown
+  hide-arrow
+  [openOnButtonClick]="false">
+
   <div slot="button">
     <div class="input-group">
       <input
+        type="search"
         class="form-control form-control-sidebar"
-        type="text"
-        placeholder="Buscar"
-        aria-label="Buscar"
+        placeholder="Buscar no menu"
+        aria-label="Buscar no menu"
+        autocomplete="off"
         [value]="searchText"
-        (input)="handleSearchTextChange($event)"
-        />
-        <div class="input-group-append">
-          <button class="btn btn-sidebar" (click)="handleIconClick()">
-            <i
-                        [ngClass]="{
-                            fas: true,
-                            'fa-search': searchText.length === 0,
-                            'fa-times': searchText.length > 0,
-                            'fa-fw': true
-                        }"
-            ></i>
-          </button>
-        </div>
+        (input)="handleSearchTextChange($event)">
+
+      <div class="input-group-append">
+        <button
+          type="button"
+          class="btn btn-sidebar"
+          [attr.aria-label]="
+            searchText.length > 0
+              ? 'Limpar busca'
+              : 'Buscar no menu'
+          "
+          [attr.title]="
+            searchText.length > 0
+              ? 'Limpar busca'
+              : 'Buscar no menu'
+          "
+          (click)="handleIconClick()">
+
+          <i
+            aria-hidden="true"
+            [ngClass]="{
+              fas: true,
+              'fa-search': searchText.length === 0,
+              'fa-times': searchText.length > 0,
+              'fa-fw': true
+            }">
+          </i>
+        </button>
       </div>
     </div>
-    <div class="menu" slot="menu">
-      @if (foundMenuItems.length === 0) {
-        <div class="nothing-found">
-          No Element found
-        </div>
-      }
+  </div>
 
-      @if (foundMenuItems.length > 0) {
-        <div class="list-group">
-          @for (menuItem of foundMenuItems; track menuItem) {
-            <a
-              [routerLink]="menuItem.path"
-              class="list-group-item"
-              (click)="handleMenuItemClick()"
-              >
-              <div
-                class="search-title"
-                [innerHTML]="boldString(menuItem.name, searchText)"
-              ></div>
-              <div class="search-path">{{ menuItem.name }}</div>
-            </a>
-          }
-        </div>
-      }
-    </div>
-  </app-dropdown>
+  <div
+    class="menu"
+    slot="menu">
+
+    @if (foundMenuItems.length === 0) {
+      <div class="nothing-found">
+        Nenhum item encontrado
+      </div>
+    }
+
+    @if (foundMenuItems.length > 0) {
+      <div class="list-group">
+        @for (
+          menuItem of foundMenuItems;
+          track menuItem
+        ) {
+          <a
+            [routerLink]="menuItem.path"
+            class="list-group-item"
+            (click)="handleMenuItemClick()">
+
+            <div
+              class="search-title"
+              [innerHTML]="
+                boldString(
+                  menuItem.name,
+                  searchText
+                )
+              ">
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</app-dropdown>

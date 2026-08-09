@@ -1,31 +1,43 @@
-<a
-  (click)="handleMainMenuAction()"
+<button
+  type="button"
   class="nav-link"
-  [ngClass]="{active: isMainActive || isOneOfChildrenActive}"
-  >
-  <i class="nav-icon {{ menuItem.iconClasses }}"></i>
-  <p>{{ menuItem.name }}
-    @if (isExpandable && menuItem.children.length > 0) {
-      <i
-        class="right fas fa-angle-right"
-        [@rotate]="isMenuExtended"
-      ></i>
-    }
-  </p>
-</a>
-@if (isExpandable) {
-  <ul class="nav nav-treeview" [@openClose]="isMenuExtended">
-    @for (item of menuItem.children; track item) {
-      <li class="nav-item">
-        <a
-          [routerLink]="item.path"
-          [routerLinkActive]="'active'"
-          class="nav-link submenu-link"
-          >
-          <i class="nav-icon {{ item.iconClasses }}"></i>
-          <p>{{ item.name }}</p>
-        </a>
-      </li>
-    }
-  </ul>
-}
+  [attr.aria-label]="menuItem.name"
+  [attr.title]="menuItem.name"
+  [ngClass]="{
+    active:
+      selecionado ||
+      isMainActive ||
+      isOneOfChildrenActive,
+    'modo-contextual':
+      modoContextual
+  }"
+  [attr.aria-expanded]="
+    isExpandable
+      ? painelAberto
+      : null
+  "
+  (click)="handleMainMenuAction()">
+
+  <i
+    class="nav-icon {{ menuItem.iconClasses }}"
+    aria-hidden="true">
+  </i>
+
+  @if (!modoContextual) {
+    <span class="nav-label">
+      {{ menuItem.name }}
+    </span>
+  }
+
+  @if (
+    !modoContextual &&
+    isExpandable &&
+    menuItem.children.length > 0
+  ) {
+    <i
+      class="right fas fa-angle-right"
+      aria-hidden="true"
+      [@rotate]="selecionado">
+    </i>
+  }
+</button>

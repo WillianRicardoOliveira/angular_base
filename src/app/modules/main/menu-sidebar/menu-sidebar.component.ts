@@ -1,40 +1,59 @@
 import {
     Component,
+    ElementRef,
     HostBinding,
+    HostListener,
     OnInit
 } from '@angular/core';
+
+import {
+    NavigationEnd,
+    Router
+} from '@angular/router';
+
 import {
     Store
 } from '@ngrx/store';
 
 import {
+    filter
+} from 'rxjs/operators';
+
+import {
     MenuItem
 } from '@/components/menu-item/models/menu-item.model';
-import {
-    AutorizacaoService
-} from '@/core/autorizacao/services/autorizacao.service';
-import {
-    AppState
-} from '@/store/state';
-import {
-    UiState
-} from '@/store/ui/state';
 
 import {
     ChavePermissao
 } from '@/core/autorizacao/models/chave-permissao';
 
+import {
+    AutorizacaoService
+} from '@/core/autorizacao/services/autorizacao.service';
+
+import {
+    AppState
+} from '@/store/state';
+
+import {
+    UiState
+} from '@/store/ui/state';
+
 const BASE_CLASSES =
-    'main-sidebar elevation-4';
+    'main-sidebar elevation-4 sidebar-no-expand';
 
 @Component({
     selector: 'app-menu-sidebar',
-    templateUrl: './menu-sidebar.component.html',
-    styleUrls: ['./menu-sidebar.component.scss'],
+    templateUrl:
+        './menu-sidebar.component.html',
+    styleUrls: [
+        './menu-sidebar.component.scss'
+    ],
     standalone: false
 })
 export class MenuSidebarComponent
     implements OnInit {
+
     @HostBinding('class')
     classes: string = BASE_CLASSES;
 
@@ -42,25 +61,71 @@ export class MenuSidebarComponent
 
     menuConfiguracoes: MenuItem[] = [];
 
+    menuRecolhido = false;
+
+    moduloSelecionado: MenuItem | null =
+        null;
+
+    painelFlutuanteAberto = false;
+
     constructor(
         private store: Store<AppState>,
         private autorizacaoService:
-            AutorizacaoService
+            AutorizacaoService,
+        private router: Router,
+        private elementRef:
+            ElementRef<HTMLElement>
     ) {}
 
     ngOnInit(): void {
         this.menu =
-            this.filtrarMenu(MENU);
+            this.filtrarMenu(
+                MENU
+            );
 
         this.menuConfiguracoes =
             this.filtrarMenu(
                 MENU_CONFIGURACOES
             );
 
+        this.selecionarModuloPelaRota(
+            this.router.url
+        );
+
+        this.router.events
+            .pipe(
+                filter(
+                    (
+                        event
+                    ): event is NavigationEnd =>
+                        event instanceof
+                        NavigationEnd
+                )
+            )
+            .subscribe(
+                (event) => {
+                    this.painelFlutuanteAberto =
+                        false;
+
+                    this.selecionarModuloPelaRota(
+                        event.urlAfterRedirects
+                    );
+                }
+            );
+
         this.store
             .select('ui')
             .subscribe(
                 (state: UiState) => {
+                    this.menuRecolhido =
+                        state
+                            .menuSidebarCollapsed;
+
+                    if (!this.menuRecolhido) {
+                        this.painelFlutuanteAberto =
+                            false;
+                    }
+
                     this.classes =
                         `${BASE_CLASSES} ` +
                         `${state.sidebarSkin}`;
@@ -68,11 +133,108 @@ export class MenuSidebarComponent
             );
     }
 
+    @HostListener(
+        'document:keydown.escape'
+    )
+    fecharPainelFlutuante(): void {
+        this.painelFlutuanteAberto =
+            false;
+    }
+
+    @HostListener(
+        'document:click',
+        [
+            '$event'
+        ]
+    )
+    fecharPainelAoClicarFora(
+        event: MouseEvent
+    ): void {
+        if (!this.painelFlutuanteAberto) {
+            return;
+        }
+
+        const alvo =
+            event.target as Node | null;
+
+        if (
+            !alvo ||
+            this.elementRef
+                .nativeElement
+                .contains(alvo)
+        ) {
+            return;
+        }
+
+        this.painelFlutuanteAberto =
+            false;
+    }
+
+    selecionarModulo(
+        item: MenuItem
+    ): void {
+        if (this.menuRecolhido) {
+            const mesmoModulo =
+                this.moduloSelecionado === item;
+
+            this.moduloSelecionado = item;
+
+            this.painelFlutuanteAberto =
+                mesmoModulo
+                    ? !this.painelFlutuanteAberto
+                    : true;
+
+            return;
+        }
+
+        this.moduloSelecionado = item;
+        this.painelFlutuanteAberto = false;
+    }
+
+    private selecionarModuloPelaRota(
+        url: string
+    ): void {
+        const caminho =
+            url
+                .split('?')[0]
+                .split('#')[0];
+
+        const modulos = [
+            ...this.menu,
+            ...this.menuConfiguracoes
+        ];
+
+        this.moduloSelecionado =
+            modulos.find(
+                (modulo) =>
+                    modulo.children?.some(
+                        (item) => {
+                            const rota =
+                                item.path?.[0];
+
+                            if (!rota) {
+                                return false;
+                            }
+
+                            return (
+                                caminho === rota ||
+                                caminho.startsWith(
+                                    `${rota}/`
+                                )
+                            );
+                        }
+                    )
+            ) ?? null;
+    }
+
     private filtrarMenu(
         itens: readonly MenuItem[]
     ): MenuItem[] {
         return itens.reduce<MenuItem[]>(
-            (itensVisiveis, item) => {
+            (
+                itensVisiveis,
+                item
+            ) => {
                 if (
                     item.permissao &&
                     !this.autorizacaoService
@@ -95,7 +257,9 @@ export class MenuSidebarComponent
                         item.children
                     );
 
-                if (children.length === 0) {
+                if (
+                    children.length === 0
+                ) {
                     return itensVisiveis;
                 }
 
@@ -117,206 +281,8 @@ export const MENU: MenuItem[] = [
         name: 'Dashboard',
         iconClasses:
             'fas fa-tachometer-alt',
-        path: ['/dashboard']
-    },
-    {
-        name: 'Comercial',
-        iconClasses: 'fas fa-tags',
-        children: [
-            {
-                name: 'Menu 1',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/comercial/menu-1'
-                ]
-            }
-        ]
-    },
-    {
-        name: 'Compras',
-        iconClasses:
-            'fas fa-shopping-cart',
-        children: [
-            {
-                name: 'Menu 1',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/compras/menu-1'
-                ]
-            }
-        ]
-    },
-    {
-        name: 'Contabilidade',
-        iconClasses:
-            'far fa-list-alt',
-        children: [
-            {
-                name: 'Menu 1',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/contabilidade/menu-1'
-                ]
-            }
-        ]
-    },
-    {
-        name: 'Controladoria',
-        iconClasses:
-            'fas fa-chart-line',
-        children: [
-            {
-                name: 'Menu 1',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/controladoria/menu-1'
-                ]
-            }
-        ]
-    },
-    {
-        name: 'Crédito',
-        iconClasses:
-            'far fa-credit-card',
-        children: [
-            {
-                name: 'Menu 1',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/credito/menu-1'
-                ]
-            }
-        ]
-    },
-    {
-        name: 'Estoque',
-        iconClasses:
-            'fas fa-warehouse',
-        children: [
-            {
-                name: 'Menu 1',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/estoque/menu-1'
-                ]
-            }
-        ]
-    },
-    {
-        name: 'Faturamento',
-        iconClasses:
-            'fas fa-file-invoice-dollar',
-        children: [
-            {
-                name: 'Menu 1',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/faturamento/menu-1'
-                ]
-            }
-        ]
-    },
-    {
-        name: 'Financeiro',
-        iconClasses:
-            'fas fa-dollar-sign',
-        children: [
-            {
-                name: 'Menu 1',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/financeiro/menu-1'
-                ]
-            }
-        ]
-    },
-    {
-        name: 'Fiscal',
-        iconClasses:
-            'far fa-file-alt',
-        children: [
-            {
-                name: 'Menu 1',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/fiscal/menu-1'
-                ]
-            }
-        ]
-    },
-    {
-        name: 'Logística',
-        iconClasses: 'fas fa-truck',
-        children: [
-            {
-                name: 'Internacional',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/logistica/internacional'
-                ]
-            },
-            {
-                name: 'Nacional',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/logistica/nacional'
-                ]
-            }
-        ]
-    },
-    {
-        name: 'Supply',
-        iconClasses: 'fas fa-boxes',
-        children: [
-            {
-                name: 'Menu 1',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/supply/menu-1'
-                ]
-            }
-        ]
-    },
-    {
-        name: 'Relatórios',
-        iconClasses:
-            'far fa-chart-bar',
-        children: [
-            {
-                name: 'Menu 1',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/relatorios/menu-1'
-                ]
-            }
-        ]
-    },
-    {
-        name: 'Cadastros',
-        iconClasses:
-            'far fa-address-book',
-        children: [
-            {
-                name: 'Menu 1',
-                iconClasses:
-                    'fas fa-circle',
-                path: [
-                    '/cadastros/menu-1'
-                ]
-            }
+        path: [
+            '/dashboard'
         ]
     }
 ];
@@ -324,12 +290,8 @@ export const MENU: MenuItem[] = [
 export const MENU_CONFIGURACOES:
     MenuItem[] = [
         {
-            name: 'Configurações',
-            iconClasses: 'fas fa-cog',
-            path: ['/configuracoes']
-        },
-        {
-            name: 'Acesso e Segurança',
+            name:
+                'Acesso e Segurança',
             iconClasses:
                 'fas fa-shield-alt',
             children: [
@@ -341,7 +303,8 @@ export const MENU_CONFIGURACOES:
                         '/acesso/perfis'
                     ],
                     permissao:
-                        ChavePermissao.PerfilListar
+                        ChavePermissao
+                            .PerfilListar
                 },
                 {
                     name: 'Permissões',
@@ -351,7 +314,8 @@ export const MENU_CONFIGURACOES:
                         '/acesso/permissoes'
                     ],
                     permissao:
-                        ChavePermissao.PermissaoListar
+                        ChavePermissao
+                            .PermissaoListar
                 },
                 {
                     name: 'Usuários',
@@ -361,7 +325,8 @@ export const MENU_CONFIGURACOES:
                         '/acesso/usuarios'
                     ],
                     permissao:
-                        ChavePermissao.UsuarioListar
+                        ChavePermissao
+                            .UsuarioListar
                 }
             ]
         }

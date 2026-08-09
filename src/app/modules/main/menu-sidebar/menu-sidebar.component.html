@@ -1,28 +1,168 @@
-<!-- Logo -->
-<a [routerLink]="['/']" class="brand-link">
-  <span class="brand-mark">
-    <i class="fas fa-leaf" aria-hidden="true"></i>
+<a
+  [routerLink]="['/']"
+  class="brand-link"
+  aria-label="Ir para o início">
+
+  <span
+    class="brand-mark"
+    aria-hidden="true">
+
+    <i class="fas fa-leaf"></i>
   </span>
-  <span class="brand-text">Agrihold</span>
+
+  <span class="brand-text">
+    Agrihold
+  </span>
 </a>
-<!-- Sidebar -->
+
 <div class="sidebar">
   <div class="sidebar-search">
-    <app-sidebar-search></app-sidebar-search>
+    <app-sidebar-search>
+    </app-sidebar-search>
   </div>
-  <!-- Sidebar Menu -->
-  <nav class="mt-2" style="overflow-y: hidden">
-    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-      @for (item of menu; track item) {
-      <app-menu-item [menuItem]="item"></app-menu-item>
+
+  <nav
+    class="sidebar-navigation"
+    aria-label="Menu principal">
+
+    <ul
+      class="nav nav-pills nav-sidebar flex-column"
+      role="menu">
+
+      @for (
+        item of menu;
+        track item
+      ) {
+        <app-menu-item
+          [menuItem]="item"
+          [selecionado]="
+            moduloSelecionado === item
+          "
+          [modoContextual]="
+            moduloSelecionado !== null
+          "
+          (solicitarExpansao)="
+            selecionarModulo($event)
+          "
+          [painelAberto]="
+            moduloSelecionado === item &&
+            (
+              !menuRecolhido ||
+              painelFlutuanteAberto
+            )
+          ">
+        </app-menu-item>
       }
     </ul>
   </nav>
-  <nav class="sidebar-settings">
-    <ul class="nav nav-pills nav-sidebar flex-column" role="menu">
-      @for (item of menuConfiguracoes; track item) {
-      <app-menu-item [menuItem]="item"></app-menu-item>
+
+  <nav
+    class="sidebar-settings"
+    aria-label="Configurações">
+
+    <ul
+      class="nav nav-pills nav-sidebar flex-column"
+      role="menu">
+
+      @for (
+        item of menuConfiguracoes;
+        track item
+      ) {
+        <app-menu-item
+          [menuItem]="item"
+          [selecionado]="
+            moduloSelecionado === item
+          "
+          [modoContextual]="
+            moduloSelecionado !== null
+          "
+          (solicitarExpansao)="
+            selecionarModulo($event)
+          "
+          [painelAberto]="
+            moduloSelecionado === item &&
+            (
+              !menuRecolhido ||
+              painelFlutuanteAberto
+            )
+          ">
+        </app-menu-item>
       }
     </ul>
   </nav>
 </div>
+
+@if (
+  moduloSelecionado &&
+  (
+    !menuRecolhido ||
+    painelFlutuanteAberto
+  )
+) {
+  <aside
+    class="contextual-panel"
+    [class.contextual-panel-floating]="
+      menuRecolhido
+    "
+    aria-labelledby="contextual-panel-title">
+
+    <header class="contextual-panel-header">
+      <span
+        class="contextual-panel-icon"
+        aria-hidden="true">
+
+        <i
+          class="{{ moduloSelecionado.iconClasses }}">
+        </i>
+      </span>
+
+      <div class="contextual-panel-heading">
+        <span class="contextual-panel-eyebrow">
+          Módulo
+        </span>
+
+        <h2 id="contextual-panel-title">
+          {{ moduloSelecionado.name }}
+        </h2>
+      </div>
+    </header>
+
+    <nav
+      class="contextual-panel-navigation"
+      [attr.aria-label]="
+        'Navegação de ' +
+        moduloSelecionado.name
+      ">
+
+      @for (
+        item of moduloSelecionado.children;
+        track item
+      ) {
+        @if (item.path) {
+          <a
+            class="contextual-panel-link"
+            [routerLink]="item.path"
+            routerLinkActive="active">
+
+            <i
+              class="contextual-panel-link-icon {{
+                item.iconClasses
+              }}"
+              aria-hidden="true">
+            </i>
+
+            <span>
+              {{ item.name }}
+            </span>
+
+            <i
+              class="fas fa-chevron-right
+                contextual-panel-link-arrow"
+              aria-hidden="true">
+            </i>
+          </a>
+        }
+      }
+    </nav>
+  </aside>
+}

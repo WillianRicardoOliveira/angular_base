@@ -1,5 +1,33 @@
 :host {
+    --app-background: #f4f7fb;
+    --app-surface: #ffffff;
+    --app-border: #e2e8f0;
+
+    --app-text: #1e293b;
+    --app-text-muted: #64748b;
+
+    --app-primary: #08979c;
+    --app-primary-hover: #087f83;
+    --app-primary-soft: #ecfeff;
+
+    --app-sidebar: #063f3d;
+    --app-sidebar-dark: #042c2b;
+
     display: block;
+    min-height: 100vh;
+
+    color: var(--app-text);
+    background-color: var(--app-background);
+}
+
+.content-wrapper {
+    overflow-x: hidden;
+
+    background-color: var(--app-background);
+
+    transition:
+        margin-left 200ms ease,
+        background-color 200ms ease;
 }
 
 .content-wrapper > *:first-child {

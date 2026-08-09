@@ -1,13 +1,17 @@
 import {
     Component,
+    EventEmitter,
     HostBinding,
     Input,
-    OnInit
+    OnInit,
+    Output
 } from '@angular/core';
+
 import {
     NavigationEnd,
     Router
 } from '@angular/router';
+
 import {
     filter
 } from 'rxjs/operators';
@@ -15,8 +19,8 @@ import {
 import {
     MenuItem
 } from './models/menu-item.model';
+
 import {
-    openCloseAnimation,
     rotateAnimation
 } from './menu-item.animations';
 
@@ -25,20 +29,31 @@ import {
     templateUrl: './menu-item.component.html',
     styleUrls: ['./menu-item.component.scss'],
     animations: [
-        openCloseAnimation,
         rotateAnimation
     ],
     standalone: false
 })
-export class MenuItemComponent implements OnInit {
+export class MenuItemComponent
+    implements OnInit {
+
     @Input()
     menuItem: MenuItem | null = null;
 
+    @Input()
+    selecionado = false;
+
+    @Input()
+    modoContextual = false;
+
+    @Input()
+    painelAberto = false;
+
+    @Output()
+    solicitarExpansao =
+        new EventEmitter<MenuItem>();
+
     @HostBinding('class.nav-item')
     isNavItem = true;
-
-    @HostBinding('class.menu-open')
-    isMenuExtended = false;
 
     isExpandable = false;
 
@@ -56,7 +71,11 @@ export class MenuItemComponent implements OnInit {
         }
 
         this.isExpandable =
-            (this.menuItem.children?.length ?? 0) > 0;
+            (
+                this.menuItem
+                    .children
+                    ?.length ?? 0
+            ) > 0;
 
         this.calculateIsActive(
             this.router.url
@@ -65,14 +84,17 @@ export class MenuItemComponent implements OnInit {
         this.router.events
             .pipe(
                 filter(
-                    (event) =>
-                        event instanceof NavigationEnd
+                    (
+                        event
+                    ): event is NavigationEnd =>
+                        event instanceof
+                        NavigationEnd
                 )
             )
             .subscribe(
                 (event) => {
                     this.calculateIsActive(
-                        event.url
+                        event.urlAfterRedirects
                     );
                 }
             );
@@ -84,7 +106,9 @@ export class MenuItemComponent implements OnInit {
         }
 
         if (this.isExpandable) {
-            this.toggleMenu();
+            this.solicitarExpansao
+                .emit(this.menuItem);
+
             return;
         }
 
@@ -95,43 +119,57 @@ export class MenuItemComponent implements OnInit {
         }
     }
 
-    toggleMenu(): void {
-        this.isMenuExtended =
-            !this.isMenuExtended;
-    }
-
     calculateIsActive(
         url: string
     ): void {
         this.isMainActive = false;
-        this.isOneOfChildrenActive = false;
+        this.isOneOfChildrenActive =
+            false;
 
         if (!this.menuItem) {
-            this.isMenuExtended = false;
             return;
         }
+
+        const caminho =
+            url
+                .split('?')[0]
+                .split('#')[0];
 
         if (this.isExpandable) {
             this.isOneOfChildrenActive =
                 this.menuItem.children
                     ?.some(
-                        (item) =>
-                            item.path?.[0] === url
+                        (item) => {
+                            const rota =
+                                item.path?.[0];
+
+                            if (!rota) {
+                                return false;
+                            }
+
+                            return (
+                                caminho === rota ||
+                                caminho.startsWith(
+                                    `${rota}/`
+                                )
+                            );
+                        }
                     ) ?? false;
 
-            if (this.isOneOfChildrenActive) {
-                this.isMenuExtended = true;
-            }
-        } else {
-            this.isMainActive =
-                this.menuItem.path?.[0] === url;
+            return;
         }
 
-        if (
-            !this.isMainActive &&
-            !this.isOneOfChildrenActive
-        ) {
-            this.isMenuExtended = false;
+        const rota =
+            this.menuItem.path?.[0];
+
+        if (!rota) {
+            return;
         }
+
+        this.isMainActive =
+            caminho === rota ||
+            caminho.startsWith(
+                `${rota}/`
+            );
     }
 }

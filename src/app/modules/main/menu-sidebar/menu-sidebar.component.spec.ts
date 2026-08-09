@@ -9,6 +9,10 @@ import {
 } from '@angular/core/testing';
 
 import {
+    Router
+} from '@angular/router';
+
+import {
     Store
 } from '@ngrx/store';
 
@@ -47,9 +51,16 @@ describe('MenuSidebarComponent', () => {
             .and.returnValue(
                 of({
                     sidebarSkin:
-                        'sidebar-dark-primary'
+                        'sidebar-dark-primary',
+                    menuSidebarCollapsed:
+                        false
                 })
             )
+    };
+
+    const routerMock = {
+        url: '/dashboard',
+        events: of()
     };
 
     const autorizacaoServiceMock = {
@@ -78,6 +89,11 @@ describe('MenuSidebarComponent', () => {
                         provide: Store,
                         useValue:
                             storeMock
+                    },
+                    {
+                        provide: Router,
+                        useValue:
+                            routerMock
                     },
                     {
                         provide:
@@ -116,6 +132,7 @@ describe('MenuSidebarComponent', () => {
                 component.classes
             ).toBe(
                 'main-sidebar elevation-4 ' +
+                'sidebar-no-expand ' +
                 'sidebar-dark-primary'
             );
         }
@@ -132,9 +149,7 @@ describe('MenuSidebarComponent', () => {
 
             expect(
                 component.menuConfiguracoes
-            ).toEqual([
-                MENU_CONFIGURACOES[0]
-            ]);
+            ).toEqual([]);
 
             expect(
                 autorizacaoServiceMock
@@ -197,7 +212,7 @@ describe('MenuSidebarComponent', () => {
                 );
 
             const perfil =
-                MENU_CONFIGURACOES[1]
+                MENU_CONFIGURACOES[0]
                     .children![0];
 
             expect(
@@ -267,7 +282,7 @@ describe('MenuSidebarComponent', () => {
                 );
 
             const permissao =
-                MENU_CONFIGURACOES[1]
+                MENU_CONFIGURACOES[0]
                     .children![1];
 
             expect(
@@ -415,6 +430,146 @@ describe('MenuSidebarComponent', () => {
             ).toHaveBeenCalledOnceWith(
                 ChavePermissao.UsuarioListar
             );
+        }
+    );
+
+    it(
+        'deve selecionar o módulo pela rota atual',
+        () => {
+            const modulo: MenuItem = {
+                name:
+                    'Acesso e Segurança',
+                iconClasses:
+                    'fas fa-shield-alt',
+                children: [
+                    {
+                        name: 'Usuários',
+                        iconClasses:
+                            'fas fa-users',
+                        path: [
+                            '/acesso/usuarios'
+                        ]
+                    }
+                ]
+            };
+
+            component.menu = [];
+            component.menuConfiguracoes = [
+                modulo
+            ];
+
+            component[
+                'selecionarModuloPelaRota'
+            ](
+                '/acesso/usuarios/1?origem=lista'
+            );
+
+            expect(
+                component.moduloSelecionado
+            ).toBe(modulo);
+        }
+    );
+
+    it(
+        'deve alternar o painel flutuante no menu recolhido',
+        () => {
+            const modulo: MenuItem = {
+                name:
+                    'Acesso e Segurança',
+                iconClasses:
+                    'fas fa-shield-alt',
+                children: [
+                    {
+                        name: 'Usuários',
+                        iconClasses:
+                            'fas fa-users',
+                        path: [
+                            '/acesso/usuarios'
+                        ]
+                    }
+                ]
+            };
+
+            component.menuRecolhido = true;
+
+            component.selecionarModulo(
+                modulo
+            );
+
+            expect(
+                component.moduloSelecionado
+            ).toBe(modulo);
+
+            expect(
+                component.painelFlutuanteAberto
+            ).toBeTrue();
+
+            component.selecionarModulo(
+                modulo
+            );
+
+            expect(
+                component.painelFlutuanteAberto
+            ).toBeFalse();
+        }
+    );
+
+    it(
+        'deve fechar o painel flutuante ao pressionar Escape',
+        () => {
+            component.painelFlutuanteAberto =
+                true;
+
+            component.fecharPainelFlutuante();
+
+            expect(
+                component.painelFlutuanteAberto
+            ).toBeFalse();
+        }
+    );
+
+    it(
+        'deve fechar o painel flutuante ao clicar fora',
+        () => {
+            component.painelFlutuanteAberto =
+                true;
+
+            const elementoExterno =
+                document.createElement(
+                    'div'
+                );
+
+            component
+                .fecharPainelAoClicarFora(
+                    {
+                        target:
+                            elementoExterno
+                    } as unknown as MouseEvent
+                );
+
+            expect(
+                component.painelFlutuanteAberto
+            ).toBeFalse();
+        }
+    );
+
+    it(
+        'não deve fechar o painel flutuante ao clicar dentro',
+        () => {
+            component.painelFlutuanteAberto =
+                true;
+
+            component
+                .fecharPainelAoClicarFora(
+                    {
+                        target:
+                            fixture.nativeElement
+                    } as unknown as MouseEvent
+                );
+
+            expect(
+                component.painelFlutuanteAberto
+            ).toBeTrue();
         }
     );
 });
