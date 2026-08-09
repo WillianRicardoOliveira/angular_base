@@ -48,6 +48,17 @@ import {
 const BASE_CLASSES =
     'main-sidebar elevation-4 sidebar-no-expand';
 
+const ALTURA_CABECALHO = 58;
+
+const ALTURA_RODAPE = 58;
+
+const MARGEM_PAINEL = 12;
+
+type DirecaoPainelFlutuante =
+    'baixo' |
+    'centro' |
+    'cima';
+
 @Component({
     selector: 'app-menu-sidebar',
     templateUrl:
@@ -74,7 +85,21 @@ export class MenuSidebarComponent
 
     painelFlutuanteAberto = false;
 
+    painelFlutuantePosicionado = false;
+
     painelFlutuanteTop = 0;
+
+    painelFlutuanteAlturaMaxima = 0;
+
+    painelFlutuanteDirecao:
+        DirecaoPainelFlutuante =
+            'centro';
+
+    private elementoModuloAtivo:
+        HTMLElement | null = null;
+
+    private agendamentoPosicionamento:
+        number | null = null;
 
     constructor(
         private store: Store<AppState>,
@@ -86,7 +111,13 @@ export class MenuSidebarComponent
         private changeDetectorRef:
             ChangeDetectorRef,
         private destroyRef: DestroyRef
-    ) {}
+    ) {
+        this.destroyRef.onDestroy(
+            () => {
+                this.cancelarPosicionamento();
+            }
+        );
+    }
 
     ngOnInit(): void {
         this.menu =
@@ -118,8 +149,7 @@ export class MenuSidebarComponent
             )
             .subscribe(
                 (event) => {
-                    this.painelFlutuanteAberto =
-                        false;
+                    this.fecharPainelFlutuante();
 
                     this.selecionarModuloPelaRota(
                         event.urlAfterRedirects
@@ -141,8 +171,7 @@ export class MenuSidebarComponent
                             .menuSidebarCollapsed;
 
                     if (!this.menuRecolhido) {
-                        this.painelFlutuanteAberto =
-                            false;
+                        this.fecharPainelFlutuante();
                     }
 
                     this.classes =
@@ -156,8 +185,16 @@ export class MenuSidebarComponent
         'document:keydown.escape'
     )
     fecharPainelFlutuante(): void {
+        this.cancelarPosicionamento();
+
         this.painelFlutuanteAberto =
             false;
+
+        this.painelFlutuantePosicionado =
+            false;
+
+        this.elementoModuloAtivo =
+            null;
     }
 
     @HostListener(
@@ -185,8 +222,30 @@ export class MenuSidebarComponent
             return;
         }
 
-        this.painelFlutuanteAberto =
+        this.fecharPainelFlutuante();
+    }
+
+    @HostListener(
+        'window:resize'
+    )
+    reposicionarPainelAoRedimensionar():
+        void {
+
+        if (
+            !this.painelFlutuanteAberto ||
+            !this.elementoModuloAtivo
+        ) {
+            return;
+        }
+
+        this.painelFlutuantePosicionado =
             false;
+
+        this.prepararAreaDisponivel();
+
+        this.posicionarPainelFlutuante(
+            this.elementoModuloAtivo
+        );
     }
 
     selecionarModulo(
@@ -204,85 +263,242 @@ export class MenuSidebarComponent
             const mesmoModulo =
                 this.moduloSelecionado === item;
 
-            this.moduloSelecionado = item;
-
-            this.painelFlutuanteAberto =
-                mesmoModulo
-                    ? !this.painelFlutuanteAberto
-                    : true;
-
             if (
+                mesmoModulo &&
                 this.painelFlutuanteAberto
             ) {
-                this.posicionarPainelFlutuante(
-                    elemento
-                );
+                this.fecharPainelFlutuante();
+
+                return;
             }
+
+            this.moduloSelecionado = item;
+
+            this.elementoModuloAtivo =
+                elemento;
+
+            this.painelFlutuantePosicionado =
+                false;
+
+            this.prepararAreaDisponivel();
+
+            this.painelFlutuanteAberto =
+                true;
+
+            this.posicionarPainelFlutuante(
+                elemento
+            );
 
             return;
         }
 
         this.moduloSelecionado = item;
-        this.painelFlutuanteAberto = false;
+
+        this.fecharPainelFlutuante();
+    }
+
+    private prepararAreaDisponivel(): void {
+        const limiteSuperior =
+            ALTURA_CABECALHO +
+            MARGEM_PAINEL;
+
+        const limiteInferior =
+            window.innerHeight -
+            ALTURA_RODAPE -
+            MARGEM_PAINEL;
+
+        this.painelFlutuanteTop =
+            limiteSuperior;
+
+        this.painelFlutuanteAlturaMaxima =
+            Math.max(
+                0,
+                limiteInferior -
+                limiteSuperior
+            );
     }
 
     private posicionarPainelFlutuante(
         elemento: HTMLElement
     ): void {
-        requestAnimationFrame(
-            () => {
-                if (
-                    !this.painelFlutuanteAberto
-                ) {
-                    return;
-                }
+        this.cancelarPosicionamento();
 
-                const painel =
-                    this.elementRef
-                        .nativeElement
-                        .querySelector<HTMLElement>(
-                            '.contextual-panel-floating'
+        this.agendamentoPosicionamento =
+            requestAnimationFrame(
+                () => {
+                    this.agendamentoPosicionamento =
+                        null;
+
+                    if (
+                        !this.painelFlutuanteAberto
+                    ) {
+                        return;
+                    }
+
+                    const painel =
+                        this.elementRef
+                            .nativeElement
+                            .querySelector<HTMLElement>(
+                                '.contextual-panel-floating'
+                            );
+
+                    if (!painel) {
+                        return;
+                    }
+
+                    const posicaoBotao =
+                        elemento
+                            .getBoundingClientRect();
+
+                    const alturaPainel =
+                        painel.offsetHeight;
+
+                    const limiteSuperior =
+                        ALTURA_CABECALHO +
+                        MARGEM_PAINEL;
+
+                    const limiteInferior =
+                        window.innerHeight -
+                        ALTURA_RODAPE -
+                        MARGEM_PAINEL;
+
+                    const alturaDisponivel =
+                        Math.max(
+                            0,
+                            limiteInferior -
+                            limiteSuperior
                         );
 
-                if (!painel) {
-                    return;
-                }
+                    const centroBotao =
+                        posicaoBotao.top +
+                        posicaoBotao.height / 2;
 
-                const posicaoBotao =
-                    elemento
-                        .getBoundingClientRect();
+                    const primeiroTerco =
+                        limiteSuperior +
+                        alturaDisponivel / 3;
 
-                const alturaPainel =
-                    painel.offsetHeight;
+                    const ultimoTerco =
+                        limiteSuperior +
+                        (
+                            alturaDisponivel * 2
+                        ) / 3;
 
-                const margem = 16;
+                    const topAbaixo =
+                        posicaoBotao.top;
 
-                const posicaoCentralizada =
-                    posicaoBotao.top +
-                    posicaoBotao.height / 2 -
-                    alturaPainel / 2;
+                    const topAcima =
+                        posicaoBotao.bottom -
+                        alturaPainel;
 
-                const limiteInferior =
-                    Math.max(
-                        margem,
-                        window.innerHeight -
-                        alturaPainel -
-                        margem
-                    );
+                    const topCentralizado =
+                        centroBotao -
+                        alturaPainel / 2;
 
-                this.painelFlutuanteTop =
-                    Math.min(
+                    const cabeAbaixo =
+                        topAbaixo +
+                        alturaPainel <=
+                        limiteInferior;
+
+                    const cabeAcima =
+                        topAcima >=
+                        limiteSuperior;
+
+                    let topCalculado:
+                        number;
+
+                    if (
+                        centroBotao <=
+                        primeiroTerco
+                    ) {
+                        if (cabeAbaixo) {
+                            this.painelFlutuanteDirecao =
+                                'baixo';
+
+                            topCalculado =
+                                topAbaixo;
+                        } else if (cabeAcima) {
+                            this.painelFlutuanteDirecao =
+                                'cima';
+
+                            topCalculado =
+                                topAcima;
+                        } else {
+                            this.painelFlutuanteDirecao =
+                                'centro';
+
+                            topCalculado =
+                                topCentralizado;
+                        }
+                    } else if (
+                        centroBotao >=
+                        ultimoTerco
+                    ) {
+                        if (cabeAcima) {
+                            this.painelFlutuanteDirecao =
+                                'cima';
+
+                            topCalculado =
+                                topAcima;
+                        } else if (cabeAbaixo) {
+                            this.painelFlutuanteDirecao =
+                                'baixo';
+
+                            topCalculado =
+                                topAbaixo;
+                        } else {
+                            this.painelFlutuanteDirecao =
+                                'centro';
+
+                            topCalculado =
+                                topCentralizado;
+                        }
+                    } else {
+                        this.painelFlutuanteDirecao =
+                            'centro';
+
+                        topCalculado =
+                            topCentralizado;
+                    }
+
+                    const maiorTopPermitido =
                         Math.max(
-                            posicaoCentralizada,
-                            margem
-                        ),
-                        limiteInferior
-                    );
+                            limiteSuperior,
+                            limiteInferior -
+                            alturaPainel
+                        );
 
-                this.changeDetectorRef
-                    .detectChanges();
-            }
+                    this.painelFlutuanteTop =
+                        Math.min(
+                            Math.max(
+                                topCalculado,
+                                limiteSuperior
+                            ),
+                            maiorTopPermitido
+                        );
+
+                    this.painelFlutuantePosicionado =
+                        true;
+
+                    this.changeDetectorRef
+                        .detectChanges();
+                }
+            );
+    }
+
+    private cancelarPosicionamento(): void {
+        if (
+            this.agendamentoPosicionamento ===
+            null
+        ) {
+            return;
+        }
+
+        cancelAnimationFrame(
+            this.agendamentoPosicionamento
         );
+
+        this.agendamentoPosicionamento =
+            null;
     }
 
     private selecionarModuloPelaRota(
@@ -370,6 +586,41 @@ export class MenuSidebarComponent
     }
 }
 
+const criarModuloReferencia = (
+    nome: string,
+    rotaBase: string,
+    iconClasses: string
+): MenuItem => ({
+    name: nome,
+    iconClasses,
+    children: [
+        {
+            name: 'Visão geral',
+            iconClasses:
+                'fas fa-chart-line',
+            path: [
+                `/${rotaBase}/visao-geral`
+            ]
+        },
+        {
+            name: 'Cadastros',
+            iconClasses:
+                'fas fa-folder-open',
+            path: [
+                `/${rotaBase}/cadastros`
+            ]
+        },
+        {
+            name: 'Relatórios',
+            iconClasses:
+                'fas fa-chart-bar',
+            path: [
+                `/${rotaBase}/relatorios`
+            ]
+        }
+    ]
+});
+
 export const MENU: MenuItem[] = [
     {
         name: 'Dashboard',
@@ -379,37 +630,71 @@ export const MENU: MenuItem[] = [
             '/dashboard'
         ]
     },
-    {
-        name: 'Módulo de referência',
-        iconClasses:
-            'fas fa-layer-group',
-        children: [
-            {
-                name: 'Visão geral',
-                iconClasses:
-                    'fas fa-chart-line',
-                path: [
-                    '/referencia/visao-geral'
-                ]
-            },
-            {
-                name: 'Cadastros',
-                iconClasses:
-                    'fas fa-folder',
-                path: [
-                    '/referencia/cadastros'
-                ]
-            },
-            {
-                name: 'Relatórios',
-                iconClasses:
-                    'fas fa-chart-bar',
-                path: [
-                    '/referencia/relatorios'
-                ]
-            }
-        ]
-    }
+    criarModuloReferencia(
+        'Comercial',
+        'comercial',
+        'fas fa-tags'
+    ),
+    criarModuloReferencia(
+        'Compras',
+        'compras',
+        'fas fa-shopping-cart'
+    ),
+    criarModuloReferencia(
+        'Contabilidade',
+        'contabilidade',
+        'fas fa-calculator'
+    ),
+    criarModuloReferencia(
+        'Controladoria',
+        'controladoria',
+        'fas fa-chart-line'
+    ),
+    criarModuloReferencia(
+        'Crédito',
+        'credito',
+        'fas fa-credit-card'
+    ),
+    criarModuloReferencia(
+        'Estoque',
+        'estoque',
+        'fas fa-warehouse'
+    ),
+    criarModuloReferencia(
+        'Faturamento',
+        'faturamento',
+        'fas fa-file-invoice-dollar'
+    ),
+    criarModuloReferencia(
+        'Financeiro',
+        'financeiro',
+        'fas fa-dollar-sign'
+    ),
+    criarModuloReferencia(
+        'Fiscal',
+        'fiscal',
+        'fas fa-file-invoice'
+    ),
+    criarModuloReferencia(
+        'Logística',
+        'logistica',
+        'fas fa-truck'
+    ),
+    criarModuloReferencia(
+        'Supply',
+        'supply',
+        'fas fa-boxes'
+    ),
+    criarModuloReferencia(
+        'Relatórios',
+        'relatorios',
+        'fas fa-chart-bar'
+    ),
+    criarModuloReferencia(
+        'Cadastros',
+        'cadastros',
+        'fas fa-address-book'
+    )
 ];
 
 export const MENU_CONFIGURACOES:

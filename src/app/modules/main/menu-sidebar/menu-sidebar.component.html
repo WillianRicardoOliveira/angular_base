@@ -104,9 +104,24 @@
     [class.contextual-panel-floating]="
       menuRecolhido
     "
+    [class.contextual-panel-positioned]="
+      !menuRecolhido ||
+      painelFlutuantePosicionado
+    "
+    [attr.data-placement]="
+      menuRecolhido
+        ? painelFlutuanteDirecao
+        : null
+    "
     [style.top.px]="
       menuRecolhido
         ? painelFlutuanteTop
+        : null
+    "
+    [style.max-height.px]="
+      menuRecolhido &&
+      painelFlutuanteAlturaMaxima > 0
+        ? painelFlutuanteAlturaMaxima
         : null
     "
     aria-labelledby="contextual-panel-title">
