@@ -1,10 +1,16 @@
 import {
+    ChangeDetectorRef,
     Component,
+    DestroyRef,
     ElementRef,
     HostBinding,
     HostListener,
     OnInit
 } from '@angular/core';
+
+import {
+    takeUntilDestroyed
+} from '@angular/core/rxjs-interop';
 
 import {
     NavigationEnd,
@@ -68,13 +74,18 @@ export class MenuSidebarComponent
 
     painelFlutuanteAberto = false;
 
+    painelFlutuanteTop = 0;
+
     constructor(
         private store: Store<AppState>,
         private autorizacaoService:
             AutorizacaoService,
         private router: Router,
         private elementRef:
-            ElementRef<HTMLElement>
+            ElementRef<HTMLElement>,
+        private changeDetectorRef:
+            ChangeDetectorRef,
+        private destroyRef: DestroyRef
     ) {}
 
     ngOnInit(): void {
@@ -100,6 +111,9 @@ export class MenuSidebarComponent
                     ): event is NavigationEnd =>
                         event instanceof
                         NavigationEnd
+                ),
+                takeUntilDestroyed(
+                    this.destroyRef
                 )
             )
             .subscribe(
@@ -115,6 +129,11 @@ export class MenuSidebarComponent
 
         this.store
             .select('ui')
+            .pipe(
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
+            )
             .subscribe(
                 (state: UiState) => {
                     this.menuRecolhido =
@@ -171,8 +190,16 @@ export class MenuSidebarComponent
     }
 
     selecionarModulo(
-        item: MenuItem
+        evento: {
+            item: MenuItem;
+            elemento: HTMLElement;
+        }
     ): void {
+        const {
+            item,
+            elemento
+        } = evento;
+
         if (this.menuRecolhido) {
             const mesmoModulo =
                 this.moduloSelecionado === item;
@@ -184,11 +211,78 @@ export class MenuSidebarComponent
                     ? !this.painelFlutuanteAberto
                     : true;
 
+            if (
+                this.painelFlutuanteAberto
+            ) {
+                this.posicionarPainelFlutuante(
+                    elemento
+                );
+            }
+
             return;
         }
 
         this.moduloSelecionado = item;
         this.painelFlutuanteAberto = false;
+    }
+
+    private posicionarPainelFlutuante(
+        elemento: HTMLElement
+    ): void {
+        requestAnimationFrame(
+            () => {
+                if (
+                    !this.painelFlutuanteAberto
+                ) {
+                    return;
+                }
+
+                const painel =
+                    this.elementRef
+                        .nativeElement
+                        .querySelector<HTMLElement>(
+                            '.contextual-panel-floating'
+                        );
+
+                if (!painel) {
+                    return;
+                }
+
+                const posicaoBotao =
+                    elemento
+                        .getBoundingClientRect();
+
+                const alturaPainel =
+                    painel.offsetHeight;
+
+                const margem = 16;
+
+                const posicaoCentralizada =
+                    posicaoBotao.top +
+                    posicaoBotao.height / 2 -
+                    alturaPainel / 2;
+
+                const limiteInferior =
+                    Math.max(
+                        margem,
+                        window.innerHeight -
+                        alturaPainel -
+                        margem
+                    );
+
+                this.painelFlutuanteTop =
+                    Math.min(
+                        Math.max(
+                            posicaoCentralizada,
+                            margem
+                        ),
+                        limiteInferior
+                    );
+
+                this.changeDetectorRef
+                    .detectChanges();
+            }
+        );
     }
 
     private selecionarModuloPelaRota(
@@ -283,6 +377,37 @@ export const MENU: MenuItem[] = [
             'fas fa-tachometer-alt',
         path: [
             '/dashboard'
+        ]
+    },
+    {
+        name: 'Módulo de referência',
+        iconClasses:
+            'fas fa-layer-group',
+        children: [
+            {
+                name: 'Visão geral',
+                iconClasses:
+                    'fas fa-chart-line',
+                path: [
+                    '/referencia/visao-geral'
+                ]
+            },
+            {
+                name: 'Cadastros',
+                iconClasses:
+                    'fas fa-folder',
+                path: [
+                    '/referencia/cadastros'
+                ]
+            },
+            {
+                name: 'Relatórios',
+                iconClasses:
+                    'fas fa-chart-bar',
+                path: [
+                    '/referencia/relatorios'
+                ]
+            }
         ]
     }
 ];

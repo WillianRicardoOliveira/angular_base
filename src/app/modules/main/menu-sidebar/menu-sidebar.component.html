@@ -27,7 +27,7 @@
 
     <ul
       class="nav nav-pills nav-sidebar flex-column"
-      role="menu">
+      role="list">
 
       @for (
         item of menu;
@@ -62,7 +62,7 @@
 
     <ul
       class="nav nav-pills nav-sidebar flex-column"
-      role="menu">
+      role="list">
 
       @for (
         item of menuConfiguracoes;
@@ -103,6 +103,11 @@
     class="contextual-panel"
     [class.contextual-panel-floating]="
       menuRecolhido
+    "
+    [style.top.px]="
+      menuRecolhido
+        ? painelFlutuanteTop
+        : null
     "
     aria-labelledby="contextual-panel-title">
 

@@ -490,11 +490,17 @@ describe('MenuSidebarComponent', () => {
                 ]
             };
 
+            const elemento =
+                document.createElement(
+                    'button'
+                );
+
             component.menuRecolhido = true;
 
-            component.selecionarModulo(
-                modulo
-            );
+            component.selecionarModulo({
+                item: modulo,
+                elemento
+            });
 
             expect(
                 component.moduloSelecionado
@@ -504,9 +510,10 @@ describe('MenuSidebarComponent', () => {
                 component.painelFlutuanteAberto
             ).toBeTrue();
 
-            component.selecionarModulo(
-                modulo
-            );
+            component.selecionarModulo({
+                item: modulo,
+                elemento
+            });
 
             expect(
                 component.painelFlutuanteAberto

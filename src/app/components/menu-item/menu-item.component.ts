@@ -1,11 +1,16 @@
 import {
     Component,
+    DestroyRef,
     EventEmitter,
     HostBinding,
     Input,
     OnInit,
     Output
 } from '@angular/core';
+
+import {
+    takeUntilDestroyed
+} from '@angular/core/rxjs-interop';
 
 import {
     NavigationEnd,
@@ -50,10 +55,16 @@ export class MenuItemComponent
 
     @Output()
     solicitarExpansao =
-        new EventEmitter<MenuItem>();
+        new EventEmitter<{
+            item: MenuItem;
+            elemento: HTMLElement;
+        }>();
 
     @HostBinding('class.nav-item')
     isNavItem = true;
+
+    @HostBinding('attr.role')
+    role = 'listitem';
 
     isExpandable = false;
 
@@ -62,7 +73,8 @@ export class MenuItemComponent
     isOneOfChildrenActive = false;
 
     constructor(
-        private router: Router
+        private router: Router,
+        private destroyRef: DestroyRef
     ) {}
 
     ngOnInit(): void {
@@ -89,6 +101,9 @@ export class MenuItemComponent
                     ): event is NavigationEnd =>
                         event instanceof
                         NavigationEnd
+                ),
+                takeUntilDestroyed(
+                    this.destroyRef
                 )
             )
             .subscribe(
@@ -100,14 +115,19 @@ export class MenuItemComponent
             );
     }
 
-    handleMainMenuAction(): void {
+    handleMainMenuAction(
+        event: MouseEvent
+    ): void {
         if (!this.menuItem) {
             return;
         }
 
         if (this.isExpandable) {
-            this.solicitarExpansao
-                .emit(this.menuItem);
+            this.solicitarExpansao.emit({
+                item: this.menuItem,
+                elemento:
+                    event.currentTarget as HTMLElement
+            });
 
             return;
         }
