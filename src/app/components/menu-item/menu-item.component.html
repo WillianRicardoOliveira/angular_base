@@ -2,7 +2,14 @@
   type="button"
   class="nav-link"
   [attr.aria-label]="menuItem.name"
-  [attr.title]="menuItem.name"
+  [matTooltip]="menuItem.name"
+  [matTooltipDisabled]="
+    !tooltipHabilitado
+  "
+  matTooltipPosition="right"
+  [matTooltipShowDelay]="350"
+  [matTooltipHideDelay]="75"
+  matTooltipClass="sidebar-module-tooltip"
   [ngClass]="{
     active:
       isMainActive ||

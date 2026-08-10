@@ -53,6 +53,9 @@ export class MenuItemComponent
     @Input()
     painelAberto = false;
 
+    @Input()
+    tooltipHabilitado = false;
+
     @Output()
     solicitarExpansao =
         new EventEmitter<{

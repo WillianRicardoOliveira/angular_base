@@ -21,40 +21,69 @@
     </app-sidebar-search>
   </div>
 
-  <nav
-    class="sidebar-navigation"
-    aria-label="Menu principal">
+  <div class="sidebar-navigation-area">
+    @if (possuiModulosAcima) {
+      <span
+        class="sidebar-scroll-indicator
+          sidebar-scroll-indicator-top"
+        aria-hidden="true">
 
-    <ul
-      class="nav nav-pills nav-sidebar flex-column"
-      role="list">
+        <i class="fas fa-chevron-up"></i>
+      </span>
+    }
 
-      @for (
-        item of menu;
-        track item
-      ) {
-        <app-menu-item
-          [menuItem]="item"
-          [selecionado]="
-            moduloSelecionado === item
-          "
-          [modoContextual]="
-            moduloSelecionado !== null
-          "
-          (solicitarExpansao)="
-            selecionarModulo($event)
-          "
-          [painelAberto]="
-            moduloSelecionado === item &&
-            (
-              !menuRecolhido ||
-              painelFlutuanteAberto
-            )
-          ">
-        </app-menu-item>
-      }
-    </ul>
-  </nav>
+    <nav
+      #sidebarNavigation
+      class="sidebar-navigation"
+      aria-label="Menu principal"
+      (scroll)="
+        atualizarIndicadoresRolagem($event)
+      ">
+
+      <ul
+        class="nav nav-pills nav-sidebar flex-column"
+        role="list">
+
+        @for (
+          item of menu;
+          track item
+        ) {
+          <app-menu-item
+            [menuItem]="item"
+            [selecionado]="
+              moduloSelecionado === item
+            "
+            [modoContextual]="
+              moduloSelecionado !== null
+            "
+            (solicitarExpansao)="
+              selecionarModulo($event)
+            "
+            [painelAberto]="
+              moduloSelecionado === item &&
+              (
+                !menuRecolhido ||
+                painelFlutuanteAberto
+              )
+            "
+            [tooltipHabilitado]="
+              menuRecolhido
+            ">
+          </app-menu-item>
+        }
+      </ul>
+    </nav>
+
+    @if (possuiModulosAbaixo) {
+      <span
+        class="sidebar-scroll-indicator
+          sidebar-scroll-indicator-bottom"
+        aria-hidden="true">
+
+        <i class="fas fa-chevron-down"></i>
+      </span>
+    }
+  </div>
 
   <nav
     class="sidebar-settings"
@@ -85,6 +114,9 @@
               !menuRecolhido ||
               painelFlutuanteAberto
             )
+          "
+          [tooltipHabilitado]="
+            menuRecolhido
           ">
         </app-menu-item>
       }

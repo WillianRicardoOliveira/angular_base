@@ -1,11 +1,13 @@
 import {
+    AfterViewInit,
     ChangeDetectorRef,
     Component,
     DestroyRef,
     ElementRef,
     HostBinding,
     HostListener,
-    OnInit
+    OnInit,
+    ViewChild
 } from '@angular/core';
 
 import {
@@ -65,16 +67,26 @@ type DirecaoPainelFlutuante =
     standalone: false
 })
 export class MenuSidebarComponent
-    implements OnInit {
+    implements OnInit, AfterViewInit {
 
     @HostBinding('class')
     classes: string = BASE_CLASSES;
+
+    @ViewChild(
+        'sidebarNavigation'
+    )
+    private sidebarNavigation?:
+        ElementRef<HTMLElement>;
 
     menu: MenuItem[] = [];
 
     menuConfiguracoes: MenuItem[] = [];
 
     menuRecolhido = false;
+
+    possuiModulosAcima = false;
+
+    possuiModulosAbaixo = false;
 
     moduloSelecionado: MenuItem | null =
         null;
@@ -177,6 +189,53 @@ export class MenuSidebarComponent
             );
     }
 
+    ngAfterViewInit(): void {
+        requestAnimationFrame(
+            () => {
+                this.atualizarIndicadoresRolagem();
+
+                this.changeDetectorRef
+                    .detectChanges();
+            }
+        );
+    }
+
+    atualizarIndicadoresRolagem(
+        event?: Event
+    ): void {
+        const navegacaoEvento =
+            event
+                ?.currentTarget as
+                HTMLElement | null;
+
+        const navegacao =
+            navegacaoEvento ??
+            this.sidebarNavigation
+                ?.nativeElement;
+
+        if (!navegacao) {
+            this.possuiModulosAcima =
+                false;
+
+            this.possuiModulosAbaixo =
+                false;
+
+            return;
+        }
+
+        const tolerancia = 1;
+
+        this.possuiModulosAcima =
+            navegacao.scrollTop >
+            tolerancia;
+
+        this.possuiModulosAbaixo =
+            navegacao.scrollTop +
+            navegacao.clientHeight <
+            navegacao.scrollHeight -
+            tolerancia;
+    }
+
     @HostListener(
         'document:keydown.escape'
     )
@@ -226,6 +285,8 @@ export class MenuSidebarComponent
     )
     reposicionarPainelAoRedimensionar():
         void {
+
+        this.atualizarIndicadoresRolagem();
 
         if (
             !this.painelFlutuanteAberto ||

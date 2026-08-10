@@ -19,6 +19,10 @@ import {
     MenuItemComponent
 } from './menu-item.component';
 
+import {
+    MatTooltipModule
+} from '@angular/material/tooltip';
+
 describe('MenuItemComponent', () => {
     let component:
         MenuItemComponent;
@@ -34,6 +38,7 @@ describe('MenuItemComponent', () => {
                 ],
                 imports: [
                     CommonModule,
+                    MatTooltipModule,
                     NoopAnimationsModule,
                     RouterTestingModule
                 ]

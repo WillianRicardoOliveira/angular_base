@@ -100,11 +100,22 @@
     margin-top: 0.85rem;
 }
 
-.sidebar-navigation {
+.sidebar-navigation-area {
+    position: relative;
+
+    display: flex;
     flex: 1 1 auto;
 
     min-height: 0;
     margin-top: 0.75rem;
+}
+
+.sidebar-navigation {
+    flex: 1 1 auto;
+
+    width: 100%;
+    min-height: 0;
+    margin-top: 0;
     padding-right: 2px;
 
     overflow-x: hidden;
@@ -140,6 +151,58 @@
 .sidebar-navigation:hover::-webkit-scrollbar-thumb {
     background-color:
         rgba(244, 251, 251, 0.28);
+}
+
+.sidebar-scroll-indicator {
+    position: absolute;
+    z-index: 3;
+    right: 0;
+    left: 0;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    height: 22px;
+
+    color:
+        rgba(244, 251, 251, 0.72);
+
+    font-size: 0.55rem;
+
+    pointer-events: none;
+}
+
+.sidebar-scroll-indicator-top {
+    top: 0;
+
+    align-items: flex-start;
+    padding-top: 2px;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--app-sidebar, #063f3d)
+                15%,
+            rgba(6, 63, 61, 0)
+                100%
+        );
+}
+
+.sidebar-scroll-indicator-bottom {
+    bottom: 0;
+
+    align-items: flex-end;
+    padding-bottom: 2px;
+
+    background:
+        linear-gradient(
+            0deg,
+            var(--app-sidebar-dark, #042c2b)
+                15%,
+            rgba(4, 44, 43, 0)
+                100%
+        );
 }
 
 .nav-sidebar {
@@ -222,6 +285,13 @@
 )
 .sidebar-navigation::-webkit-scrollbar {
     display: none;
+}
+
+:host-context(
+    .sidebar-collapse.sidebar-mini
+)
+.sidebar-scroll-indicator {
+    display: flex;
 }
 
 :host-context(
@@ -449,11 +519,11 @@
 :host:has(.contextual-panel)
 .sidebar-navigation {
     width: 100%;
-    margin-top: 0.75rem;
+    margin-top: 0;
     padding-right: 0;
 
     overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-y: auto;
 
     scrollbar-width: none;
 }
@@ -461,6 +531,11 @@
 :host:has(.contextual-panel)
 .sidebar-navigation::-webkit-scrollbar {
     display: none;
+}
+
+:host:has(.contextual-panel)
+.sidebar-scroll-indicator {
+    display: flex;
 }
 
 :host:has(.contextual-panel)
