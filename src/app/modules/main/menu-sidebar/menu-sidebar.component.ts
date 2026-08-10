@@ -48,10 +48,6 @@ import {
 const BASE_CLASSES =
     'main-sidebar elevation-4 sidebar-no-expand';
 
-const ALTURA_CABECALHO = 58;
-
-const ALTURA_RODAPE = 58;
-
 const MARGEM_PAINEL = 12;
 
 type DirecaoPainelFlutuante =
@@ -238,6 +234,10 @@ export class MenuSidebarComponent
             return;
         }
 
+        this.manterModuloVisivel(
+            this.elementoModuloAtivo
+        );
+
         this.painelFlutuantePosicionado =
             false;
 
@@ -277,6 +277,10 @@ export class MenuSidebarComponent
             this.elementoModuloAtivo =
                 elemento;
 
+            this.manterModuloVisivel(
+                elemento
+            );
+
             this.painelFlutuantePosicionado =
                 false;
 
@@ -297,15 +301,65 @@ export class MenuSidebarComponent
         this.fecharPainelFlutuante();
     }
 
-    private prepararAreaDisponivel(): void {
+    private manterModuloVisivel(
+        elemento: HTMLElement
+    ): void {
+        elemento.scrollIntoView({
+            behavior: 'auto',
+            block: 'nearest',
+            inline: 'nearest'
+        });
+    }
+
+    private obterLimitesAreaDisponivel(): {
+        limiteSuperior: number;
+        limiteInferior: number;
+    } {
+        const cabecalho =
+            document.querySelector<HTMLElement>(
+                '.main-header'
+            );
+
+        const rodape =
+            document.querySelector<HTMLElement>(
+                '.main-footer'
+            );
+
         const limiteSuperior =
-            ALTURA_CABECALHO +
+            (
+                cabecalho
+                    ?.getBoundingClientRect()
+                    .bottom ?? 0
+            ) +
             MARGEM_PAINEL;
 
+        const inicioRodape =
+            rodape
+                ?.getBoundingClientRect()
+                .top ??
+            window.innerHeight;
+
         const limiteInferior =
-            window.innerHeight -
-            ALTURA_RODAPE -
-            MARGEM_PAINEL;
+            Math.max(
+                limiteSuperior,
+                Math.min(
+                    window.innerHeight,
+                    inicioRodape
+                ) -
+                MARGEM_PAINEL
+            );
+
+        return {
+            limiteSuperior,
+            limiteInferior
+        };
+    }
+
+    private prepararAreaDisponivel(): void {
+        const {
+            limiteSuperior,
+            limiteInferior
+        } = this.obterLimitesAreaDisponivel();
 
         this.painelFlutuanteTop =
             limiteSuperior;
@@ -353,14 +407,10 @@ export class MenuSidebarComponent
                     const alturaPainel =
                         painel.offsetHeight;
 
-                    const limiteSuperior =
-                        ALTURA_CABECALHO +
-                        MARGEM_PAINEL;
-
-                    const limiteInferior =
-                        window.innerHeight -
-                        ALTURA_RODAPE -
-                        MARGEM_PAINEL;
+                    const {
+                        limiteSuperior,
+                        limiteInferior
+                    } = this.obterLimitesAreaDisponivel();
 
                     const alturaDisponivel =
                         Math.max(

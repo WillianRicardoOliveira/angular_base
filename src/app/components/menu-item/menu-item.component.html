@@ -5,9 +5,11 @@
   [attr.title]="menuItem.name"
   [ngClass]="{
     active:
-      selecionado ||
       isMainActive ||
       isOneOfChildrenActive,
+    'painel-aberto':
+      selecionado &&
+      painelAberto,
     'modo-contextual':
       modoContextual
   }"
