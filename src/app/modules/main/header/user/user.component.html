@@ -1,56 +1,109 @@
-<app-dropdown hide-arrow class="user-menu">
-    <div slot="button">
-        <button type="button" class="nav-link user-toggle" aria-label="Abrir menu do usuario">
-            <span class="user-avatar user-avatar--small">
-                {{ userInitials }}
-            </span>
-            <span class="d-none d-md-inline">{{ userName }}</span>
-        </button>
-    </div>
+<button
+    type="button"
+    class="user-trigger"
+    aria-label="Abrir menu do usuário"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="menuAberto"
+    (click)="alternarMenu($event)">
 
-    <div slot="menu">
-        <section class="user-card" aria-label="Menu do usuario">
-            <header class="user-card__header">
-                <span class="user-avatar user-avatar--large">
-                    {{ userInitials }}
+    <img
+        class="user-trigger__photo"
+        src="assets/img/avatar3.png"
+        alt="Foto de {{ userName }}">
+</button>
+
+@if (menuAberto) {
+    <section
+        class="user-popover"
+        role="menu"
+        aria-label="Menu do usuário"
+        (click)="$event.stopPropagation()">
+
+        <header
+            class="user-popover__identity">
+
+            <img
+                class="user-popover__photo"
+                src="assets/img/avatar3.png"
+                alt="">
+
+            <div
+                class="user-popover__details">
+
+                <strong>
+                    {{ userName }}
+                </strong>
+
+                <span>
+                    {{ userEmail }}
                 </span>
+            </div>
+        </header>
 
-                <div class="user-card__identity">
-                    <strong>{{ userName }}</strong>
-                    <span>{{ userEmail }}</span>
-                </div>
+        <nav
+            class="user-actions"
+            aria-label="Ações do usuário">
 
-                <span class="user-card__brand" aria-hidden="true">
-                    <i class="fas fa-seedling"></i>
+            <button
+                type="button"
+                role="menuitem"
+                class="user-action"
+                (click)="executarAcaoEmBreve()">
+
+                <i
+                    class="far fa-user"
+                    aria-hidden="true">
+                </i>
+
+                <span>Meu perfil</span>
+            </button>
+
+            <button
+                type="button"
+                role="menuitem"
+                class="user-action"
+                (click)="executarAcaoEmBreve()">
+
+                <i
+                    class="fas fa-cog"
+                    aria-hidden="true">
+                </i>
+
+                <span>
+                    Configurações da conta
                 </span>
+            </button>
 
-                <span class="user-card__lines" aria-hidden="true"></span>
-            </header>
+            <button
+                type="button"
+                role="menuitem"
+                class="user-action"
+                (click)="executarAcaoEmBreve()">
 
-            <nav class="user-actions" aria-label="Acoes do usuario">
-                <a href="#" class="user-action">
-                    <i class="far fa-user" aria-hidden="true"></i>
-                    <span>Meu perfil</span>
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </a>
+                <i
+                    class="fas fa-sliders-h"
+                    aria-hidden="true">
+                </i>
 
-                <a href="#" class="user-action">
-                    <i class="fas fa-cog" aria-hidden="true"></i>
-                    <span>Configura&ccedil;&otilde;es da conta</span>
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </a>
+                <span>Preferências</span>
+            </button>
 
-                <a href="#" class="user-action">
-                    <i class="fas fa-sliders-h" aria-hidden="true"></i>
-                    <span>Prefer&ecirc;ncias</span>
-                    <i class="fas fa-chevron-right" aria-hidden="true"></i>
-                </a>
+            <button
+                type="button"
+                role="menuitem"
+                class="
+                    user-action
+                    user-action--danger
+                "
+                (click)="logout()">
 
-                <button type="button" class="user-action user-action--danger" (click)="logout()">
-                    <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
-                    <span>Sair do sistema</span>
-                </button>
-            </nav>
-        </section>
-    </div>
-</app-dropdown>
+                <i
+                    class="fas fa-sign-out-alt"
+                    aria-hidden="true">
+                </i>
+
+                <span>Sair do sistema</span>
+            </button>
+        </nav>
+    </section>
+}

@@ -1,11 +1,17 @@
 import {
     Component,
+    ElementRef,
+    EventEmitter,
+    HostListener,
     OnDestroy,
-    OnInit
+    OnInit,
+    Output
 } from '@angular/core';
+
 import {
     Router
 } from '@angular/router';
+
 import {
     Subject,
     takeUntil
@@ -14,24 +20,36 @@ import {
 import {
     AutenticacaoService
 } from '@/core/autenticacao/services/autenticacao.service';
+
 import {
     MicrosoftSsoService
 } from '@/core/autenticacao/services/microsoft-sso.service';
+
 import {
     UsuarioAutenticadoService
 } from '@/core/autenticacao/services/usuario-autenticado.service';
 
 @Component({
     selector: 'app-user',
-    templateUrl: './user.component.html',
-    styleUrls: ['./user.component.scss'],
+    templateUrl:
+        './user.component.html',
+    styleUrls: [
+        './user.component.scss'
+    ],
     standalone: false
 })
 export class UserComponent
     implements OnInit, OnDestroy {
+
+    @Output()
+    menuUsuarioAberto =
+        new EventEmitter<void>();
+
     userName = 'Usuário';
 
     userEmail = '';
+
+    menuAberto = false;
 
     private readonly destroy$ =
         new Subject<void>();
@@ -43,7 +61,9 @@ export class UserComponent
             MicrosoftSsoService,
         private usuarioAutenticadoService:
             UsuarioAutenticadoService,
-        private router: Router
+        private router: Router,
+        private elementRef:
+            ElementRef<HTMLElement>
     ) {}
 
     ngOnInit(): void {
@@ -70,21 +90,64 @@ export class UserComponent
         this.destroy$.complete();
     }
 
-    get userInitials(): string {
-        return this.userName
-            .split(' ')
-            .filter(Boolean)
-            .slice(0, 2)
-            .map(
-                (name) =>
-                    name
-                        .charAt(0)
-                        .toUpperCase()
-            )
-            .join('');
+    alternarMenu(
+        event: MouseEvent
+    ): void {
+        event.stopPropagation();
+
+        const deveAbrir =
+            !this.menuAberto;
+
+        this.menuAberto =
+            deveAbrir;
+
+        if (deveAbrir) {
+            this.menuUsuarioAberto.emit();
+        }
+    }
+
+    fecharMenu(): void {
+        this.menuAberto = false;
+    }
+
+    executarAcaoEmBreve(): void {
+        this.fecharMenu();
+    }
+
+    @HostListener(
+        'document:keydown.escape'
+    )
+    fecharMenuComEscape(): void {
+        this.fecharMenu();
+    }
+
+    @HostListener(
+        'document:click',
+        ['$event']
+    )
+    fecharMenuAoClicarFora(
+        event: MouseEvent
+    ): void {
+        if (!this.menuAberto) {
+            return;
+        }
+
+        const alvo =
+            event.target as Node | null;
+
+        if (
+            alvo &&
+            !this.elementRef
+                .nativeElement
+                .contains(alvo)
+        ) {
+            this.fecharMenu();
+        }
     }
 
     logout(): void {
+        this.fecharMenu();
+
         this.autenticacaoService
             .logout()
             .subscribe({
@@ -124,14 +187,16 @@ export class UserComponent
 
     private async finalizarLogout():
         Promise<void> {
+
         try {
             await this.microsoftSsoService
                 .limparCacheLocal();
         } catch {
             // A sessão interna já foi encerrada.
-            // Uma falha no cache MSAL não impede a saída.
         }
 
-        this.router.navigate(['/login']);
+        await this.router.navigate([
+            '/login'
+        ]);
     }
 }

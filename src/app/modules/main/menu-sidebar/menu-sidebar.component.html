@@ -1,19 +1,10 @@
-<a
-  [routerLink]="['/']"
-  class="brand-link"
-  aria-label="Ir para o início">
-
-  <span
-    class="brand-mark"
-    aria-hidden="true">
-
-    <i class="fas fa-leaf"></i>
-  </span>
-
-  <span class="brand-text">
-    Agrihold
-  </span>
-</a>
+<div class="sidebar-user-area">
+  <app-user
+    (menuUsuarioAberto)="
+      fecharPainelFlutuante()
+    ">
+  </app-user>
+</div>
 
 <div class="sidebar">
   <div class="sidebar-search">
