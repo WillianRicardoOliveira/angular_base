@@ -31,4 +31,4 @@ jobs:
         run: npm run build
 
       - name: Verificar arquivos gerados
-        run: ls -la dist/adminlte
+        run: ls -la dist/erp
