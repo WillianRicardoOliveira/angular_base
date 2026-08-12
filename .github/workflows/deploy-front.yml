@@ -1,0 +1,119 @@
+name: Deploy Front
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-front
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v7
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24.18.0'
+          package-manager-cache: false
+
+      - name: Configurar npm
+        run: npm install -g npm@12.0.0
+
+      - name: Verificar versões
+        run: |
+          node -v
+          npm -v
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Gerar build de produção
+        run: npm run build
+
+      - name: Validar build
+        run: |
+          test -f dist/erp/index.html
+          echo "Build validado com sucesso."
+
+      - name: Criar manifesto do deploy
+        run: |
+          find dist/erp \
+            -mindepth 1 \
+            -maxdepth 1 \
+            ! -name '.front-deploy-manifest' \
+            -printf '%f\n' \
+            | sort > dist/erp/.front-deploy-manifest
+
+      - name: Preparar área temporária no servidor
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            set -e
+
+            rm -rf /home/willi10700/deploy_front
+            mkdir -p /home/willi10700/deploy_front
+
+      - name: Enviar build para Integrator
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          source: "dist/erp"
+          target: "/home/willi10700/deploy_front"
+          strip_components: 2
+          overwrite: true
+
+      - name: Publicar frontend
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            set -e
+
+            PUBLIC_HTML="/home/willi10700/public_html"
+            STAGING="/home/willi10700/deploy_front"
+            MANIFEST="$PUBLIC_HTML/.front-deploy-manifest"
+
+            if [ -f "$MANIFEST" ]; then
+              while IFS= read -r item; do
+                [ -n "$item" ] || continue
+
+                case "$item" in
+                  */*|"."|"..")
+                    echo "Entrada inválida no manifesto: $item"
+                    exit 1
+                    ;;
+                esac
+
+                rm -rf -- "$PUBLIC_HTML/$item"
+              done < "$MANIFEST"
+            fi
+
+            cp -a "$STAGING"/. "$PUBLIC_HTML"/
+
+            rm -rf "$STAGING"
+
+            echo "Frontend publicado com sucesso."
