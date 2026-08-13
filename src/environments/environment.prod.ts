@@ -1,6 +1,6 @@
 export const environment = {
     production: true,
-    api: 'http://localhost:8080',
+    api: 'https://api.willi10700.c44.integrator.host',
 
     sso: {
         clientId: 'e807cbd8-3d3c-4292-a7df-e8f1e94076e6',
