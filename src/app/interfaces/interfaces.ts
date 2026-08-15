@@ -10,6 +10,30 @@ export interface Usuario {
     status?: Status;
 }
 
+export interface Empresa {
+    id?: number;
+    nome: string;
+    status?: Status;
+}
+
+export interface Subsidiaria {
+    id?: number;
+    idEmpresa: number;
+    empresa?: string;
+    nome: string;
+    status?: Status;
+}
+
+export interface UsuarioEmpresa {
+    id?: number;
+    idUsuario: number;
+    usuario?: string;
+    idEmpresa: number;
+    empresa?: string;
+    todasSubsidiarias: boolean;
+    status?: Status;
+}
+
 export interface Perfil {
     id?: number;
     nome: string;

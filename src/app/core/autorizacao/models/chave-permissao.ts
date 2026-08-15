@@ -1,4 +1,37 @@
 export enum ChavePermissao {
+    EmpresaCriar =
+        'CONFIGURACAO_EMPRESA_CRIAR',
+    EmpresaListar =
+        'CONFIGURACAO_EMPRESA_LISTAR',
+    EmpresaEditar =
+        'CONFIGURACAO_EMPRESA_EDITAR',
+    EmpresaExcluir =
+        'CONFIGURACAO_EMPRESA_EXCLUIR',
+    EmpresaDetalhar =
+        'CONFIGURACAO_EMPRESA_DETALHAR',
+
+    SubsidiariaCriar =
+        'CONFIGURACAO_SUBSIDIARIA_CRIAR',
+    SubsidiariaListar =
+        'CONFIGURACAO_SUBSIDIARIA_LISTAR',
+    SubsidiariaEditar =
+        'CONFIGURACAO_SUBSIDIARIA_EDITAR',
+    SubsidiariaExcluir =
+        'CONFIGURACAO_SUBSIDIARIA_EXCLUIR',
+    SubsidiariaDetalhar =
+        'CONFIGURACAO_SUBSIDIARIA_DETALHAR',
+
+    UsuarioEmpresaCriar =
+        'ACESSO_USUARIO_EMPRESA_CRIAR',
+    UsuarioEmpresaListar =
+        'ACESSO_USUARIO_EMPRESA_LISTAR',
+    UsuarioEmpresaEditar =
+        'ACESSO_USUARIO_EMPRESA_EDITAR',
+    UsuarioEmpresaExcluir =
+        'ACESSO_USUARIO_EMPRESA_EXCLUIR',
+    UsuarioEmpresaDetalhar =
+        'ACESSO_USUARIO_EMPRESA_DETALHAR',
+
     UsuarioCriar = 'ACESSO_USUARIO_CRIAR',
     UsuarioListar = 'ACESSO_USUARIO_LISTAR',
     UsuarioEditar = 'ACESSO_USUARIO_EDITAR',

@@ -102,7 +102,13 @@ import { BannerComponent } from './components/site/banner/banner.component';
 
 /* COMPONENTE OUTROS */
 
+import {
+    EmpresaComponent
+} from '@/domain/configuracao/empresa/empresa.component';
 
+import {
+    SubsidiariaComponent
+} from '@/domain/configuracao/subsidiaria/subsidiaria.component';
 
 //import {MainMenuComponent} from './pages/main-menu/main-menu.component';
 //import { interval, take } from 'rxjs';
@@ -191,6 +197,10 @@ registerLocaleData(localePt);
         /* COMPONENTE OUTROS */
         CabecalhoPaginaComponent,
         GridComponent,
+
+        /* DOMAIN CONFIGURACAO */
+        EmpresaComponent,
+        SubsidiariaComponent,
 
         //MainMenuComponent,
         //RegisterComponent,
