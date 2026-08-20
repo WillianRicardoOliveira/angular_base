@@ -12,6 +12,7 @@ import {
 } from 'rxjs';
 
 import {
+    Empresa,
     UsuarioEmpresa
 } from '@/interfaces/interfaces';
 
@@ -108,6 +109,42 @@ export class UsuarioEmpresaService {
             Pagina<UsuarioEmpresa>
         >(
             `${this.api}/acesso/usuario-empresa`,
+            {
+                params
+            }
+        );
+    }
+
+    listarEmpresas(
+        filtro?: string,
+        page = 0,
+        size = 10
+    ): Observable<Pagina<Empresa>> {
+        let params = new HttpParams()
+            .set(
+                'page',
+                page
+            )
+            .set(
+                'size',
+                size
+            )
+            .set(
+                'sort',
+                'nome,asc'
+            );
+
+        if (filtro?.trim()) {
+            params = params.set(
+                'filtro',
+                filtro.trim()
+            );
+        }
+
+        return this.http.get<
+            Pagina<Empresa>
+        >(
+            `${this.api}/acesso/usuario-empresa/empresas`,
             {
                 params
             }

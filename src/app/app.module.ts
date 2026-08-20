@@ -73,6 +73,10 @@ import {
     UsuarioPerfilComponent
 } from '@/domain/acesso/usuario-perfil/usuario-perfil.component';
 
+import {
+    UsuarioEmpresaComponent
+} from '@/domain/acesso/usuario-empresa/usuario-empresa.component';
+
 /* APP */
 import { AppRoutingModule } from '@/app-routing.module';
 import { AppComponent } from './app.component';
@@ -186,6 +190,7 @@ registerLocaleData(localePt);
         PermissaoComponent,
         UsuarioComponent,
         UsuarioPerfilComponent,
+        UsuarioEmpresaComponent,
 
         /* COMPONENTE SITE */
         BannerComponent,

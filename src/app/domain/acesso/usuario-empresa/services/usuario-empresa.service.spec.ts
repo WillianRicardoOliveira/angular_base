@@ -202,6 +202,143 @@ describe('UsuarioEmpresaService', () => {
     );
 
     it(
+        'deve listar empresas para seleção',
+        () => {
+            const resposta = {
+                content: [
+                    {
+                        id: 3,
+                        nome:
+                            'Empresa Exemplo',
+                        status:
+                            'ATIVO' as const
+                    }
+                ],
+                totalElements: 1
+            };
+
+            service.listarEmpresas(
+                ' Exemplo ',
+                1,
+                20
+            ).subscribe((resultado) => {
+                expect(resultado)
+                    .toEqual(resposta);
+            });
+
+            const request =
+                httpTestingController
+                    .expectOne(
+                        (requisicao) =>
+                            requisicao.url ===
+                            `${url}/empresas`
+                    );
+
+            expect(request.request.method)
+                .toBe('GET');
+
+            expect(
+                request.request.params
+                    .get('page')
+            ).toBe('1');
+
+            expect(
+                request.request.params
+                    .get('size')
+            ).toBe('20');
+
+            expect(
+                request.request.params
+                    .get('sort')
+            ).toBe('nome,asc');
+
+            expect(
+                request.request.params
+                    .get('filtro')
+            ).toBe('Exemplo');
+
+            request.flush(resposta);
+        }
+    );
+
+    it(
+        'deve listar empresas com parâmetros padrão',
+        () => {
+            service.listarEmpresas()
+                .subscribe((resultado) => {
+                    expect(resultado)
+                        .toEqual({
+                            content: [],
+                            totalElements: 0
+                        });
+                });
+
+            const request =
+                httpTestingController
+                    .expectOne(
+                        (requisicao) =>
+                            requisicao.url ===
+                            `${url}/empresas`
+                    );
+
+            expect(request.request.method)
+                .toBe('GET');
+
+            expect(
+                request.request.params
+                    .get('page')
+            ).toBe('0');
+
+            expect(
+                request.request.params
+                    .get('size')
+            ).toBe('10');
+
+            expect(
+                request.request.params
+                    .get('sort')
+            ).toBe('nome,asc');
+
+            expect(
+                request.request.params
+                    .has('filtro')
+            ).toBeFalse();
+
+            request.flush({
+                content: [],
+                totalElements: 0
+            });
+        }
+    );
+
+    it(
+        'deve ignorar filtro de empresa vazio',
+        () => {
+            service.listarEmpresas(
+                '   '
+            ).subscribe();
+
+            const request =
+                httpTestingController
+                    .expectOne(
+                        (requisicao) =>
+                            requisicao.url ===
+                            `${url}/empresas`
+                    );
+
+            expect(
+                request.request.params
+                    .has('filtro')
+            ).toBeFalse();
+
+            request.flush({
+                content: [],
+                totalElements: 0
+            });
+        }
+    );
+
+    it(
         'deve cadastrar vínculo entre usuário e empresa',
         () => {
             const dados = {

@@ -9,25 +9,25 @@
         [totalRegistros]="totalRegistros"
         [lista]="lista"
         [coluna]="coluna"
-        [placeholderPesquisa]="'Pesquisar usuários...'"
-        [ariaLabelPesquisa]="'Pesquisar usuários'"
+        [placeholderPesquisa]="
+            'Pesquisar usuários...'
+        "
+        [ariaLabelPesquisa]="
+            'Pesquisar usuários'
+        "
         [b_adicionar]="podeCriar"
         [textoAdicionar]="'Novo usuário'"
-        [b_editar]="podeEditar"
         [b_excluir]="podeExcluir"
         [b_visualizar]="podeDetalhar"
-        [b_chamar]="podeGerenciarPerfis"
-        [iconeChamar]="'manage_accounts'"
-        [tooltipChamar]="'Gerenciar perfis'"
-        [b_alterar_senha]="podeAlterarSenha"
+        [acoesExtras]="acoesExtras"
         (pesquisa)="pesquisar($event)"
         (adicionar)="botaoAdicionar()"
-        (editar)="botaoEditar($event)"
         (excluir)="botaoExcluir($event)"
         (visualizar)="botaoVisualizar($event)"
-        (chamar)="botaoPerfis($event)"
-        (alterarSenha)="botaoAlterarSenha($event)"
-        (p_paginacao)="quantidadePorPagina($event)">
+        (acaoExtra)="botaoAcaoExtra($event)"
+        (p_paginacao)="
+            quantidadePorPagina($event)
+        ">
     </app-grid>
 }
 
@@ -41,19 +41,18 @@
                 <div class="row">
                     <div
                         class="col-md-12 titulo-formulario">
-                        @if (isAlteracaoSenha) {
-                            Alterar senha
-                        } @else if (isVisualizacao) {
+
+                        @if (isVisualizacao) {
                             Detalhes do usuário
-                        } @else if (formulario.get('id')?.value) {
-                            Editar usuário
                         } @else {
                             Novo usuário
                         }
                     </div>
                 </div>
 
-                @if (formulario.get('email')) {
+                @if (
+                    formulario.get('email')
+                ) {
                     <div class="row">
                         <div class="col-md-2 titulo-campo">
                             E-mail
@@ -73,7 +72,9 @@
                                 @if (
                                     formulario
                                         .get('email')
-                                        ?.hasError('required')
+                                        ?.hasError(
+                                            'required'
+                                        )
                                 ) {
                                     <mat-error>
                                         O e-mail é obrigatório.
@@ -83,7 +84,9 @@
                                 @if (
                                     formulario
                                         .get('email')
-                                        ?.hasError('email')
+                                        ?.hasError(
+                                            'email'
+                                        )
                                 ) {
                                     <mat-error>
                                         Informe um e-mail válido.
@@ -94,7 +97,11 @@
                     </div>
                 }
 
-                @if (formulario.contains('senha')) {
+                @if (
+                    formulario.contains(
+                        'senha'
+                    )
+                ) {
                     <div class="row">
                         <div class="col-md-2 titulo-campo">
                             Senha
@@ -114,7 +121,9 @@
                                 @if (
                                     formulario
                                         .get('senha')
-                                        ?.hasError('required')
+                                        ?.hasError(
+                                            'required'
+                                        )
                                 ) {
                                     <mat-error>
                                         A senha é obrigatória.
@@ -124,26 +133,32 @@
                                 @if (
                                     formulario
                                         .get('senha')
-                                        ?.hasError('minlength')
+                                        ?.hasError(
+                                            'minlength'
+                                        )
                                 ) {
                                     <mat-error>
                                         A senha deve possuir no mínimo 8 caracteres.
                                     </mat-error>
                                 }
+
                                 @if (
                                     formulario
                                         .get('senha')
-                                        ?.hasError('pattern') &&
+                                        ?.hasError(
+                                            'pattern'
+                                        ) &&
                                     !formulario
                                         .get('senha')
-                                        ?.hasError('minlength')
+                                        ?.hasError(
+                                            'minlength'
+                                        )
                                 ) {
                                     <mat-error>
                                         Use letra maiúscula, letra minúscula,
                                         número e caractere especial.
                                     </mat-error>
                                 }
-
                             </mat-form-field>
 
                             <small>
@@ -156,12 +171,17 @@
 
                 <div class="row">
                     <div class="col-md-12 botao">
-                        @if (!isVisualizacao && podeSalvar) {
+                        @if (
+                            !isVisualizacao &&
+                            podeSalvar
+                        ) {
                             <button
                                 type="submit"
                                 mat-stroked-button
                                 color="primary"
-                                [disabled]="formulario.invalid">
+                                [disabled]="
+                                    formulario.invalid
+                                ">
                                 Salvar
                             </button>
                         }
@@ -171,6 +191,7 @@
                             mat-stroked-button
                             color="primary"
                             (click)="cancelar()">
+
                             @if (isVisualizacao) {
                                 Fechar
                             } @else {
