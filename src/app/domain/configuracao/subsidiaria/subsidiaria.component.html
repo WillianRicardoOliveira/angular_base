@@ -1,0 +1,215 @@
+<app-cabecalho-pagina
+    [pagina]="pagina"
+    [descricao]="descricao"
+    [breadcrumb]="breadcrumb">
+</app-cabecalho-pagina>
+
+@if (isLista) {
+    <app-grid
+        [totalRegistros]="totalRegistros"
+        [lista]="lista"
+        [coluna]="coluna"
+        [placeholderPesquisa]="'Pesquisar subsidiárias...'"
+        [ariaLabelPesquisa]="'Pesquisar subsidiárias'"
+        [b_adicionar]="podeCriar"
+        [textoAdicionar]="'Nova subsidiária'"
+        [b_editar]="podeEditar"
+        [b_excluir]="podeExcluir"
+        [tituloExclusao]="'Remover subsidiária'"
+        [mensagemExclusao]="
+            'Deseja realmente remover esta subsidiária?'
+        "
+        [textoConfirmarExclusao]="'Remover'"
+        [b_visualizar]="podeDetalhar"
+        (pesquisa)="pesquisar($event)"
+        (adicionar)="botaoAdicionar()"
+        (editar)="botaoEditar($event)"
+        (excluir)="botaoExcluir($event)"
+        (visualizar)="botaoVisualizar($event)"
+        (p_paginacao)="
+            quantidadePorPagina($event)
+        ">
+    </app-grid>
+}
+
+<div class="formulario">
+    <section class="content">
+        @if (isFormulario && formulario) {
+            <form
+                [formGroup]="formulario"
+                (ngSubmit)="salvar()">
+
+                <div class="row">
+                    <div
+                        class="col-md-12 titulo-formulario">
+
+                        @if (isVisualizacao) {
+                            Detalhes da subsidiária
+                        } @else if (
+                            formulario.get('id')?.value
+                        ) {
+                            Editar subsidiária
+                        } @else {
+                            Nova subsidiária
+                        }
+                    </div>
+                </div>
+
+                @if (cadastrando) {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Empresa
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    type="text"
+                                    matInput
+                                    autocomplete="off"
+                                    [formControl]="
+                                        empresaPesquisaControl
+                                    "
+                                    [matAutocomplete]="
+                                        empresasAutocomplete
+                                    ">
+
+                                <mat-autocomplete
+                                    #empresasAutocomplete=
+                                        "matAutocomplete"
+                                    [displayWith]="
+                                        exibirEmpresa
+                                    "
+                                    (optionSelected)="
+                                        selecionarEmpresa(
+                                            $event.option.value
+                                        )
+                                    ">
+
+                                    @for (
+                                        empresa of empresas;
+                                        track empresa.id
+                                    ) {
+                                        <mat-option
+                                            [value]="empresa">
+                                            {{ empresa.nome }}
+                                        </mat-option>
+                                    }
+                                </mat-autocomplete>
+                            </mat-form-field>
+
+                            @if (
+                                formulario
+                                    .get('idEmpresa')
+                                    ?.hasError('required') &&
+                                formulario
+                                    .get('idEmpresa')
+                                    ?.touched
+                            ) {
+                                <div
+                                    class="mensagem-validacao">
+                                    A empresa é obrigatória.
+                                </div>
+                            }
+                        </div>
+                    </div>
+                } @else {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Empresa
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    matInput
+                                    type="text"
+                                    [value]="empresaNome"
+                                    readonly>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                }
+
+                <div class="row">
+                    <div class="col-md-2 titulo-campo">
+                        Nome
+                    </div>
+
+                    <div class="col-md-10">
+                        <mat-form-field
+                            appearance="outline"
+                            class="full-width">
+
+                            <input
+                                matInput
+                                type="text"
+                                formControlName="nome"
+                                maxlength="100"
+                                autocomplete="off">
+
+                            @if (
+                                formulario
+                                    .get('nome')
+                                    ?.hasError('required')
+                            ) {
+                                <mat-error>
+                                    O nome é obrigatório.
+                                </mat-error>
+                            }
+
+                            @if (
+                                formulario
+                                    .get('nome')
+                                    ?.hasError('maxlength')
+                            ) {
+                                <mat-error>
+                                    O nome deve possuir no
+                                    máximo 100 caracteres.
+                                </mat-error>
+                            }
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 botao">
+                        @if (
+                            !isVisualizacao &&
+                            podeSalvar
+                        ) {
+                            <button
+                                type="submit"
+                                mat-stroked-button
+                                color="primary"
+                                [disabled]="
+                                    formulario.invalid
+                                ">
+                                Salvar
+                            </button>
+                        }
+
+                        <button
+                            type="button"
+                            mat-stroked-button
+                            color="primary"
+                            (click)="cancelar()">
+
+                            @if (isVisualizacao) {
+                                Fechar
+                            } @else {
+                                Cancelar
+                            }
+                        </button>
+                    </div>
+                </div>
+            </form>
+        }
+    </section>
+</div>

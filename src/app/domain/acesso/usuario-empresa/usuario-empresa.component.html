@@ -1,0 +1,217 @@
+<app-cabecalho-pagina
+    [pagina]="pagina"
+    [descricao]="descricao"
+    [breadcrumb]="breadcrumb">
+</app-cabecalho-pagina>
+
+@if (isLista) {
+    <app-grid
+        [totalRegistros]="totalRegistros"
+        [lista]="lista"
+        [coluna]="coluna"
+        [b_adicionar]="podeCriar"
+        [textoAdicionar]="'Vincular empresa'"
+        [b_editar]="podeEditar"
+        [b_excluir]="podeExcluir"
+        [tituloExclusao]="'Remover empresa'"
+        [mensagemExclusao]="
+            'Deseja realmente remover esta empresa do usuário?'
+        "
+        [textoConfirmarExclusao]="'Remover'"
+        [b_visualizar]="podeDetalhar"
+        [b_pesquisa]="false"
+        [b_paginacao]="true"
+        (adicionar)="botaoAdicionar()"
+        (editar)="botaoEditar($event)"
+        (excluir)="botaoExcluir($event)"
+        (visualizar)="botaoVisualizar($event)"
+        (p_paginacao)="
+            quantidadePorPagina($event)
+        ">
+    </app-grid>
+
+    <div class="botao-voltar">
+        <button
+            type="button"
+            mat-stroked-button
+            color="primary"
+            (click)="voltar()">
+            Voltar
+        </button>
+    </div>
+}
+
+<div class="formulario">
+    <section class="content">
+        @if (isFormulario && formulario) {
+            <form
+                [formGroup]="formulario"
+                (ngSubmit)="salvar()">
+
+                <div class="row">
+                    <div
+                        class="col-md-12 titulo-formulario">
+                        @if (isVisualizacao) {
+                            Detalhes da empresa do usuário
+                        } @else if (cadastrando) {
+                            Vincular empresa ao usuário
+                        } @else {
+                            Editar empresa do usuário
+                        }
+                    </div>
+                </div>
+
+                @if (cadastrando) {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Empresa
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    matInput
+                                    type="text"
+                                    autocomplete="off"
+                                    [formControl]="
+                                        empresaPesquisaControl
+                                    "
+                                    [matAutocomplete]="
+                                        empresasAutocomplete
+                                    ">
+
+                                <mat-autocomplete
+                                    #empresasAutocomplete=
+                                        "matAutocomplete"
+                                    [displayWith]="
+                                        exibirEmpresa
+                                    "
+                                    (optionSelected)="
+                                        selecionarEmpresa(
+                                            $event.option.value
+                                        )
+                                    ">
+
+                                    @for (
+                                        empresa of empresas;
+                                        track empresa.id
+                                    ) {
+                                        <mat-option
+                                            [value]="empresa">
+                                            {{ empresa.nome }}
+                                        </mat-option>
+                                    }
+                                </mat-autocomplete>
+                            </mat-form-field>
+
+                            @if (
+                                formulario
+                                    .get('idEmpresa')
+                                    ?.hasError('required') &&
+                                formulario
+                                    .get('idEmpresa')
+                                    ?.touched
+                            ) {
+                                <div
+                                    class="mensagem-validacao">
+                                    A empresa é obrigatória.
+                                </div>
+                            }
+                        </div>
+                    </div>
+                } @else {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Usuário
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    matInput
+                                    type="text"
+                                    [value]="usuarioNome"
+                                    readonly>
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Empresa
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    matInput
+                                    type="text"
+                                    [value]="empresaNome"
+                                    readonly>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                }
+
+                <div class="row">
+                    <div class="col-md-2 titulo-campo">
+                        Subsidiárias
+                    </div>
+
+                    <div
+                        class="col-md-10 campo-checkbox">
+                        <mat-checkbox
+                            color="primary"
+                            formControlName="todasSubsidiarias">
+                            Permitir acesso a todas as subsidiárias
+                        </mat-checkbox>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 botao">
+                        @if (
+                            !isVisualizacao &&
+                            podeSalvar
+                        ) {
+                            <button
+                                type="submit"
+                                mat-stroked-button
+                                color="primary"
+                                [disabled]="
+                                    formulario.invalid
+                                ">
+                                @if (cadastrando) {
+                                    Vincular
+                                } @else {
+                                    Salvar
+                                }
+                            </button>
+                        }
+
+                        <button
+                            type="button"
+                            mat-stroked-button
+                            color="primary"
+                            (click)="cancelar()">
+                            @if (isVisualizacao) {
+                                Fechar
+                            } @else {
+                                Cancelar
+                            }
+                        </button>
+                    </div>
+                </div>
+            </form>
+        }
+    </section>
+</div>

@@ -33,10 +33,6 @@ import {
 } from '@services/base/base.service';
 
 import {
-    UsuarioService
-} from './services/usuario.service';
-
-import {
     UsuarioComponent
 } from './usuario.component';
 
@@ -49,9 +45,6 @@ describe('UsuarioComponent', () => {
 
     let baseServiceMock:
         jasmine.SpyObj<BaseService>;
-
-    let usuarioServiceMock:
-        jasmine.SpyObj<UsuarioService>;
 
     const autorizacaoServiceMock = {
         possuiPermissao:
@@ -140,14 +133,6 @@ describe('UsuarioComponent', () => {
                 ]
             );
 
-        usuarioServiceMock =
-            jasmine.createSpyObj<UsuarioService>(
-                'UsuarioService',
-                [
-                    'alterarSenha'
-                ]
-            );
-
         baseServiceMock
             .listar
             .and.returnValue(
@@ -169,12 +154,6 @@ describe('UsuarioComponent', () => {
                             BaseService,
                         useValue:
                             baseServiceMock
-                    },
-                    {
-                        provide:
-                            UsuarioService,
-                        useValue:
-                            usuarioServiceMock
                     },
                     {
                         provide:
@@ -311,7 +290,7 @@ describe('UsuarioComponent', () => {
     );
 
     it(
-        'deve criar formulário de edição sem senha',
+        'deve criar formulário de visualização sem senha',
         () => {
             const formulario =
                 component.campos({
@@ -410,7 +389,7 @@ describe('UsuarioComponent', () => {
     );
 
     it(
-        'deve exigir a permissão correspondente para salvar',
+        'deve permitir salvar somente um novo usuário autorizado',
         () => {
             autorizar(
                 ChavePermissao
@@ -435,15 +414,6 @@ describe('UsuarioComponent', () => {
             expect(
                 component.podeSalvar
             ).toBeFalse();
-
-            autorizar(
-                ChavePermissao
-                    .UsuarioEditar
-            );
-
-            expect(
-                component.podeSalvar
-            ).toBeTrue();
         }
     );
 
@@ -474,10 +444,6 @@ describe('UsuarioComponent', () => {
             ).toBeTrue();
 
             expect(
-                component.podeEditar
-            ).toBeFalse();
-
-            expect(
                 component.podeExcluir
             ).toBeTrue();
 
@@ -498,14 +464,6 @@ describe('UsuarioComponent', () => {
                     .possuiPermissao
             ).toHaveBeenCalledWith(
                 ChavePermissao
-                    .UsuarioEditar
-            );
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao
                     .UsuarioExcluir
             );
 
@@ -516,191 +474,6 @@ describe('UsuarioComponent', () => {
                 ChavePermissao
                     .UsuarioDetalhar
             );
-        }
-    );
-
-    it(
-        'deve verificar a permissão para alterar senha',
-        () => {
-            autorizar(
-                ChavePermissao
-                    .UsuarioSenhaEditar
-            );
-
-            expect(
-                component.podeAlterarSenha
-            ).toBeTrue();
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao
-                    .UsuarioSenhaEditar
-            );
-        }
-    );
-
-    it(
-        'deve abrir o formulário de alteração de senha',
-        () => {
-            autorizar(
-                ChavePermissao
-                    .UsuarioSenhaEditar
-            );
-
-            component
-                .botaoAlterarSenha(10);
-
-            expect(
-                component.isAlteracaoSenha
-            ).toBeTrue();
-
-            expect(
-                component.isLista
-            ).toBeFalse();
-
-            expect(
-                component.isFormulario
-            ).toBeTrue();
-
-            expect(
-                component.formulario
-                    .getRawValue()
-            ).toEqual({
-                id: 10,
-                senha: ''
-            });
-
-            expect(
-                component.formulario
-                    .contains('email')
-            ).toBeFalse();
-        }
-    );
-
-    it(
-        'não deve abrir a alteração de senha sem permissão',
-        () => {
-            component
-                .botaoAlterarSenha(10);
-
-            expect(
-                component.isAlteracaoSenha
-            ).toBeFalse();
-
-            expect(
-                component.isLista
-            ).toBeTrue();
-
-            expect(
-                component.isFormulario
-            ).toBeFalse();
-        }
-    );
-
-    it(
-        'deve enviar a alteração de senha',
-        () => {
-            autorizar(
-                ChavePermissao
-                    .UsuarioSenhaEditar
-            );
-
-            usuarioServiceMock
-                .alterarSenha
-                .and.returnValue(
-                    of({
-                        id: 10,
-                        email:
-                            'usuario@teste.com',
-                        status: 'ATIVO'
-                    })
-                );
-
-            component
-                .botaoAlterarSenha(10);
-
-            component.formulario
-                .get('senha')
-                ?.setValue(
-                    'Senha@123'
-                );
-
-            component.salvar();
-
-            expect(
-                usuarioServiceMock
-                    .alterarSenha
-            ).toHaveBeenCalledOnceWith({
-                id: 10,
-                senha: 'Senha@123'
-            });
-
-            expect(
-                component.isAlteracaoSenha
-            ).toBeFalse();
-
-            expect(
-                component.isLista
-            ).toBeTrue();
-
-            expect(
-                component.isFormulario
-            ).toBeFalse();
-
-            expect(
-                toastrMock.success
-            ).toHaveBeenCalledWith(
-                'Senha alterada com sucesso'
-            );
-        }
-    );
-
-    it(
-        'não deve enviar senha inválida',
-        () => {
-            autorizar(
-                ChavePermissao
-                    .UsuarioSenhaEditar
-            );
-
-            component
-                .botaoAlterarSenha(10);
-
-            component.salvar();
-
-            expect(
-                usuarioServiceMock
-                    .alterarSenha
-            ).not.toHaveBeenCalled();
-        }
-    );
-
-    it(
-        'deve cancelar a alteração de senha',
-        () => {
-            autorizar(
-                ChavePermissao
-                    .UsuarioSenhaEditar
-            );
-
-            component
-                .botaoAlterarSenha(10);
-
-            component.cancelar();
-
-            expect(
-                component.isAlteracaoSenha
-            ).toBeFalse();
-
-            expect(
-                component.isLista
-            ).toBeTrue();
-
-            expect(
-                component.isFormulario
-            ).toBeFalse();
         }
     );
 
@@ -738,6 +511,178 @@ describe('UsuarioComponent', () => {
             ).toBeFalse();
 
             component.botaoPerfis(10);
+
+            expect(
+                routerMock.navigate
+            ).not.toHaveBeenCalled();
+        }
+    );
+
+    it(
+        'deve disponibilizar as ações permitidas',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.callFake(
+                    (
+                        permissao:
+                            ChavePermissao
+                    ) =>
+                        [
+                            ChavePermissao
+                                .UsuarioPerfilListar,
+                            ChavePermissao
+                                .UsuarioEmpresaListar
+                        ].includes(
+                            permissao
+                        )
+                );
+
+            expect(component.acoesExtras)
+                .toEqual([
+                    {
+                        chave: 'perfis',
+                        icone:
+                            'manage_accounts',
+                        tooltip:
+                            'Gerenciar perfis'
+                    },
+                    {
+                        chave: 'empresas',
+                        icone: 'business',
+                        tooltip:
+                            'Gerenciar empresas'
+                    }
+                ]);
+        }
+    );
+
+    it(
+        'deve ocultar ações sem permissão',
+        () => {
+            expect(component.acoesExtras)
+                .toEqual([]);
+        }
+    );
+
+    it(
+        'deve disponibilizar somente a ação de empresas',
+        () => {
+            autorizar(
+                ChavePermissao
+                    .UsuarioEmpresaListar
+            );
+
+            expect(component.acoesExtras)
+                .toEqual([
+                    {
+                        chave: 'empresas',
+                        icone: 'business',
+                        tooltip:
+                            'Gerenciar empresas'
+                    }
+                ]);
+        }
+    );
+
+    it(
+        'deve abrir as empresas do usuário quando autorizado',
+        () => {
+            autorizar(
+                ChavePermissao
+                    .UsuarioEmpresaListar
+            );
+
+            expect(
+                component
+                    .podeGerenciarEmpresas
+            ).toBeTrue();
+
+            component.botaoEmpresas(10);
+
+            expect(
+                routerMock.navigate
+            ).toHaveBeenCalledOnceWith([
+                '/acesso/usuarios',
+                10,
+                'empresas'
+            ]);
+        }
+    );
+
+    it(
+        'não deve abrir as empresas do usuário sem permissão',
+        () => {
+            expect(
+                component
+                    .podeGerenciarEmpresas
+            ).toBeFalse();
+
+            component.botaoEmpresas(10);
+
+            expect(
+                routerMock.navigate
+            ).not.toHaveBeenCalled();
+        }
+    );
+
+    it(
+        'deve tratar a ação extra de perfis',
+        () => {
+            autorizar(
+                ChavePermissao
+                    .UsuarioPerfilListar
+            );
+
+            component.botaoAcaoExtra({
+                chave: 'perfis',
+                id: 10
+            });
+
+            expect(
+                routerMock.navigate
+            ).toHaveBeenCalledOnceWith([
+                '/acesso/usuarios',
+                10,
+                'perfis'
+            ]);
+        }
+    );
+
+    it(
+        'deve tratar a ação extra de empresas',
+        () => {
+            autorizar(
+                ChavePermissao
+                    .UsuarioEmpresaListar
+            );
+
+            component.botaoAcaoExtra({
+                chave: 'empresas',
+                id: 10
+            });
+
+            expect(
+                routerMock.navigate
+            ).toHaveBeenCalledOnceWith([
+                '/acesso/usuarios',
+                10,
+                'empresas'
+            ]);
+        }
+    );
+
+    it(
+        'não deve navegar para uma ação desconhecida',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.returnValue(true);
+
+            component.botaoAcaoExtra({
+                chave: 'desconhecida',
+                id: 10
+            });
 
             expect(
                 routerMock.navigate

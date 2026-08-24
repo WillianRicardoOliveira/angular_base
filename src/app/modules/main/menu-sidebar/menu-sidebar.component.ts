@@ -850,5 +850,34 @@ export const MENU_CONFIGURACOES:
                             .UsuarioListar
                 }
             ]
+        },
+        {
+            name: 'Configuração',
+            iconClasses:
+                'fas fa-cogs',
+            children: [
+                {
+                    name: 'Empresas',
+                    iconClasses:
+                        'fas fa-building',
+                    path: [
+                        '/configuracao/empresas'
+                    ],
+                    permissao:
+                        ChavePermissao
+                            .EmpresaListar
+                },
+                {
+                    name: 'Subsidiárias',
+                    iconClasses:
+                        'fas fa-code-branch',
+                    path: [
+                        '/configuracao/subsidiarias'
+                    ],
+                    permissao:
+                        ChavePermissao
+                            .SubsidiariaListar
+                }
+            ]
         }
     ];

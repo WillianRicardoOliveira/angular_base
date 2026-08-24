@@ -1,0 +1,20 @@
+@use '../../../components/shared/styles/formulario';
+
+.mensagem-validacao {
+    color: #f44336;
+    font-size: 12px;
+    margin-top: -16px;
+    margin-bottom: 16px;
+}
+
+.campo-checkbox {
+    display: flex;
+    align-items: center;
+    min-height: 56px;
+}
+
+.botao-voltar {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+}

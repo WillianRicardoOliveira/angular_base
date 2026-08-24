@@ -66,6 +66,18 @@ import {
     ChavePermissao
 } from '@/core/autorizacao/models/chave-permissao';
 
+import {
+    EmpresaComponent
+} from '@/domain/configuracao/empresa/empresa.component';
+
+import {
+    SubsidiariaComponent
+} from '@/domain/configuracao/subsidiaria/subsidiaria.component';
+
+import {
+    UsuarioEmpresaComponent
+} from '@/domain/acesso/usuario-empresa/usuario-empresa.component';
+
 //import {RegisterComponent} from '@modules/register/register.component';
 //import {DashboardComponent} from '@pages/dashboard/dashboard.component';
 //import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
@@ -158,6 +170,43 @@ const routes: Routes = [
                     permissao:
                         ChavePermissao
                             .UsuarioPerfilListar
+                }
+            },
+            {
+                path:
+                    'acesso/usuarios/:idUsuario/empresas',
+                component:
+                    UsuarioEmpresaComponent,
+                canActivate: [
+                    PermissaoGuard
+                ],
+                data: {
+                    permissao:
+                        ChavePermissao
+                            .UsuarioEmpresaListar
+                }
+            },
+            {
+                path: 'configuracao/empresas',
+                component: EmpresaComponent,
+                canActivate: [
+                    PermissaoGuard
+                ],
+                data: {
+                    permissao:
+                        ChavePermissao.EmpresaListar
+                }
+            },
+            {
+                path: 'configuracao/subsidiarias',
+                component: SubsidiariaComponent,
+                canActivate: [
+                    PermissaoGuard
+                ],
+                data: {
+                    permissao:
+                        ChavePermissao
+                            .SubsidiariaListar
                 }
             },
 
