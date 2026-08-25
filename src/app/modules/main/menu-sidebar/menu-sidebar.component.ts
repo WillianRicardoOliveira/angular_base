@@ -128,19 +128,16 @@ export class MenuSidebarComponent
     }
 
     ngOnInit(): void {
-        this.menu =
-            this.filtrarMenu(
-                MENU
-            );
-
-        this.menuConfiguracoes =
-            this.filtrarMenu(
-                MENU_CONFIGURACOES
-            );
-
-        this.selecionarModuloPelaRota(
-            this.router.url
-        );
+        this.autorizacaoService
+            .retornarEstado()
+            .pipe(
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
+            )
+            .subscribe(() => {
+                this.atualizarMenusAutorizados();
+            });
 
         this.router.events
             .pipe(
@@ -646,6 +643,24 @@ export class MenuSidebarComponent
                         }
                     )
             ) ?? null;
+    }
+
+    private atualizarMenusAutorizados(): void {
+        this.menu =
+            this.filtrarMenu(
+                MENU
+            );
+
+        this.menuConfiguracoes =
+            this.filtrarMenu(
+                MENU_CONFIGURACOES
+            );
+
+        this.selecionarModuloPelaRota(
+            this.router.url
+        );
+
+        this.atualizarIndicadoresRolagem();
     }
 
     private filtrarMenu(

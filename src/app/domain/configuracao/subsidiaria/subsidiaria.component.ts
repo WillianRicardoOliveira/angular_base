@@ -15,7 +15,8 @@ import {
 import {
     debounceTime,
     distinctUntilChanged,
-    filter
+    filter,
+    skip
 } from 'rxjs';
 
 import {
@@ -33,6 +34,10 @@ import {
 import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
+
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 import {
     Empresa,
@@ -67,6 +72,11 @@ export class SubsidiariaComponent
     private readonly autorizacaoService =
         inject(
             AutorizacaoService
+        );
+
+    private readonly contextoOrganizacaoService =
+        inject(
+            ContextoOrganizacaoService
         );
 
     private readonly builder =
@@ -180,6 +190,7 @@ export class SubsidiariaComponent
 
     ngOnInit(): void {
         this.configurarPesquisaDeEmpresa();
+        this.configurarAtualizacaoPorOrganizacao();
         this.carregarLista();
     }
 
@@ -425,6 +436,38 @@ export class SubsidiariaComponent
                 emitEvent: false
             }
         );
+    }
+
+    private configurarAtualizacaoPorOrganizacao(): void {
+        this.contextoOrganizacaoService
+            .retornarOrganizacaoAtivaObservable()
+            .pipe(
+                skip(1),
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
+            )
+            .subscribe((organizacao) => {
+                this.limparEstadoPorTrocaOrganizacao();
+
+                if (organizacao) {
+                    this.carregarLista(
+                        0,
+                        this.tamanhoPagina,
+                        ''
+                    );
+                }
+            });
+    }
+
+    private limparEstadoPorTrocaOrganizacao(): void {
+        this.cancelar();
+
+        this.lista = [];
+        this.empresas = [];
+        this.totalRegistros = 0;
+        this.paginaAtual = 0;
+        this.filtro = '';
     }
 
     private configurarPesquisaDeEmpresa(): void {

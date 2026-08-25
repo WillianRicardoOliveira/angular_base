@@ -17,6 +17,7 @@ import {
 } from '@ngrx/store';
 
 import {
+    BehaviorSubject,
     of
 } from 'rxjs';
 
@@ -45,6 +46,12 @@ describe('MenuSidebarComponent', () => {
     let fixture:
         ComponentFixture<MenuSidebarComponent>;
 
+    let estadoAutorizacaoSubject:
+        BehaviorSubject<{
+            carregado: boolean;
+            permissoes: ReadonlySet<ChavePermissao>;
+        }>;
+
     const storeMock = {
         select: jasmine
             .createSpy('select')
@@ -66,11 +73,21 @@ describe('MenuSidebarComponent', () => {
     const autorizacaoServiceMock = {
         possuiPermissao: jasmine.createSpy(
             'possuiPermissao'
+        ),
+        retornarEstado: jasmine.createSpy(
+            'retornarEstado'
         )
     };
 
     beforeEach(
         waitForAsync(() => {
+            estadoAutorizacaoSubject =
+                new BehaviorSubject({
+                    carregado: true,
+                    permissoes:
+                        new Set<ChavePermissao>()
+                });
+
             autorizacaoServiceMock
                 .possuiPermissao
                 .calls
@@ -79,6 +96,18 @@ describe('MenuSidebarComponent', () => {
             autorizacaoServiceMock
                 .possuiPermissao
                 .and.returnValue(false);
+
+            autorizacaoServiceMock
+                .retornarEstado
+                .calls
+                .reset();
+
+            autorizacaoServiceMock
+                .retornarEstado
+                .and.returnValue(
+                    estadoAutorizacaoSubject
+                        .asObservable()
+                );
 
             TestBed.configureTestingModule({
                 declarations: [
@@ -139,7 +168,7 @@ describe('MenuSidebarComponent', () => {
     );
 
     it(
-        'deve preservar itens públicos e remover acessos não autorizados',
+        'deve preservar itens publicos e remover acessos nao autorizados',
         () => {
             expect(
                 component.menu.length
@@ -175,12 +204,78 @@ describe('MenuSidebarComponent', () => {
             expect(
                 autorizacaoServiceMock
                     .possuiPermissao
-            ).toHaveBeenCalledTimes(3);
+            ).toHaveBeenCalledWith(
+                ChavePermissao.EmpresaListar
+            );
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledWith(
+                ChavePermissao.SubsidiariaListar
+            );
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledTimes(5);
         }
     );
 
     it(
-        'deve exibir Perfis quando possuir a permissão de listar',
+        'deve reconstruir menus quando o estado de autorizacao mudar',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .calls
+                .reset();
+
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.callFake(
+                    (
+                        permissao:
+                            ChavePermissao
+                    ) =>
+                        permissao ===
+                        ChavePermissao
+                            .UsuarioListar
+                );
+
+            estadoAutorizacaoSubject.next({
+                carregado: true,
+                permissoes:
+                    new Set([
+                        ChavePermissao
+                            .UsuarioListar
+                    ])
+            });
+
+            const grupoAcesso =
+                component
+                    .menuConfiguracoes
+                    .find(
+                        (item) =>
+                            item.name ===
+                            'Acesso e Segurança'
+                    );
+
+            expect(
+                grupoAcesso?.children
+                    ?.map((item) => item.name)
+            ).toEqual([
+                'Usuários'
+            ]);
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledTimes(5);
+        }
+    );
+
+    it(
+        'deve exibir Perfis quando possuir a permissao de listar',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -245,12 +340,26 @@ describe('MenuSidebarComponent', () => {
             expect(
                 autorizacaoServiceMock
                     .possuiPermissao
-            ).toHaveBeenCalledTimes(3);
+            ).toHaveBeenCalledWith(
+                ChavePermissao.EmpresaListar
+            );
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledWith(
+                ChavePermissao.SubsidiariaListar
+            );
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledTimes(5);
         }
     );
 
     it(
-        'deve exibir Permissões quando possuir a permissão de listar',
+        'deve exibir Permissoes quando possuir a permissao de listar',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -315,12 +424,26 @@ describe('MenuSidebarComponent', () => {
             expect(
                 autorizacaoServiceMock
                     .possuiPermissao
-            ).toHaveBeenCalledTimes(3);
+            ).toHaveBeenCalledWith(
+                ChavePermissao.EmpresaListar
+            );
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledWith(
+                ChavePermissao.SubsidiariaListar
+            );
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledTimes(5);
         }
     );
 
     it(
-        'deve remover item quando usuário não possuir a permissão',
+        'deve remover item quando usuario nao possuir a permissao',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -341,7 +464,7 @@ describe('MenuSidebarComponent', () => {
 
             const itens: MenuItem[] = [
                 {
-                    name: 'Usuários',
+                    name: 'Usuarios',
                     iconClasses:
                         'fas fa-users',
                     path: [
@@ -401,7 +524,7 @@ describe('MenuSidebarComponent', () => {
                         'fas fa-shield-alt',
                     children: [
                         {
-                            name: 'Usuários',
+                            name: 'Usuarios',
                             iconClasses:
                                 'fas fa-users',
                             path: [
@@ -434,7 +557,7 @@ describe('MenuSidebarComponent', () => {
     );
 
     it(
-        'deve selecionar o módulo pela rota atual',
+        'deve selecionar o modulo pela rota atual',
         () => {
             const modulo: MenuItem = {
                 name:
@@ -443,7 +566,7 @@ describe('MenuSidebarComponent', () => {
                     'fas fa-shield-alt',
                 children: [
                     {
-                        name: 'Usuários',
+                        name: 'Usuarios',
                         iconClasses:
                             'fas fa-users',
                         path: [
@@ -480,7 +603,7 @@ describe('MenuSidebarComponent', () => {
                     'fas fa-shield-alt',
                 children: [
                     {
-                        name: 'Usuários',
+                        name: 'Usuarios',
                         iconClasses:
                             'fas fa-users',
                         path: [
@@ -561,7 +684,7 @@ describe('MenuSidebarComponent', () => {
     );
 
     it(
-        'não deve fechar o painel flutuante ao clicar dentro',
+        'nao deve fechar o painel flutuante ao clicar dentro',
         () => {
             component.painelFlutuanteAberto =
                 true;

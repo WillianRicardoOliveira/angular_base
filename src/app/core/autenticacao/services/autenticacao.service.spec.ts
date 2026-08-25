@@ -8,6 +8,7 @@ import {TestBed} from '@angular/core/testing';
 import {TokenJwt} from '@/core/autenticacao/models/token-jwt.model';
 import {TokenService} from '@/core/autenticacao/services/token.service';
 import {UsuarioAutenticadoService} from '@/core/autenticacao/services/usuario-autenticado.service';
+import {ContextoOrganizacaoService} from '@/core/organizacao/services/contexto-organizacao.service';
 import {environment} from 'environments/environment';
 
 import {AutenticacaoService} from './autenticacao.service';
@@ -21,6 +22,9 @@ describe('AutenticacaoService', () => {
 
     let tokenServiceMock:
         jasmine.SpyObj<TokenService>;
+
+    let contextoOrganizacaoServiceMock:
+        jasmine.SpyObj<ContextoOrganizacaoService>;
 
     beforeEach(() => {
         usuarioAutenticadoServiceMock =
@@ -36,6 +40,12 @@ describe('AutenticacaoService', () => {
             jasmine.createSpyObj<TokenService>(
                 'TokenService',
                 ['retornarRefreshToken']
+            );
+
+        contextoOrganizacaoServiceMock =
+            jasmine.createSpyObj<ContextoOrganizacaoService>(
+                'ContextoOrganizacaoService',
+                ['limpar']
             );
 
         tokenServiceMock.retornarRefreshToken.and.returnValue(
@@ -54,6 +64,10 @@ describe('AutenticacaoService', () => {
                 {
                     provide: TokenService,
                     useValue: tokenServiceMock
+                },
+                {
+                    provide: ContextoOrganizacaoService,
+                    useValue: contextoOrganizacaoServiceMock
                 }
             ]
         });
@@ -97,6 +111,10 @@ describe('AutenticacaoService', () => {
         expect(
             usuarioAutenticadoServiceMock.salvarTokens
         ).toHaveBeenCalledOnceWith(tokens);
+
+        expect(
+            contextoOrganizacaoServiceMock.limpar
+        ).not.toHaveBeenCalled();
     });
 
     it('deve autenticar por SSO e salvar os tokens recebidos', () => {
@@ -125,6 +143,10 @@ describe('AutenticacaoService', () => {
         expect(
             usuarioAutenticadoServiceMock.salvarTokens
         ).toHaveBeenCalledOnceWith(tokens);
+
+        expect(
+            contextoOrganizacaoServiceMock.limpar
+        ).not.toHaveBeenCalled();
     });
 
     it('deve renovar e rotacionar os tokens', () => {
@@ -155,9 +177,13 @@ describe('AutenticacaoService', () => {
         expect(
             usuarioAutenticadoServiceMock.salvarTokens
         ).toHaveBeenCalledOnceWith(novosTokens);
+
+        expect(
+            contextoOrganizacaoServiceMock.limpar
+        ).not.toHaveBeenCalled();
     });
 
-    it('deve executar logout e limpar a sessão local', () => {
+    it('deve executar logout e limpar a sessao local', () => {
         service.logout().subscribe((response) => {
             expect(response).toBeNull();
         });
@@ -179,13 +205,17 @@ describe('AutenticacaoService', () => {
 
         expect(
             usuarioAutenticadoServiceMock.logout
-        ).toHaveBeenCalled();
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            contextoOrganizacaoServiceMock.limpar
+        ).toHaveBeenCalledTimes(1);
     });
 
-    it('deve limpar a sessão local mesmo quando o logout falhar', () => {
+    it('deve limpar a sessao local mesmo quando o logout falhar', () => {
         service.logout().subscribe({
             next: () => {
-                fail('A requisição deveria falhar');
+                fail('A requisicao deveria falhar');
             },
             error: (erro) => {
                 expect(erro.status).toBe(401);
@@ -205,7 +235,7 @@ describe('AutenticacaoService', () => {
             {
                 status: 401,
                 erro: 'REFRESH_TOKEN_INVALIDO',
-                mensagem: 'Refresh token inválido'
+                mensagem: 'Refresh token invalido'
             },
             {
                 status: 401,
@@ -215,6 +245,10 @@ describe('AutenticacaoService', () => {
 
         expect(
             usuarioAutenticadoServiceMock.logout
-        ).toHaveBeenCalled();
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            contextoOrganizacaoServiceMock.limpar
+        ).toHaveBeenCalledTimes(1);
     });
 });

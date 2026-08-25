@@ -34,6 +34,9 @@ import {
 import {
     PermissoesUsuarioService
 } from '@/core/autorizacao/services/permissoes-usuario.service';
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 @Component({
     selector: 'app-login',
@@ -54,6 +57,8 @@ export class LoginComponent implements OnInit {
             AutenticacaoService,
         private permissoesUsuarioService:
             PermissoesUsuarioService,
+        private contextoOrganizacaoService:
+            ContextoOrganizacaoService,
         private microsoftSsoService:
             MicrosoftSsoService,
         private router: Router,
@@ -135,7 +140,7 @@ export class LoginComponent implements OnInit {
 
     recoverPassword(): void {
         this.toastr.info(
-            'Recuperação de senha ainda não configurada.'
+            'Recuperacao de senha ainda nao configurada.'
         );
     }
 
@@ -184,9 +189,13 @@ export class LoginComponent implements OnInit {
 
     private carregarPermissoesAposLogin():
         Observable<void> {
-        return this.permissoesUsuarioService
-            .carregarPermissoes()
+        return this.contextoOrganizacaoService
+            .carregarESelecionarPadrao()
             .pipe(
+                switchMap(() =>
+                    this.permissoesUsuarioService
+                        .carregarPermissoes()
+                ),
                 catchError(
                     (erro: unknown) =>
                         this.service

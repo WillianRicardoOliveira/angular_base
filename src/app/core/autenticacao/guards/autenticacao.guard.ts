@@ -7,7 +7,8 @@ import {
 import {
     catchError,
     map,
-    of
+    of,
+    switchMap
 } from 'rxjs';
 
 import {
@@ -19,6 +20,9 @@ import {
 import {
     PermissoesUsuarioService
 } from '@/core/autorizacao/services/permissoes-usuario.service';
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 export const AutenticacaoGuard = () => {
     const usuarioAutenticadoService =
@@ -34,6 +38,11 @@ export const AutenticacaoGuard = () => {
     const permissoesUsuarioService =
         inject(
             PermissoesUsuarioService
+        );
+
+    const contextoOrganizacaoService =
+        inject(
+            ContextoOrganizacaoService
         );
 
     const router =
@@ -54,9 +63,13 @@ export const AutenticacaoGuard = () => {
         return true;
     }
 
-    return permissoesUsuarioService
-        .carregarPermissoes()
+    return contextoOrganizacaoService
+        .carregarESelecionarPadrao()
         .pipe(
+            switchMap(() =>
+                permissoesUsuarioService
+                    .carregarPermissoes()
+            ),
             map(() => true),
             catchError(() => of(false))
         );

@@ -17,6 +17,10 @@
     gap: 4px;
 }
 
+.navbar-nav.ml-auto {
+    min-width: 0;
+}
+
 .nav-item .nav-link {
     display: inline-flex;
     align-items: center;
@@ -62,6 +66,13 @@
 
     background-color: transparent;
     border: 0;
+}
+
+.nav-item-organizacao {
+    display: flex;
+    align-items: center;
+
+    min-width: 0;
 }
 
 .fa-bars {

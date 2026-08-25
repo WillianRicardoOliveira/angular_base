@@ -1,0 +1,44 @@
+<div class="organizacao-selector" [class.organizacao-selector--loading]="exibindoCarregamento">
+    <i class="fas fa-building organizacao-selector__icon" aria-hidden="true"></i>
+
+    <label class="sr-only" for="organizacaoAtiva">Organização ativa</label>
+
+    <select
+        *ngIf="possuiOrganizacoes; else semOrganizacao"
+        id="organizacaoAtiva"
+        class="organizacao-selector__control"
+        [ngModel]="idOrganizacaoSelecionada"
+        [disabled]="controleDesabilitado"
+        aria-label="Organização ativa"
+        title="Organização ativa"
+        (ngModelChange)="trocarOrganizacao($event)">
+
+        <option
+            *ngFor="let organizacao of organizacoes; trackBy: rastrearOrganizacao"
+            [ngValue]="organizacao.id">
+            {{ organizacao.nome }}
+        </option>
+    </select>
+
+    <ng-template #semOrganizacao>
+        <button
+            type="button"
+            class="organizacao-selector__empty"
+            title="Nenhuma organização disponível"
+            disabled>
+            Sem organização
+        </button>
+    </ng-template>
+
+    <i
+        *ngIf="possuiOrganizacoes && !exibindoCarregamento"
+        class="fas fa-chevron-down organizacao-selector__status"
+        aria-hidden="true">
+    </i>
+
+    <i
+        *ngIf="exibindoCarregamento"
+        class="fas fa-circle-notch fa-spin organizacao-selector__status"
+        aria-hidden="true">
+    </i>
+</div>

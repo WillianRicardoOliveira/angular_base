@@ -119,7 +119,9 @@ import {
 //import {RegisterComponent} from '@modules/register/register.component';
 //import {DashboardComponent} from '@pages/dashboard/dashboard.component';
 
-
+import {
+    SeletorOrganizacaoComponent
+} from '@modules/main/header/seletor-organizacao/seletor-organizacao.component';
 
 //import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
 //import {RecoverPasswordComponent} from '@modules/recover-password/recover-password.component';
@@ -174,6 +176,7 @@ registerLocaleData(localePt);
         /* LAYOUT ADMINLTE */
         MainComponent,
         HeaderComponent,
+        SeletorOrganizacaoComponent,
         UserComponent,
         FooterComponent,
         MenuSidebarComponent,

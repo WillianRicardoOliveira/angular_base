@@ -14,6 +14,7 @@ import {
 } from 'ngx-toastr';
 
 import {
+    BehaviorSubject,
     of,
     throwError
 } from 'rxjs';
@@ -25,6 +26,14 @@ import {
 import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
+
+import {
+    OrganizacaoDisponivel
+} from '@/core/organizacao/models/organizacao-disponivel.model';
+
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 import {
     Empresa,
@@ -49,10 +58,20 @@ describe('SubsidiariaComponent', () => {
     let serviceMock:
         jasmine.SpyObj<SubsidiariaService>;
 
+    let organizacaoAtivaSubject:
+        BehaviorSubject<OrganizacaoDisponivel | null>;
+
     const autorizacaoServiceMock = {
         possuiPermissao: jasmine.createSpy(
             'possuiPermissao'
         )
+    };
+
+    const contextoOrganizacaoServiceMock = {
+        retornarOrganizacaoAtivaObservable:
+            jasmine.createSpy(
+                'retornarOrganizacaoAtivaObservable'
+            )
     };
 
     const toastrMock = {
@@ -82,6 +101,26 @@ describe('SubsidiariaComponent', () => {
     };
 
     beforeEach(async () => {
+        organizacaoAtivaSubject =
+            new BehaviorSubject<
+                OrganizacaoDisponivel | null
+            >({
+                id: 1,
+                nome: 'Organização Principal'
+            });
+
+        contextoOrganizacaoServiceMock
+            .retornarOrganizacaoAtivaObservable
+            .calls
+            .reset();
+
+        contextoOrganizacaoServiceMock
+            .retornarOrganizacaoAtivaObservable
+            .and.returnValue(
+                organizacaoAtivaSubject
+                    .asObservable()
+            );
+
         autorizacaoServiceMock
             .possuiPermissao
             .calls
@@ -156,6 +195,12 @@ describe('SubsidiariaComponent', () => {
                             AutorizacaoService,
                         useValue:
                             autorizacaoServiceMock
+                    },
+                    {
+                        provide:
+                            ContextoOrganizacaoService,
+                        useValue:
+                            contextoOrganizacaoServiceMock
                     },
                     {
                         provide:
@@ -807,6 +852,107 @@ describe('SubsidiariaComponent', () => {
 
             expect(component.empresas)
                 .toEqual([]);
+        }
+    );
+
+    it(
+        'deve recarregar dados ao trocar a organização ativa',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.returnValue(true);
+
+            component.botaoAdicionar();
+
+            component.lista = [
+                subsidiaria
+            ];
+
+            component.empresas = [
+                empresa
+            ];
+
+            component.totalRegistros = 1;
+            component.paginaAtual = 2;
+            component.filtro = 'Filial';
+
+            serviceMock.listar.calls.reset();
+
+            organizacaoAtivaSubject.next({
+                id: 2,
+                nome: 'Organização Filial'
+            });
+
+            expect(component.isLista)
+                .toBeTrue();
+
+            expect(component.isFormulario)
+                .toBeFalse();
+
+            expect(component.isVisualizacao)
+                .toBeFalse();
+
+            expect(component.lista)
+                .toEqual([]);
+
+            expect(component.empresas)
+                .toEqual([]);
+
+            expect(component.totalRegistros)
+                .toBe(0);
+
+            expect(component.paginaAtual)
+                .toBe(0);
+
+            expect(component.filtro)
+                .toBe('');
+
+            expect(serviceMock.listar)
+                .toHaveBeenCalledOnceWith(
+                    0,
+                    10,
+                    'id,desc',
+                    ''
+                );
+        }
+    );
+
+    it(
+        'deve limpar dados quando não houver organização ativa',
+        () => {
+            component.lista = [
+                subsidiaria
+            ];
+
+            component.empresas = [
+                empresa
+            ];
+
+            component.totalRegistros = 1;
+            component.paginaAtual = 2;
+            component.filtro = 'Filial';
+
+            serviceMock.listar.calls.reset();
+
+            organizacaoAtivaSubject.next(null);
+
+            expect(component.lista)
+                .toEqual([]);
+
+            expect(component.empresas)
+                .toEqual([]);
+
+            expect(component.totalRegistros)
+                .toBe(0);
+
+            expect(component.paginaAtual)
+                .toBe(0);
+
+            expect(component.filtro)
+                .toBe('');
+
+            expect(serviceMock.listar)
+                .not.toHaveBeenCalled();
         }
     );
 

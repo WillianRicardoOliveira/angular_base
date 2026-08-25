@@ -43,6 +43,9 @@ import {
 import {
     PermissoesUsuarioService
 } from '@/core/autorizacao/services/permissoes-usuario.service';
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 import {
     LoginComponent
@@ -78,6 +81,17 @@ describe('LoginComponent', () => {
             )
     };
 
+    const contextoOrganizacaoServiceMock = {
+        carregarESelecionarPadrao: jasmine
+            .createSpy('carregarESelecionarPadrao')
+            .and.returnValue(
+                of({
+                    id: 1,
+                    nome: 'Matriz'
+                })
+            )
+    };
+
     const microsoftSsoServiceMock = {
         login: jasmine
             .createSpy('login')
@@ -110,14 +124,14 @@ describe('LoginComponent', () => {
         mensagemAutenticacaoServiceMock
             .obterMensagemLogin
             .and.returnValue(
-                'Não foi possível acessar o sistema. ' +
+                'Nao foi possivel acessar o sistema. ' +
                 'Verifique suas credenciais.'
             );
 
         mensagemAutenticacaoServiceMock
             .obterMensagemSso
             .and.returnValue(
-                'Não foi possível acessar com a Microsoft.'
+                'Nao foi possivel acessar com a Microsoft.'
             );
 
         await TestBed.configureTestingModule({
@@ -141,6 +155,11 @@ describe('LoginComponent', () => {
                     provide: PermissoesUsuarioService,
                     useValue:
                         permissoesUsuarioServiceMock
+                },
+                {
+                    provide: ContextoOrganizacaoService,
+                    useValue:
+                        contextoOrganizacaoServiceMock
                 },
                 {
                     provide: MicrosoftSsoService,
@@ -219,6 +238,20 @@ describe('LoginComponent', () => {
                 of(undefined)
             );
 
+        contextoOrganizacaoServiceMock
+            .carregarESelecionarPadrao
+            .calls
+            .reset();
+
+        contextoOrganizacaoServiceMock
+            .carregarESelecionarPadrao
+            .and.returnValue(
+                of({
+                    id: 1,
+                    nome: 'Matriz'
+                })
+            );
+
         microsoftSsoServiceMock
             .login
             .calls
@@ -238,7 +271,7 @@ describe('LoginComponent', () => {
         mensagemAutenticacaoServiceMock
             .obterMensagemLogin
             .and.returnValue(
-                'Não foi possível acessar o sistema. ' +
+                'Nao foi possivel acessar o sistema. ' +
                 'Verifique suas credenciais.'
             );
 
@@ -250,7 +283,7 @@ describe('LoginComponent', () => {
         mensagemAutenticacaoServiceMock
             .obterMensagemSso
             .and.returnValue(
-                'Não foi possível acessar com a Microsoft.'
+                'Nao foi possivel acessar com a Microsoft.'
             );
 
         routerMock
@@ -273,7 +306,28 @@ describe('LoginComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('deve autenticar, carregar permissões e redirecionar quando o formulário for válido', () => {
+    it('deve autenticar, carregar contexto, carregar permissoes e redirecionar quando o formulario for valido', () => {
+        const ordemExecucao: string[] = [];
+
+        contextoOrganizacaoServiceMock
+            .carregarESelecionarPadrao
+            .and.callFake(() => {
+                ordemExecucao.push('contexto');
+
+                return of({
+                    id: 1,
+                    nome: 'Matriz'
+                });
+            });
+
+        permissoesUsuarioServiceMock
+            .carregarPermissoes
+            .and.callFake(() => {
+                ordemExecucao.push('permissoes');
+
+                return of(undefined);
+            });
+
         component.loginForm.setValue({
             email: 'usuario@teste.com',
             senha: '123456'
@@ -289,19 +343,29 @@ describe('LoginComponent', () => {
         );
 
         expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
             permissoesUsuarioServiceMock
                 .carregarPermissoes
         ).toHaveBeenCalledTimes(1);
+
+        expect(ordemExecucao).toEqual([
+            'contexto',
+            'permissoes'
+        ]);
 
         expect(
             routerMock.navigateByUrl
         ).toHaveBeenCalledOnceWith('/');
     });
 
-    it('deve encerrar a sessão quando as permissões falharem após o login comum', () => {
+    it('deve encerrar a sessao quando as permissoes falharem apos o login comum', () => {
         const erroPermissoes =
             new Error(
-                'Falha ao carregar permissões'
+                'Falha ao carregar permissoes'
             );
 
         permissoesUsuarioServiceMock
@@ -315,7 +379,7 @@ describe('LoginComponent', () => {
         mensagemAutenticacaoServiceMock
             .obterMensagemLogin
             .and.returnValue(
-                'Não foi possível concluir o acesso ao sistema.'
+                'Nao foi possivel concluir o acesso ao sistema.'
             );
 
         component.loginForm.setValue({
@@ -331,6 +395,11 @@ describe('LoginComponent', () => {
             'usuario@teste.com',
             '123456'
         );
+
+        expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
+        ).toHaveBeenCalledTimes(1);
 
         expect(
             permissoesUsuarioServiceMock
@@ -351,7 +420,7 @@ describe('LoginComponent', () => {
         expect(
             toastrMock.error
         ).toHaveBeenCalledOnceWith(
-            'Não foi possível concluir o acesso ao sistema.'
+            'Nao foi possivel concluir o acesso ao sistema.'
         );
 
         expect(
@@ -363,15 +432,85 @@ describe('LoginComponent', () => {
         ).toBeFalse();
     });
 
-    it('deve preservar o erro das permissões quando o logout compensatório falhar', () => {
+    it('deve encerrar a sessao quando o contexto falhar apos o login comum', () => {
+        const erroContexto =
+            new Error(
+                'Falha ao carregar contexto'
+            );
+
+        contextoOrganizacaoServiceMock
+            .carregarESelecionarPadrao
+            .and.returnValue(
+                throwError(
+                    () => erroContexto
+                )
+            );
+
+        mensagemAutenticacaoServiceMock
+            .obterMensagemLogin
+            .and.returnValue(
+                'Nao foi possivel concluir o acesso ao sistema.'
+            );
+
+        component.loginForm.setValue({
+            email: 'usuario@teste.com',
+            senha: '123456'
+        });
+
+        component.login();
+
+        expect(
+            autenticacaoServiceMock.login
+        ).toHaveBeenCalledOnceWith(
+            'usuario@teste.com',
+            '123456'
+        );
+
+        expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            permissoesUsuarioServiceMock
+                .carregarPermissoes
+        ).not.toHaveBeenCalled();
+
+        expect(
+            autenticacaoServiceMock.logout
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            mensagemAutenticacaoServiceMock
+                .obterMensagemLogin
+        ).toHaveBeenCalledOnceWith(
+            erroContexto
+        );
+
+        expect(
+            toastrMock.error
+        ).toHaveBeenCalledOnceWith(
+            'Nao foi possivel concluir o acesso ao sistema.'
+        );
+
+        expect(
+            routerMock.navigateByUrl
+        ).not.toHaveBeenCalled();
+
+        expect(
+            component.isAuthLoading
+        ).toBeFalse();
+    });
+
+    it('deve preservar o erro das permissoes quando o logout compensatorio falhar', () => {
         const erroPermissoes =
             new Error(
-                'Falha ao carregar permissões'
+                'Falha ao carregar permissoes'
             );
 
         const erroLogout =
             new Error(
-                'Falha ao revogar sessão'
+                'Falha ao revogar sessao'
             );
 
         permissoesUsuarioServiceMock
@@ -393,7 +532,7 @@ describe('LoginComponent', () => {
         mensagemAutenticacaoServiceMock
             .obterMensagemLogin
             .and.returnValue(
-                'Não foi possível concluir o acesso ao sistema.'
+                'Nao foi possivel concluir o acesso ao sistema.'
             );
 
         component.loginForm.setValue({
@@ -402,6 +541,11 @@ describe('LoginComponent', () => {
         });
 
         component.login();
+
+        expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
+        ).toHaveBeenCalledTimes(1);
 
         expect(
             permissoesUsuarioServiceMock
@@ -429,7 +573,7 @@ describe('LoginComponent', () => {
         expect(
             toastrMock.error
         ).toHaveBeenCalledOnceWith(
-            'Não foi possível concluir o acesso ao sistema.'
+            'Nao foi possivel concluir o acesso ao sistema.'
         );
 
         expect(
@@ -441,7 +585,7 @@ describe('LoginComponent', () => {
         ).toBeFalse();
     });
 
-    it('não deve autenticar quando o formulário for inválido', () => {
+    it('nao deve autenticar quando o formulario for invalido', () => {
         component.loginForm.setValue({
             email: 'email-invalido',
             senha: ''
@@ -454,6 +598,11 @@ describe('LoginComponent', () => {
         ).not.toHaveBeenCalled();
 
         expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
+        ).not.toHaveBeenCalled();
+
+        expect(
             permissoesUsuarioServiceMock
                 .carregarPermissoes
         ).not.toHaveBeenCalled();
@@ -463,7 +612,7 @@ describe('LoginComponent', () => {
         ).not.toHaveBeenCalled();
     });
 
-    it('não deve iniciar outro login enquanto houver autenticação em andamento', () => {
+    it('nao deve iniciar outro login enquanto houver autenticacao em andamento', () => {
         component.loginForm.setValue({
             email: 'usuario@teste.com',
             senha: '123456'
@@ -478,15 +627,20 @@ describe('LoginComponent', () => {
         ).not.toHaveBeenCalled();
 
         expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
+        ).not.toHaveBeenCalled();
+
+        expect(
             permissoesUsuarioServiceMock
                 .carregarPermissoes
         ).not.toHaveBeenCalled();
     });
 
-    it('deve exibir a mensagem segura retornada pelo serviço', () => {
+    it('deve exibir a mensagem segura retornada pelo servico', () => {
         const erroLogin =
             new Error(
-                'Erro interno que não deve ser exibido'
+                'Erro interno que nao deve ser exibido'
             );
 
         autenticacaoServiceMock
@@ -498,7 +652,7 @@ describe('LoginComponent', () => {
         mensagemAutenticacaoServiceMock
             .obterMensagemLogin
             .and.returnValue(
-                'Não foi possível acessar o sistema. ' +
+                'Nao foi possivel acessar o sistema. ' +
                 'Verifique suas credenciais.'
             );
 
@@ -508,6 +662,11 @@ describe('LoginComponent', () => {
         });
 
         component.login();
+
+        expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
+        ).not.toHaveBeenCalled();
 
         expect(
             permissoesUsuarioServiceMock
@@ -524,7 +683,7 @@ describe('LoginComponent', () => {
         expect(
             toastrMock.error
         ).toHaveBeenCalledOnceWith(
-            'Não foi possível acessar o sistema. ' +
+            'Nao foi possivel acessar o sistema. ' +
             'Verifique suas credenciais.'
         );
     });
@@ -554,6 +713,11 @@ describe('LoginComponent', () => {
         component.login();
 
         expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
+        ).not.toHaveBeenCalled();
+
+        expect(
             permissoesUsuarioServiceMock
                 .carregarPermissoes
         ).not.toHaveBeenCalled();
@@ -573,7 +737,7 @@ describe('LoginComponent', () => {
         );
     });
 
-    it('deve restaurar o estado de carregamento após sucesso', () => {
+    it('deve restaurar o estado de carregamento apos sucesso', () => {
         component.loginForm.setValue({
             email: 'usuario@teste.com',
             senha: '123456'
@@ -586,7 +750,7 @@ describe('LoginComponent', () => {
         ).toBeFalse();
     });
 
-    it('deve restaurar o estado de carregamento após erro', () => {
+    it('deve restaurar o estado de carregamento apos erro', () => {
         autenticacaoServiceMock
             .login
             .and.returnValue(
@@ -625,17 +789,38 @@ describe('LoginComponent', () => {
         ).toBeFalse();
     });
 
-    it('deve informar quando a recuperação de senha não estiver configurada', () => {
+    it('deve informar quando a recuperacao de senha nao estiver configurada', () => {
         component.recoverPassword();
 
         expect(
             toastrMock.info
         ).toHaveBeenCalledOnceWith(
-            'Recuperação de senha ainda não configurada.'
+            'Recuperacao de senha ainda nao configurada.'
         );
     });
 
-    it('deve autenticar pela Microsoft, carregar permissões e redirecionar', () => {
+    it('deve autenticar pela Microsoft, carregar contexto, carregar permissoes e redirecionar', () => {
+        const ordemExecucao: string[] = [];
+
+        contextoOrganizacaoServiceMock
+            .carregarESelecionarPadrao
+            .and.callFake(() => {
+                ordemExecucao.push('contexto');
+
+                return of({
+                    id: 1,
+                    nome: 'Matriz'
+                });
+            });
+
+        permissoesUsuarioServiceMock
+            .carregarPermissoes
+            .and.callFake(() => {
+                ordemExecucao.push('permissoes');
+
+                return of(undefined);
+            });
+
         component.loginWithMicrosoft();
 
         expect(
@@ -649,19 +834,29 @@ describe('LoginComponent', () => {
         );
 
         expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
             permissoesUsuarioServiceMock
                 .carregarPermissoes
         ).toHaveBeenCalledTimes(1);
+
+        expect(ordemExecucao).toEqual([
+            'contexto',
+            'permissoes'
+        ]);
 
         expect(
             routerMock.navigateByUrl
         ).toHaveBeenCalledOnceWith('/');
     });
 
-    it('deve encerrar a sessão quando as permissões falharem após o login Microsoft', () => {
+    it('deve encerrar a sessao quando as permissoes falharem apos o login Microsoft', () => {
         const erroPermissoes =
             new Error(
-                'Falha ao carregar permissões'
+                'Falha ao carregar permissoes'
             );
 
         permissoesUsuarioServiceMock
@@ -675,7 +870,7 @@ describe('LoginComponent', () => {
         mensagemAutenticacaoServiceMock
             .obterMensagemSso
             .and.returnValue(
-                'Não foi possível concluir o acesso corporativo.'
+                'Nao foi possivel concluir o acesso corporativo.'
             );
 
         component.loginWithMicrosoft();
@@ -689,6 +884,11 @@ describe('LoginComponent', () => {
         ).toHaveBeenCalledOnceWith(
             'access-token-microsoft'
         );
+
+        expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
+        ).toHaveBeenCalledTimes(1);
 
         expect(
             permissoesUsuarioServiceMock
@@ -709,7 +909,7 @@ describe('LoginComponent', () => {
         expect(
             toastrMock.error
         ).toHaveBeenCalledOnceWith(
-            'Não foi possível concluir o acesso corporativo.'
+            'Nao foi possivel concluir o acesso corporativo.'
         );
 
         expect(
@@ -721,7 +921,75 @@ describe('LoginComponent', () => {
         ).toBeFalse();
     });
 
-    it('não deve iniciar outro login Microsoft enquanto houver autenticação em andamento', () => {
+    it('deve encerrar a sessao quando o contexto falhar apos o login Microsoft', () => {
+        const erroContexto =
+            new Error(
+                'Falha ao carregar contexto'
+            );
+
+        contextoOrganizacaoServiceMock
+            .carregarESelecionarPadrao
+            .and.returnValue(
+                throwError(
+                    () => erroContexto
+                )
+            );
+
+        mensagemAutenticacaoServiceMock
+            .obterMensagemSso
+            .and.returnValue(
+                'Nao foi possivel concluir o acesso corporativo.'
+            );
+
+        component.loginWithMicrosoft();
+
+        expect(
+            microsoftSsoServiceMock.login
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            autenticacaoServiceMock.loginSso
+        ).toHaveBeenCalledOnceWith(
+            'access-token-microsoft'
+        );
+
+        expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            permissoesUsuarioServiceMock
+                .carregarPermissoes
+        ).not.toHaveBeenCalled();
+
+        expect(
+            autenticacaoServiceMock.logout
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            mensagemAutenticacaoServiceMock
+                .obterMensagemSso
+        ).toHaveBeenCalledOnceWith(
+            erroContexto
+        );
+
+        expect(
+            toastrMock.error
+        ).toHaveBeenCalledOnceWith(
+            'Nao foi possivel concluir o acesso corporativo.'
+        );
+
+        expect(
+            routerMock.navigateByUrl
+        ).not.toHaveBeenCalled();
+
+        expect(
+            component.isAuthLoading
+        ).toBeFalse();
+    });
+
+    it('nao deve iniciar outro login Microsoft enquanto houver autenticacao em andamento', () => {
         component.isAuthLoading = true;
 
         component.loginWithMicrosoft();
@@ -732,6 +1000,11 @@ describe('LoginComponent', () => {
 
         expect(
             autenticacaoServiceMock.loginSso
+        ).not.toHaveBeenCalled();
+
+        expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
         ).not.toHaveBeenCalled();
 
         expect(
@@ -756,13 +1029,18 @@ describe('LoginComponent', () => {
         mensagemAutenticacaoServiceMock
             .obterMensagemSso
             .and.returnValue(
-                'Não foi possível acessar com a Microsoft.'
+                'Nao foi possivel acessar com a Microsoft.'
             );
 
         component.loginWithMicrosoft();
 
         expect(
             autenticacaoServiceMock.loginSso
+        ).not.toHaveBeenCalled();
+
+        expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
         ).not.toHaveBeenCalled();
 
         expect(
@@ -775,7 +1053,7 @@ describe('LoginComponent', () => {
         expect(
             toastrMock.error
         ).toHaveBeenCalledOnceWith(
-            'Não foi possível acessar com a Microsoft.'
+            'Nao foi possivel acessar com a Microsoft.'
         );
 
         expect(
@@ -794,7 +1072,7 @@ describe('LoginComponent', () => {
                 status: 401,
                 erro: 'SSO_INVALIDO',
                 mensagem:
-                    'Detalhe interno que não deve ser exibido'
+                    'Detalhe interno que nao deve ser exibido'
             }
         };
 
@@ -809,7 +1087,7 @@ describe('LoginComponent', () => {
         mensagemAutenticacaoServiceMock
             .obterMensagemSso
             .and.returnValue(
-                'Não foi possível validar o acesso corporativo.'
+                'Nao foi possivel validar o acesso corporativo.'
             );
 
         component.loginWithMicrosoft();
@@ -825,6 +1103,11 @@ describe('LoginComponent', () => {
         );
 
         expect(
+            contextoOrganizacaoServiceMock
+                .carregarESelecionarPadrao
+        ).not.toHaveBeenCalled();
+
+        expect(
             mensagemAutenticacaoServiceMock
                 .obterMensagemSso
         ).toHaveBeenCalledOnceWith(
@@ -834,7 +1117,7 @@ describe('LoginComponent', () => {
         expect(
             toastrMock.error
         ).toHaveBeenCalledOnceWith(
-            'Não foi possível validar o acesso corporativo.'
+            'Nao foi possivel validar o acesso corporativo.'
         );
 
         expect(
