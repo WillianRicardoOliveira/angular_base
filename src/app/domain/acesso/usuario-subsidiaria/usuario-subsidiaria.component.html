@@ -10,30 +10,23 @@
         [lista]="lista"
         [coluna]="coluna"
         [b_adicionar]="podeCriar"
-        [textoAdicionar]="'Vincular empresa'"
-        [b_editar]="podeEditar"
+        [textoAdicionar]="'Vincular subsidiaria'"
+        [b_editar]="false"
         [b_excluir]="podeExcluir"
-        [tituloExclusao]="'Remover empresa'"
+        [tituloExclusao]="'Remover subsidiaria'"
         [mensagemExclusao]="
-            'Deseja realmente remover esta empresa do usuário?'
+            'Deseja realmente remover esta subsidiaria do usuario?'
         "
         [textoConfirmarExclusao]="'Remover'"
         [b_visualizar]="podeDetalhar"
         [b_pesquisa]="false"
         [b_paginacao]="true"
         (adicionar)="botaoAdicionar()"
-        (editar)="botaoEditar($event)"
         (excluir)="botaoExcluir($event)"
         (visualizar)="botaoVisualizar($event)"
         (p_paginacao)="
             quantidadePorPagina($event)
-        "
-        [acoesExtras]="
-            podeGerenciarSubsidiarias
-                ? acoesExtras
-                : []
-        "
-        (acaoExtra)="botaoAcaoExtra($event)">
+        ">
     </app-grid>
 
     <div class="botao-voltar">
@@ -55,22 +48,57 @@
                 (ngSubmit)="salvar()">
 
                 <div class="row">
-                    <div
-                        class="col-md-12 titulo-formulario">
+                    <div class="col-md-12 titulo-formulario">
                         @if (isVisualizacao) {
-                            Detalhes da empresa do usuário
-                        } @else if (cadastrando) {
-                            Vincular empresa ao usuário
+                            Detalhes da subsidiaria do usuario
                         } @else {
-                            Editar empresa do usuário
+                            Vincular subsidiaria ao usuario
                         }
                     </div>
                 </div>
 
-                @if (cadastrando) {
+                <div class="row">
+                    <div class="col-md-2 titulo-campo">
+                        Usuario
+                    </div>
+
+                    <div class="col-md-10">
+                        <mat-form-field
+                            appearance="outline"
+                            class="full-width">
+
+                            <input
+                                matInput
+                                type="text"
+                                [value]="usuarioNome"
+                                readonly>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 titulo-campo">
+                        Empresa
+                    </div>
+
+                    <div class="col-md-10">
+                        <mat-form-field
+                            appearance="outline"
+                            class="full-width">
+
+                            <input
+                                matInput
+                                type="text"
+                                [value]="empresaNome"
+                                readonly>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                @if (!isVisualizacao) {
                     <div class="row">
                         <div class="col-md-2 titulo-campo">
-                            Empresa
+                            Subsidiaria
                         </div>
 
                         <div class="col-md-10">
@@ -83,31 +111,31 @@
                                     type="text"
                                     autocomplete="off"
                                     [formControl]="
-                                        empresaPesquisaControl
+                                        subsidiariaPesquisaControl
                                     "
                                     [matAutocomplete]="
-                                        empresasAutocomplete
+                                        subsidiariasAutocomplete
                                     ">
 
                                 <mat-autocomplete
-                                    #empresasAutocomplete=
+                                    #subsidiariasAutocomplete=
                                         "matAutocomplete"
                                     [displayWith]="
-                                        exibirEmpresa
+                                        exibirSubsidiaria
                                     "
                                     (optionSelected)="
-                                        selecionarEmpresa(
+                                        selecionarSubsidiaria(
                                             $event.option.value
                                         )
                                     ">
 
                                     @for (
-                                        empresa of empresas;
-                                        track empresa.id
+                                        subsidiaria of subsidiarias;
+                                        track subsidiaria.id
                                     ) {
                                         <mat-option
-                                            [value]="empresa">
-                                            {{ empresa.nome }}
+                                            [value]="subsidiaria">
+                                            {{ subsidiaria.nome }}
                                         </mat-option>
                                     }
                                 </mat-autocomplete>
@@ -115,15 +143,14 @@
 
                             @if (
                                 formulario
-                                    .get('idEmpresa')
+                                    .get('idSubsidiaria')
                                     ?.hasError('required') &&
                                 formulario
-                                    .get('idEmpresa')
+                                    .get('idSubsidiaria')
                                     ?.touched
                             ) {
-                                <div
-                                    class="mensagem-validacao">
-                                    A empresa é obrigatória.
+                                <div class="mensagem-validacao">
+                                    A subsidiaria e obrigatoria.
                                 </div>
                             }
                         </div>
@@ -131,7 +158,7 @@
                 } @else {
                     <div class="row">
                         <div class="col-md-2 titulo-campo">
-                            Usuário
+                            Subsidiaria
                         </div>
 
                         <div class="col-md-10">
@@ -142,26 +169,7 @@
                                 <input
                                     matInput
                                     type="text"
-                                    [value]="usuarioNome"
-                                    readonly>
-                            </mat-form-field>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-2 titulo-campo">
-                            Empresa
-                        </div>
-
-                        <div class="col-md-10">
-                            <mat-form-field
-                                appearance="outline"
-                                class="full-width">
-
-                                <input
-                                    matInput
-                                    type="text"
-                                    [value]="empresaNome"
+                                    [value]="subsidiariaNome"
                                     readonly>
                             </mat-form-field>
                         </div>
@@ -169,38 +177,17 @@
                 }
 
                 <div class="row">
-                    <div class="col-md-2 titulo-campo">
-                        Subsidiárias
-                    </div>
-
-                    <div
-                        class="col-md-10 campo-checkbox">
-                        <mat-checkbox
-                            color="primary"
-                            formControlName="todasSubsidiarias">
-                            Permitir acesso a todas as subsidiárias
-                        </mat-checkbox>
-                    </div>
-                </div>
-
-                <div class="row">
                     <div class="col-md-12 botao">
                         @if (
                             !isVisualizacao &&
-                            podeSalvar
+                            podeCriar
                         ) {
                             <button
                                 type="submit"
                                 mat-stroked-button
                                 color="primary"
-                                [disabled]="
-                                    formulario.invalid
-                                ">
-                                @if (cadastrando) {
-                                    Vincular
-                                } @else {
-                                    Salvar
-                                }
+                                [disabled]="formulario.invalid">
+                                Vincular
                             </button>
                         }
 

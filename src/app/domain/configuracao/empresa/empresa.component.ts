@@ -1,12 +1,21 @@
 import {
     Component,
+    DestroyRef,
     inject
 } from '@angular/core';
+
+import {
+    takeUntilDestroyed
+} from '@angular/core/rxjs-interop';
 
 import {
     FormGroup,
     Validators
 } from '@angular/forms';
+
+import {
+    skip
+} from 'rxjs';
 
 import {
     ChavePermissao
@@ -15,6 +24,10 @@ import {
 import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
+
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 import {
     Empresa
@@ -39,6 +52,16 @@ export class EmpresaComponent extends Base {
     private readonly autorizacaoService =
         inject(
             AutorizacaoService
+        );
+
+    private readonly contextoOrganizacaoService =
+        inject(
+            ContextoOrganizacaoService
+        );
+
+    private readonly destroyRef =
+        inject(
+            DestroyRef
         );
 
     get podeCriar(): boolean {
@@ -98,6 +121,12 @@ export class EmpresaComponent extends Base {
         'Status'
     ];
 
+    override ngOnInit(): void {
+        this.configurarAtualizacaoPorOrganizacao();
+
+        super.ngOnInit();
+    }
+
     campos(
         dados?: Empresa
     ): FormGroup {
@@ -125,5 +154,28 @@ export class EmpresaComponent extends Base {
                 ]
             ]
         });
+    }
+
+    private configurarAtualizacaoPorOrganizacao(): void {
+        this.contextoOrganizacaoService
+            .retornarOrganizacaoAtivaObservable()
+            .pipe(
+                skip(1),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe((organizacao) => {
+                this.limparEstadoPorTrocaOrganizacao();
+
+                if (organizacao) {
+                    this.carregarLista();
+                }
+            });
+    }
+
+    private limparEstadoPorTrocaOrganizacao(): void {
+        this.cancelar();
+
+        this.lista = [];
+        this.totalRegistros = 0;
     }
 }

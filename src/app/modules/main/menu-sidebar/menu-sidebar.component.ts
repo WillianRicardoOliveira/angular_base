@@ -826,6 +826,24 @@ export const MENU: MenuItem[] = [
 export const MENU_CONFIGURACOES:
     MenuItem[] = [
         {
+            name: 'Plataforma',
+            iconClasses:
+                'fas fa-layer-group',
+            children: [
+                {
+                    name: 'Organizacoes',
+                    iconClasses:
+                        'fas fa-building',
+                    path: [
+                        '/plataforma/organizacoes'
+                    ],
+                    permissao:
+                        ChavePermissao
+                            .PlataformaOrganizacaoListar
+                }
+            ]
+        },
+        {
             name:
                 'Acesso e Segurança',
             iconClasses:

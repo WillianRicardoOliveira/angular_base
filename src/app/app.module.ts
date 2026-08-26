@@ -126,6 +126,14 @@ import {
 //import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
 //import {RecoverPasswordComponent} from '@modules/recover-password/recover-password.component';
 
+import {
+    UsuarioSubsidiariaComponent
+} from '@/domain/acesso/usuario-subsidiaria/usuario-subsidiaria.component';
+
+import {
+    OrganizacaoPlataformaComponent
+} from '@/domain/plataforma/organizacao/organizacao-plataforma.component';
+
 import { CabecalhoPaginaComponent } from './components/cabecalho-pagina/cabecalho-pagina.component';
 
 //import { InformacaoComponent } from './components/dashboard/informacao/informacao.component';
@@ -194,6 +202,8 @@ registerLocaleData(localePt);
         UsuarioComponent,
         UsuarioPerfilComponent,
         UsuarioEmpresaComponent,
+        UsuarioSubsidiariaComponent,
+        OrganizacaoPlataformaComponent,
 
         /* COMPONENTE SITE */
         BannerComponent,

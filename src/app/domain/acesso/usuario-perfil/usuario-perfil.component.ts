@@ -1,8 +1,13 @@
 import {
     Component,
+    DestroyRef,
     OnInit,
     inject
 } from '@angular/core';
+
+import {
+    takeUntilDestroyed
+} from '@angular/core/rxjs-interop';
 
 import {
     FormBuilder,
@@ -16,6 +21,10 @@ import {
 } from '@angular/router';
 
 import {
+    skip
+} from 'rxjs';
+
+import {
     ToastrService
 } from 'ngx-toastr';
 
@@ -26,6 +35,10 @@ import {
 import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
+
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 import {
     UsuarioPerfil
@@ -62,6 +75,11 @@ export class UsuarioPerfilComponent
             AutorizacaoService
         );
 
+    private readonly contextoOrganizacaoService =
+        inject(
+            ContextoOrganizacaoService
+        );
+
     private readonly builder =
         inject(
             FormBuilder
@@ -80,6 +98,11 @@ export class UsuarioPerfilComponent
     private readonly toastr =
         inject(
             ToastrService
+        );
+
+    private readonly destroyRef =
+        inject(
+            DestroyRef
         );
 
     idUsuario = 0;
@@ -165,6 +188,7 @@ export class UsuarioPerfilComponent
             return;
         }
 
+        this.configurarAtualizacaoPorOrganizacao();
         this.carregarLista();
     }
 
@@ -328,5 +352,25 @@ export class UsuarioPerfilComponent
         this.router.navigate([
             '/acesso/usuarios'
         ]);
+    }
+
+    private configurarAtualizacaoPorOrganizacao(): void {
+        this.contextoOrganizacaoService
+            .retornarOrganizacaoAtivaObservable()
+            .pipe(
+                skip(1),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe(() => {
+                this.limparEstadoPorTrocaOrganizacao();
+                this.voltar();
+            });
+    }
+
+    private limparEstadoPorTrocaOrganizacao(): void {
+        this.cancelar();
+
+        this.lista = [];
+        this.totalRegistros = 0;
     }
 }

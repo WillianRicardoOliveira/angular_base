@@ -78,6 +78,14 @@ import {
     UsuarioEmpresaComponent
 } from '@/domain/acesso/usuario-empresa/usuario-empresa.component';
 
+import {
+    UsuarioSubsidiariaComponent
+} from '@/domain/acesso/usuario-subsidiaria/usuario-subsidiaria.component';
+
+import {
+    OrganizacaoPlataformaComponent
+} from '@/domain/plataforma/organizacao/organizacao-plataforma.component';
+
 //import {RegisterComponent} from '@modules/register/register.component';
 //import {DashboardComponent} from '@pages/dashboard/dashboard.component';
 //import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
@@ -111,6 +119,18 @@ const routes: Routes = [
             AutenticacaoGuard
         ],
         children: [
+            {
+                path: 'plataforma/organizacoes',
+                component: OrganizacaoPlataformaComponent,
+                canActivate: [
+                    PermissaoGuard
+                ],
+                data: {
+                    permissao:
+                        ChavePermissao
+                            .PlataformaOrganizacaoListar
+                }
+            },
             {
                 path: 'acesso/perfis',
                 component: PerfilComponent,
@@ -184,6 +204,20 @@ const routes: Routes = [
                     permissao:
                         ChavePermissao
                             .UsuarioEmpresaListar
+                }
+            },
+            {
+                path:
+                    'acesso/usuarios/:idUsuario/empresas/:idUsuarioEmpresa/subsidiarias',
+                component:
+                    UsuarioSubsidiariaComponent,
+                canActivate: [
+                    PermissaoGuard
+                ],
+                data: {
+                    permissao:
+                        ChavePermissao
+                            .UsuarioSubsidiariaListar
                 }
             },
             {

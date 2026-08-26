@@ -1,4 +1,18 @@
 export enum ChavePermissao {
+
+    PlataformaOrganizacaoCriar =
+        'PLATAFORMA_ORGANIZACAO_CRIAR',
+    PlataformaOrganizacaoListar =
+        'PLATAFORMA_ORGANIZACAO_LISTAR',
+    PlataformaOrganizacaoDetalhar =
+        'PLATAFORMA_ORGANIZACAO_DETALHAR',
+    PlataformaOrganizacaoEditar =
+        'PLATAFORMA_ORGANIZACAO_EDITAR',
+    PlataformaOrganizacaoStatus =
+        'PLATAFORMA_ORGANIZACAO_STATUS',
+    PlataformaOrganizacaoExcluir =
+        'PLATAFORMA_ORGANIZACAO_EXCLUIR',
+
     EmpresaCriar =
         'CONFIGURACAO_EMPRESA_CRIAR',
     EmpresaListar =
@@ -31,6 +45,15 @@ export enum ChavePermissao {
         'ACESSO_USUARIO_EMPRESA_EXCLUIR',
     UsuarioEmpresaDetalhar =
         'ACESSO_USUARIO_EMPRESA_DETALHAR',
+
+    UsuarioSubsidiariaCriar =
+        'ACESSO_USUARIO_SUBSIDIARIA_CRIAR',
+    UsuarioSubsidiariaListar =
+        'ACESSO_USUARIO_SUBSIDIARIA_LISTAR',
+    UsuarioSubsidiariaExcluir =
+        'ACESSO_USUARIO_SUBSIDIARIA_EXCLUIR',
+    UsuarioSubsidiariaDetalhar =
+        'ACESSO_USUARIO_SUBSIDIARIA_DETALHAR',
 
     UsuarioCriar =
         'ACESSO_USUARIO_CRIAR',

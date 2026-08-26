@@ -1,0 +1,379 @@
+<app-cabecalho-pagina
+    [pagina]="pagina"
+    [descricao]="descricao"
+    [breadcrumb]="breadcrumb">
+</app-cabecalho-pagina>
+
+@if (isLista) {
+    <section class="content">
+        <mat-card class="card">
+            <mat-card-header class="card-header">
+                <mat-card-title class="card-title">
+                    Organizacoes
+                </mat-card-title>
+
+                <mat-card-actions
+                    class="card-tools search">
+
+                    <div class="grid-search-field">
+                        <mat-icon aria-hidden="true">
+                            search
+                        </mat-icon>
+
+                        <input
+                            type="search"
+                            class="form-control"
+                            placeholder="Pesquisar organizacoes..."
+                            aria-label="Pesquisar organizacoes"
+                            [(ngModel)]="filtro"
+                            (keyup)="pesquisar()">
+                    </div>
+                </mat-card-actions>
+            </mat-card-header>
+
+            <mat-card-content class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Nome</th>
+                            <th>Status</th>
+
+                            <th class="grid-actions-header">
+                                Acoes
+                            </th>
+                        </tr>
+                    </thead>
+
+                    @if (lista.length > 0) {
+                        <tbody>
+                            @for (
+                                organizacao of lista;
+                                track organizacao.id
+                            ) {
+                                <tr>
+                                    <td>
+                                        {{ organizacao.id }}
+                                    </td>
+
+                                    <td>
+                                        <div>
+                                            {{ organizacao.nome }}
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <span
+                                            class="grid-status"
+                                            [ngClass]="
+                                                classeStatus(
+                                                    organizacao.status
+                                                )
+                                            ">
+
+                                            <span
+                                                class="grid-status-dot"
+                                                aria-hidden="true">
+                                            </span>
+
+                                            {{
+                                                textoStatus(
+                                                    organizacao.status
+                                                )
+                                            }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <div class="grid-actions">
+                                            @if (podeDetalhar) {
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-tool"
+                                                    matTooltip="Visualizar"
+                                                    aria-label="Visualizar"
+                                                    (click)="
+                                                        botaoVisualizar(
+                                                            organizacao.id!
+                                                        )
+                                                    ">
+
+                                                    <mat-icon>
+                                                        visibility
+                                                    </mat-icon>
+                                                </button>
+                                            }
+
+                                            @if (
+                                                podeEditarOrganizacao(
+                                                    organizacao
+                                                )
+                                            ) {
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-tool"
+                                                    matTooltip="Editar"
+                                                    aria-label="Editar"
+                                                    (click)="
+                                                        botaoEditar(
+                                                            organizacao.id!
+                                                        )
+                                                    ">
+
+                                                    <mat-icon>
+                                                        edit
+                                                    </mat-icon>
+                                                </button>
+                                            }
+
+                                            @if (
+                                                podeInativar(
+                                                    organizacao
+                                                )
+                                            ) {
+                                                <button
+                                                    type="button"
+                                                    class="
+                                                        btn
+                                                        btn-tool
+                                                        grid-action-warning
+                                                    "
+                                                    matTooltip="Inativar"
+                                                    aria-label="Inativar"
+                                                    (click)="
+                                                        botaoInativar(
+                                                            organizacao
+                                                        )
+                                                    ">
+
+                                                    <mat-icon>
+                                                        block
+                                                    </mat-icon>
+                                                </button>
+                                            }
+
+                                            @if (
+                                                podeReativar(
+                                                    organizacao
+                                                )
+                                            ) {
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-tool"
+                                                    matTooltip="Reativar"
+                                                    aria-label="Reativar"
+                                                    (click)="
+                                                        botaoReativar(
+                                                            organizacao
+                                                        )
+                                                    ">
+
+                                                    <mat-icon>
+                                                        restart_alt
+                                                    </mat-icon>
+                                                </button>
+                                            }
+
+                                            @if (
+                                                podeRemover(
+                                                    organizacao
+                                                )
+                                            ) {
+                                                <button
+                                                    type="button"
+                                                    class="
+                                                        btn
+                                                        btn-tool
+                                                        grid-action-danger
+                                                    "
+                                                    matTooltip="Remover"
+                                                    aria-label="Remover"
+                                                    (click)="
+                                                        botaoExcluir(
+                                                            organizacao
+                                                        )
+                                                    ">
+
+                                                    <mat-icon>
+                                                        delete
+                                                    </mat-icon>
+                                                </button>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    } @else {
+                        <tbody>
+                            <tr>
+                                <td
+                                    class="grid-empty-cell"
+                                    colspan="4">
+
+                                    <div class="grid-empty-state">
+                                        <mat-icon>
+                                            inventory_2
+                                        </mat-icon>
+
+                                        <strong>
+                                            Nenhuma organizacao encontrada
+                                        </strong>
+
+                                        <span>
+                                            Ainda nao ha registros para exibir.
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+            </mat-card-content>
+
+            <mat-card-actions
+                class="
+                    card-footer
+                    centraliza-paginator
+                ">
+
+                <mat-paginator
+                    class="cor-paginator"
+                    [length]="totalRegistros"
+                    [pageIndex]="paginaAtual"
+                    [pageSize]="tamanhoPagina"
+                    [pageSizeOptions]="[
+                        10,
+                        20
+                    ]"
+                    (page)="
+                        quantidadePorPagina(
+                            $event
+                        )
+                    ">
+                </mat-paginator>
+            </mat-card-actions>
+        </mat-card>
+    </section>
+}
+
+<div class="formulario">
+    <section class="content">
+        @if (isFormulario && formulario) {
+            <form
+                [formGroup]="formulario"
+                (ngSubmit)="salvar()">
+
+                <div class="row">
+                    <div
+                        class="col-md-12 titulo-formulario">
+
+                        @if (isVisualizacao) {
+                            Detalhes da organizacao
+                        } @else {
+                            Editar organizacao
+                        }
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 titulo-campo">
+                        Nome
+                    </div>
+
+                    <div class="col-md-10">
+                        <mat-form-field
+                            appearance="outline"
+                            class="full-width">
+
+                            <input
+                                matInput
+                                type="text"
+                                formControlName="nome"
+                                maxlength="100"
+                                autocomplete="off">
+
+                            @if (
+                                formulario
+                                    .get('nome')
+                                    ?.hasError('required')
+                            ) {
+                                <mat-error>
+                                    O nome e obrigatorio.
+                                </mat-error>
+                            }
+
+                            @if (
+                                formulario
+                                    .get('nome')
+                                    ?.hasError('maxlength')
+                            ) {
+                                <mat-error>
+                                    O nome deve possuir no maximo
+                                    100 caracteres.
+                                </mat-error>
+                            }
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 titulo-campo">
+                        Status
+                    </div>
+
+                    <div class="col-md-10">
+                        <mat-form-field
+                            appearance="outline"
+                            class="full-width">
+
+                            <input
+                                matInput
+                                type="text"
+                                [value]="
+                                    textoStatus(
+                                        formulario
+                                            .get('status')
+                                            ?.value
+                                    )
+                                "
+                                readonly>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12 botao">
+                        @if (
+                            !isVisualizacao &&
+                            podeSalvar
+                        ) {
+                            <button
+                                type="submit"
+                                mat-stroked-button
+                                color="primary"
+                                [disabled]="
+                                    formulario.invalid
+                                ">
+                                Salvar
+                            </button>
+                        }
+
+                        <button
+                            type="button"
+                            mat-stroked-button
+                            color="primary"
+                            (click)="cancelar()">
+
+                            @if (isVisualizacao) {
+                                Fechar
+                            } @else {
+                                Cancelar
+                            }
+                        </button>
+                    </div>
+                </div>
+            </form>
+        }
+    </section>
+</div>

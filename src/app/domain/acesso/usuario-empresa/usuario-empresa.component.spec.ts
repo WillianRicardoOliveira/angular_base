@@ -19,6 +19,7 @@ import {
 } from 'ngx-toastr';
 
 import {
+    BehaviorSubject,
     of,
     throwError
 } from 'rxjs';
@@ -30,6 +31,14 @@ import {
 import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
+
+import {
+    OrganizacaoDisponivel
+} from '@/core/organizacao/models/organizacao-disponivel.model';
+
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 import {
     Empresa,
@@ -53,6 +62,16 @@ describe('UsuarioEmpresaComponent', () => {
 
     let serviceMock:
         jasmine.SpyObj<UsuarioEmpresaService>;
+
+    let organizacaoAtivaSubject:
+        BehaviorSubject<OrganizacaoDisponivel | null>;
+
+    const contextoOrganizacaoServiceMock = {
+        retornarOrganizacaoAtivaObservable:
+            jasmine.createSpy(
+                'retornarOrganizacaoAtivaObservable'
+            )
+    };
 
     const autorizacaoServiceMock = {
         possuiPermissao: jasmine.createSpy(
@@ -111,6 +130,26 @@ describe('UsuarioEmpresaComponent', () => {
         };
 
     beforeEach(async () => {
+        organizacaoAtivaSubject =
+            new BehaviorSubject<
+                OrganizacaoDisponivel | null
+            >({
+                id: 1,
+                nome: 'Organização 1'
+            });
+
+        contextoOrganizacaoServiceMock
+            .retornarOrganizacaoAtivaObservable
+            .calls
+            .reset();
+
+        contextoOrganizacaoServiceMock
+            .retornarOrganizacaoAtivaObservable
+            .and.returnValue(
+                organizacaoAtivaSubject
+                    .asObservable()
+            );
+
         paramMapMock.get.calls.reset();
         paramMapMock.get.and.returnValue(
             '1'
@@ -192,6 +231,12 @@ describe('UsuarioEmpresaComponent', () => {
                             AutorizacaoService,
                         useValue:
                             autorizacaoServiceMock
+                    },
+                    {
+                        provide:
+                            ContextoOrganizacaoService,
+                        useValue:
+                            contextoOrganizacaoServiceMock
                     },
                     {
                         provide:
@@ -280,6 +325,163 @@ describe('UsuarioEmpresaComponent', () => {
                     'id,desc',
                     1
                 );
+        }
+    );
+
+    it(
+        'deve voltar para usuários ao trocar a organização ativa',
+        () => {
+            serviceMock.listar.calls.reset();
+            serviceMock.listarEmpresas.calls.reset();
+            routerMock.navigate.calls.reset();
+
+            component.formulario =
+                new FormBuilder().group({
+                    id: [3],
+                    todasSubsidiarias: [true]
+                });
+
+            component.lista = [
+                usuarioEmpresa
+            ];
+
+            component.empresas = [
+                empresa
+            ];
+
+            component.totalRegistros = 1;
+            component.paginaAtual = 2;
+            component.tamanhoPagina = 20;
+            component.usuarioNome =
+                'usuario@empresa.com';
+            component.empresaNome =
+                'Empresa Exemplo';
+            component.isLista = false;
+            component.isFormulario = true;
+            component.isVisualizacao = true;
+
+            organizacaoAtivaSubject.next({
+                id: 2,
+                nome: 'Organização 2'
+            });
+
+            expect(component.isLista)
+                .toBeTrue();
+
+            expect(component.isFormulario)
+                .toBeFalse();
+
+            expect(component.isVisualizacao)
+                .toBeFalse();
+
+            expect(component.lista)
+                .toEqual([]);
+
+            expect(component.empresas)
+                .toEqual([]);
+
+            expect(component.totalRegistros)
+                .toBe(0);
+
+            expect(component.paginaAtual)
+                .toBe(0);
+
+            expect(component.tamanhoPagina)
+                .toBe(10);
+
+            expect(component.usuarioNome)
+                .toBe('');
+
+            expect(component.empresaNome)
+                .toBe('');
+
+            expect(serviceMock.listar)
+                .not.toHaveBeenCalled();
+
+            expect(serviceMock.listarEmpresas)
+                .not.toHaveBeenCalled();
+
+            expect(routerMock.navigate)
+                .toHaveBeenCalledOnceWith([
+                    '/acesso/usuarios'
+                ]);
+        }
+    );
+
+    it(
+        'deve limpar dados e voltar para usuários quando não houver organização ativa',
+        () => {
+            serviceMock.listar.calls.reset();
+            serviceMock.listarEmpresas.calls.reset();
+            routerMock.navigate.calls.reset();
+
+            component.formulario =
+                new FormBuilder().group({
+                    id: [3],
+                    todasSubsidiarias: [true]
+                });
+
+            component.lista = [
+                usuarioEmpresa
+            ];
+
+            component.empresas = [
+                empresa
+            ];
+
+            component.totalRegistros = 1;
+            component.paginaAtual = 2;
+            component.tamanhoPagina = 20;
+            component.usuarioNome =
+                'usuario@empresa.com';
+            component.empresaNome =
+                'Empresa Exemplo';
+            component.isLista = false;
+            component.isFormulario = true;
+            component.isVisualizacao = true;
+
+            organizacaoAtivaSubject.next(null);
+
+            expect(component.isLista)
+                .toBeTrue();
+
+            expect(component.isFormulario)
+                .toBeFalse();
+
+            expect(component.isVisualizacao)
+                .toBeFalse();
+
+            expect(component.lista)
+                .toEqual([]);
+
+            expect(component.empresas)
+                .toEqual([]);
+
+            expect(component.totalRegistros)
+                .toBe(0);
+
+            expect(component.paginaAtual)
+                .toBe(0);
+
+            expect(component.tamanhoPagina)
+                .toBe(10);
+
+            expect(component.usuarioNome)
+                .toBe('');
+
+            expect(component.empresaNome)
+                .toBe('');
+
+            expect(serviceMock.listar)
+                .not.toHaveBeenCalled();
+
+            expect(serviceMock.listarEmpresas)
+                .not.toHaveBeenCalled();
+
+            expect(routerMock.navigate)
+                .toHaveBeenCalledOnceWith([
+                    '/acesso/usuarios'
+                ]);
         }
     );
 
@@ -388,6 +590,180 @@ describe('UsuarioEmpresaComponent', () => {
 
             expect(component.podeDetalhar)
                 .toBeTrue();
+        }
+    );
+
+        it(
+        'deve configurar acao extra para subsidiarias',
+        () => {
+            expect(component.acoesExtras)
+                .toEqual([
+                    {
+                        chave: 'subsidiarias',
+                        icone: 'account_tree',
+                        tooltip: 'Subsidiarias'
+                    }
+                ]);
+        }
+    );
+
+    it(
+        'deve controlar permissao para gerenciar subsidiarias',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.callFake(
+                    (
+                        permissao:
+                            ChavePermissao
+                    ) =>
+                        permissao ===
+                        ChavePermissao
+                            .UsuarioSubsidiariaListar
+                );
+
+            expect(component.podeGerenciarSubsidiarias)
+                .toBeTrue();
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledWith(
+                ChavePermissao
+                    .UsuarioSubsidiariaListar
+            );
+        }
+    );
+
+    it(
+        'deve navegar para subsidiarias especificas da empresa do usuario',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.callFake(
+                    (
+                        permissao:
+                            ChavePermissao
+                    ) =>
+                        permissao ===
+                        ChavePermissao
+                            .UsuarioSubsidiariaListar
+                );
+
+            routerMock.navigate.calls.reset();
+
+            component.lista = [
+                usuarioEmpresa
+            ];
+
+            component.botaoAcaoExtra({
+                chave: 'subsidiarias',
+                id: 3
+            });
+
+            expect(routerMock.navigate)
+                .toHaveBeenCalledOnceWith([
+                    '/acesso/usuarios',
+                    1,
+                    'empresas',
+                    3,
+                    'subsidiarias'
+                ]);
+
+            expect(toastrMock.info)
+                .not.toHaveBeenCalled();
+        }
+    );
+
+    it(
+        'nao deve navegar para subsidiarias sem permissao',
+        () => {
+            routerMock.navigate.calls.reset();
+
+            component.lista = [
+                usuarioEmpresa
+            ];
+
+            component.botaoAcaoExtra({
+                chave: 'subsidiarias',
+                id: 3
+            });
+
+            expect(routerMock.navigate)
+                .not.toHaveBeenCalled();
+        }
+    );
+
+    it(
+        'nao deve navegar para subsidiarias quando usuario ja acessa todas',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.callFake(
+                    (
+                        permissao:
+                            ChavePermissao
+                    ) =>
+                        permissao ===
+                        ChavePermissao
+                            .UsuarioSubsidiariaListar
+                );
+
+            routerMock.navigate.calls.reset();
+
+            component.lista = [
+                {
+                    ...usuarioEmpresa,
+                    todasSubsidiarias: true
+                }
+            ];
+
+            component.botaoAcaoExtra({
+                chave: 'subsidiarias',
+                id: 3
+            });
+
+            expect(routerMock.navigate)
+                .not.toHaveBeenCalled();
+
+            expect(toastrMock.info)
+                .toHaveBeenCalledOnceWith(
+                    'Usuario ja possui acesso a todas as subsidiarias da empresa'
+                );
+        }
+    );
+
+    it(
+        'deve ignorar acao extra desconhecida',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.callFake(
+                    (
+                        permissao:
+                            ChavePermissao
+                    ) =>
+                        permissao ===
+                        ChavePermissao
+                            .UsuarioSubsidiariaListar
+                );
+
+            routerMock.navigate.calls.reset();
+
+            component.lista = [
+                usuarioEmpresa
+            ];
+
+            component.botaoAcaoExtra({
+                chave: 'outra-acao',
+                id: 3
+            });
+
+            expect(routerMock.navigate)
+                .not.toHaveBeenCalled();
+
+            expect(toastrMock.info)
+                .not.toHaveBeenCalled();
         }
     );
 

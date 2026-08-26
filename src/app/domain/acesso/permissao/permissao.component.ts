@@ -1,12 +1,21 @@
 import {
     Component,
+    DestroyRef,
     inject
 } from '@angular/core';
+
+import {
+    takeUntilDestroyed
+} from '@angular/core/rxjs-interop';
 
 import {
     FormGroup,
     Validators
 } from '@angular/forms';
+
+import {
+    skip
+} from 'rxjs';
 
 import {
     ChavePermissao
@@ -15,6 +24,10 @@ import {
 import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
+
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 import {
     Permissao
@@ -41,25 +54,26 @@ export class PermissaoComponent extends Base {
             AutorizacaoService
         );
 
+    private readonly contextoOrganizacaoService =
+        inject(
+            ContextoOrganizacaoService
+        );
+
+    private readonly destroyRef =
+        inject(
+            DestroyRef
+        );
+
     get podeCriar(): boolean {
-        return this.autorizacaoService
-            .possuiPermissao(
-                ChavePermissao.PermissaoCriar
-            );
+        return false;
     }
 
     get podeEditar(): boolean {
-        return this.autorizacaoService
-            .possuiPermissao(
-                ChavePermissao.PermissaoEditar
-            );
+        return false;
     }
 
     get podeExcluir(): boolean {
-        return this.autorizacaoService
-            .possuiPermissao(
-                ChavePermissao.PermissaoExcluir
-            );
+        return false;
     }
 
     get podeDetalhar(): boolean {
@@ -70,20 +84,13 @@ export class PermissaoComponent extends Base {
     }
 
     get podeSalvar(): boolean {
-        const possuiId =
-            !!this.formulario
-                ?.get('id')
-                ?.value;
-
-        return possuiId
-            ? this.podeEditar
-            : this.podeCriar;
+        return false;
     }
 
     pagina = 'Permissões';
 
     descricao =
-        'Gerencie as permissões de acesso do sistema';
+        'Consulte as permissões de acesso disponíveis para perfis da organização';
 
     breadcrumb: ItemBreadcrumbPagina[] = [
         {
@@ -100,40 +107,65 @@ export class PermissaoComponent extends Base {
         'Status'
     ];
 
+    override ngOnInit(): void {
+        this.configurarAtualizacaoPorOrganizacao();
+
+        super.ngOnInit();
+    }
+
+    override botaoAdicionar(): void {}
+
+    override botaoEditar(
+        id: number
+    ): void {}
+
+    override botaoExcluir(
+        id: number
+    ): void {}
+
+    override salvar(): void {}
+
     campos(
         dados?: Permissao
     ): FormGroup {
-        if (dados) {
-            return this.builder.group({
-                id: [
-                    dados.id
-                ],
-                nome: [
-                    dados.nome,
-                    Validators.required
-                ],
-                chave: [
-                    dados.chave,
-                    Validators.required
-                ],
-                descricao: [
-                    dados.descricao ?? ''
-                ]
-            });
-        }
-
         return this.builder.group({
+            id: [
+                dados?.id ?? null
+            ],
             nome: [
-                '',
+                dados?.nome ?? '',
                 Validators.required
             ],
             chave: [
-                '',
+                dados?.chave ?? '',
                 Validators.required
             ],
             descricao: [
-                ''
+                dados?.descricao ?? ''
             ]
         });
+    }
+
+    private configurarAtualizacaoPorOrganizacao(): void {
+        this.contextoOrganizacaoService
+            .retornarOrganizacaoAtivaObservable()
+            .pipe(
+                skip(1),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe((organizacao) => {
+                this.limparEstadoPorTrocaOrganizacao();
+
+                if (organizacao) {
+                    this.carregarLista();
+                }
+            });
+    }
+
+    private limparEstadoPorTrocaOrganizacao(): void {
+        this.cancelar();
+
+        this.lista = [];
+        this.totalRegistros = 0;
     }
 }

@@ -1,8 +1,13 @@
 import {
     Component,
+    DestroyRef,
     OnInit,
     inject
 } from '@angular/core';
+
+import {
+    takeUntilDestroyed
+} from '@angular/core/rxjs-interop';
 
 import {
     FormBuilder,
@@ -16,6 +21,10 @@ import {
 } from '@angular/router';
 
 import {
+    skip
+} from 'rxjs';
+
+import {
     ToastrService
 } from 'ngx-toastr';
 
@@ -26,6 +35,10 @@ import {
 import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
+
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 import {
     PerfilPermissao
@@ -62,6 +75,11 @@ export class PerfilPermissaoComponent
             AutorizacaoService
         );
 
+    private readonly contextoOrganizacaoService =
+        inject(
+            ContextoOrganizacaoService
+        );
+
     private readonly builder =
         inject(
             FormBuilder
@@ -80,6 +98,11 @@ export class PerfilPermissaoComponent
     private readonly toastr =
         inject(
             ToastrService
+        );
+
+    private readonly destroyRef =
+        inject(
+            DestroyRef
         );
 
     idPerfil = 0;
@@ -174,6 +197,7 @@ export class PerfilPermissaoComponent
             return;
         }
 
+        this.configurarAtualizacaoPorOrganizacao();
         this.carregarLista();
     }
 
@@ -358,5 +382,25 @@ export class PerfilPermissaoComponent
         this.router.navigate([
             '/acesso/perfis'
         ]);
+    }
+
+    private configurarAtualizacaoPorOrganizacao(): void {
+        this.contextoOrganizacaoService
+            .retornarOrganizacaoAtivaObservable()
+            .pipe(
+                skip(1),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe(() => {
+                this.limparEstadoPorTrocaOrganizacao();
+                this.voltar();
+            });
+    }
+
+    private limparEstadoPorTrocaOrganizacao(): void {
+        this.cancelar();
+
+        this.lista = [];
+        this.totalRegistros = 0;
     }
 }

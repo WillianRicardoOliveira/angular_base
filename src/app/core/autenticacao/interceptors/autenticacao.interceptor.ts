@@ -113,7 +113,9 @@ export class AutenticacaoInterceptor implements HttpInterceptor {
                 `${api}/login`,
                 `${api}/login/refresh`,
                 `${api}/login/logout`,
-                `${api}/login/sso`
+                `${api}/login/sso`,
+                `${api}/plataforma/organizacao/convite/consulta`,
+                `${api}/plataforma/organizacao/convite/aceite/novo-usuario`
             ]);
 
         return !rotasPublicas.has(

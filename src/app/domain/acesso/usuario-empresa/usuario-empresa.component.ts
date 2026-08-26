@@ -24,7 +24,8 @@ import {
 import {
     debounceTime,
     distinctUntilChanged,
-    filter
+    filter,
+    skip
 } from 'rxjs';
 
 import {
@@ -40,6 +41,10 @@ import {
 } from '@/core/autorizacao/services/autorizacao.service';
 
 import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
+
+import {
     Empresa,
     UsuarioEmpresa
 } from '@/interfaces/interfaces';
@@ -51,6 +56,11 @@ import {
 import {
     ItemBreadcrumbPagina
 } from '@components/cabecalho-pagina/cabecalho-pagina.component';
+
+import {
+    AcaoExtraGrid,
+    EventoAcaoExtraGrid
+} from '@components/grid/grid.component';
 
 @Component({
     selector: 'app-usuario-empresa',
@@ -72,6 +82,11 @@ export class UsuarioEmpresaComponent
     private readonly autorizacaoService =
         inject(
             AutorizacaoService
+        );
+
+    private readonly contextoOrganizacaoService =
+        inject(
+            ContextoOrganizacaoService
         );
 
     private readonly builder =
@@ -125,6 +140,14 @@ export class UsuarioEmpresaComponent
         'Empresa',
         'Todas as subsidiárias',
         'Status'
+    ];
+
+    readonly acoesExtras: AcaoExtraGrid[] = [
+        {
+            chave: 'subsidiarias',
+            icone: 'account_tree',
+            tooltip: 'Subsidiarias'
+        }
     ];
 
     lista: UsuarioEmpresa[] = [];
@@ -186,6 +209,14 @@ export class UsuarioEmpresaComponent
             );
     }
 
+    get podeGerenciarSubsidiarias(): boolean {
+        return this.autorizacaoService
+            .possuiPermissao(
+                ChavePermissao
+                    .UsuarioSubsidiariaListar
+            );
+    }
+
     get cadastrando(): boolean {
         return !this.formulario
             ?.get('id')
@@ -226,6 +257,7 @@ export class UsuarioEmpresaComponent
         }
 
         this.configurarPesquisaDeEmpresa();
+        this.configurarAtualizacaoPorOrganizacao();
         this.carregarLista();
     }
 
@@ -267,6 +299,38 @@ export class UsuarioEmpresaComponent
             parametros.page,
             parametros.size
         );
+    }
+
+    botaoAcaoExtra(
+        evento: EventoAcaoExtraGrid
+    ): void {
+        if (
+            evento.chave !== 'subsidiarias' ||
+            !this.podeGerenciarSubsidiarias
+        ) {
+            return;
+        }
+
+        const vinculo =
+            this.lista.find(
+                (item) => item.id === evento.id
+            );
+
+        if (vinculo?.todasSubsidiarias) {
+            this.toastr.info(
+                'Usuario ja possui acesso a todas as subsidiarias da empresa'
+            );
+
+            return;
+        }
+
+        this.router.navigate([
+            '/acesso/usuarios',
+            this.idUsuario,
+            'empresas',
+            evento.id,
+            'subsidiarias'
+        ]);
     }
 
     botaoAdicionar(): void {
@@ -510,6 +574,29 @@ export class UsuarioEmpresaComponent
                     filtro
                 );
             });
+    }
+
+    private configurarAtualizacaoPorOrganizacao(): void {
+        this.contextoOrganizacaoService
+            .retornarOrganizacaoAtivaObservable()
+            .pipe(
+                skip(1),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe(() => {
+                this.limparEstadoPorTrocaOrganizacao();
+                this.voltar();
+            });
+    }
+
+    private limparEstadoPorTrocaOrganizacao(): void {
+        this.cancelar();
+
+        this.lista = [];
+        this.empresas = [];
+        this.totalRegistros = 0;
+        this.paginaAtual = 0;
+        this.tamanhoPagina = 10;
     }
 
     private carregarEmpresas(

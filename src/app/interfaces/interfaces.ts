@@ -3,6 +3,39 @@ export type Status =
     | 'INATIVO'
     | 'REMOVIDO';
 
+export interface OrganizacaoPlataforma {
+    id?: number;
+    nome: string;
+    status?: Status;
+}
+
+export type StatusConviteOrganizacao =
+    | 'PENDENTE'
+    | 'ACEITO'
+    | 'REVOGADO';
+
+export interface ConviteOrganizacao {
+    id?: number;
+    nomeOrganizacao: string;
+    emailAdministrador: string;
+    criadoEm?: string;
+    expiraEm?: string;
+    aceitoEm?: string | null;
+    status?: StatusConviteOrganizacao;
+    expirado?: boolean;
+}
+
+export interface ConsultaConviteOrganizacao {
+    nomeOrganizacao: string;
+    emailAdministradorMascarado: string;
+    usuarioExistente: boolean;
+}
+
+export interface ResultadoAceiteConviteOrganizacao {
+    idOrganizacao: number;
+    nomeOrganizacao: string;
+}
+
 export interface Usuario {
     id?: number;
     email: string;
@@ -31,6 +64,18 @@ export interface UsuarioEmpresa {
     idEmpresa: number;
     empresa?: string;
     todasSubsidiarias: boolean;
+    status?: Status;
+}
+
+export interface UsuarioSubsidiaria {
+    id?: number;
+    idUsuarioEmpresa: number;
+    idUsuario?: number;
+    usuario?: string;
+    idEmpresa?: number;
+    empresa?: string;
+    idSubsidiaria: number;
+    subsidiaria?: string;
     status?: Status;
 }
 
