@@ -1,0 +1,198 @@
+<section class="aceite-page">
+    <main class="aceite-card">
+        <div class="aceite-card__header">
+            <div
+                class="aceite-card__icon"
+                aria-hidden="true">
+                <i class="fas fa-building"></i>
+            </div>
+
+            <div>
+                <span>Convite de organizacao</span>
+                <h1>Ativar acesso</h1>
+            </div>
+        </div>
+
+        @if (carregando) {
+            <p class="aceite-message">
+                Validando convite...
+            </p>
+        }
+
+        @if (erro) {
+            <div class="aceite-alert aceite-alert--error">
+                {{ erro }}
+            </div>
+        }
+
+        @if (concluido) {
+            <div class="aceite-success">
+                <i
+                    class="fas fa-check-circle"
+                    aria-hidden="true">
+                </i>
+
+                <h2>
+                    Organizacao criada
+                </h2>
+
+                <p>
+                    O acesso para
+                    <strong>
+                        {{ nomeOrganizacaoAceita }}
+                    </strong>
+                    foi ativado com sucesso.
+                </p>
+
+                <button
+                    type="button"
+                    mat-flat-button
+                    color="primary"
+                    (click)="irParaSistema()">
+                    Entrar no sistema
+                </button>
+            </div>
+        }
+
+        @if (
+            convite &&
+            !concluido
+        ) {
+            <div class="aceite-summary">
+                <span>Organizacao</span>
+
+                <strong>
+                    {{ convite.nomeOrganizacao }}
+                </strong>
+
+                <small>
+                    Administrador:
+                    {{ convite.emailAdministradorMascarado }}
+                </small>
+            </div>
+
+            @if (deveCriarUsuario) {
+                <form
+                    [formGroup]="formulario"
+                    (ngSubmit)="aceitarNovoUsuario()"
+                    class="aceite-form">
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Senha</mat-label>
+
+                        <input
+                            matInput
+                            type="password"
+                            formControlName="senha"
+                            autocomplete="new-password">
+
+                        @if (
+                            formulario
+                                .get('senha')
+                                ?.hasError('required')
+                        ) {
+                            <mat-error>
+                                A senha e obrigatoria.
+                            </mat-error>
+                        }
+
+                        @if (
+                            formulario
+                                .get('senha')
+                                ?.hasError('minlength')
+                        ) {
+                            <mat-error>
+                                A senha deve possuir pelo menos
+                                8 caracteres.
+                            </mat-error>
+                        }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                        <mat-label>Confirmar senha</mat-label>
+
+                        <input
+                            matInput
+                            type="password"
+                            formControlName="confirmarSenha"
+                            autocomplete="new-password">
+
+                        @if (
+                            formulario
+                                .get('confirmarSenha')
+                                ?.hasError('required')
+                        ) {
+                            <mat-error>
+                                Confirme a senha.
+                            </mat-error>
+                        }
+
+                        @if (
+                            formulario
+                                .get('confirmarSenha')
+                                ?.hasError('senhasDiferentes')
+                        ) {
+                            <mat-error>
+                                As senhas devem ser iguais.
+                            </mat-error>
+                        }
+                    </mat-form-field>
+
+                    <button
+                        type="submit"
+                        mat-flat-button
+                        color="primary"
+                        [disabled]="
+                            formulario.invalid ||
+                            processando
+                        ">
+                        @if (processando) {
+                            Criando organizacao...
+                        } @else {
+                            Aceitar convite
+                        }
+                    </button>
+                </form>
+            }
+
+            @if (deveAceitarComUsuarioExistente) {
+                <div class="aceite-existing">
+                    @if (usuarioLogado) {
+                        <p>
+                            Este convite pertence a uma conta
+                            existente. Confirme para ativar a
+                            organizacao nesta conta.
+                        </p>
+
+                        <button
+                            type="button"
+                            mat-flat-button
+                            color="primary"
+                            [disabled]="processando"
+                            (click)="aceitarUsuarioExistente()">
+                            @if (processando) {
+                                Ativando...
+                            } @else {
+                                Aceitar convite
+                            }
+                        </button>
+                    } @else {
+                        <p>
+                            Este convite pertence a uma conta
+                            existente. Entre com a conta convidada
+                            para aceitar.
+                        </p>
+
+                        <button
+                            type="button"
+                            mat-flat-button
+                            color="primary"
+                            (click)="irParaLoginMantendoConvite()">
+                            Entrar para aceitar
+                        </button>
+                    }
+                </div>
+            }
+        }
+    </main>
+</section>

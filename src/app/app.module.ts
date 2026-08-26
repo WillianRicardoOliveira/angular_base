@@ -134,6 +134,14 @@ import {
     OrganizacaoPlataformaComponent
 } from '@/domain/plataforma/organizacao/organizacao-plataforma.component';
 
+import {
+    ConviteOrganizacaoComponent
+} from '@/domain/plataforma/organizacao/convite/convite-organizacao.component';
+
+import {
+    AceiteConviteOrganizacaoComponent
+} from '@/domain/plataforma/organizacao/convite/aceite/aceite-convite-organizacao.component';
+
 import { CabecalhoPaginaComponent } from './components/cabecalho-pagina/cabecalho-pagina.component';
 
 //import { InformacaoComponent } from './components/dashboard/informacao/informacao.component';
@@ -204,6 +212,8 @@ registerLocaleData(localePt);
         UsuarioEmpresaComponent,
         UsuarioSubsidiariaComponent,
         OrganizacaoPlataformaComponent,
+        ConviteOrganizacaoComponent,
+        AceiteConviteOrganizacaoComponent,
 
         /* COMPONENTE SITE */
         BannerComponent,

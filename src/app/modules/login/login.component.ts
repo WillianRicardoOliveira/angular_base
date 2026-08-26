@@ -8,6 +8,7 @@ import {
     Validators
 } from '@angular/forms';
 import {
+    ActivatedRoute,
     Router
 } from '@angular/router';
 import {
@@ -51,6 +52,8 @@ export class LoginComponent implements OnInit {
 
     isPasswordVisible = false;
 
+    private returnUrl = '/';
+
     constructor(
         private formBuilder: FormBuilder,
         private service:
@@ -61,6 +64,7 @@ export class LoginComponent implements OnInit {
             ContextoOrganizacaoService,
         private microsoftSsoService:
             MicrosoftSsoService,
+        private route: ActivatedRoute,
         private router: Router,
         private toastr: ToastrService,
         private mensagemAutenticacaoService:
@@ -68,6 +72,13 @@ export class LoginComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
+        this.returnUrl =
+            this.normalizarReturnUrl(
+                this.route.snapshot
+                    .queryParamMap
+                    .get('returnUrl')
+            );
+
         this.loginForm =
             this.formBuilder.group({
                 email: [
@@ -117,7 +128,9 @@ export class LoginComponent implements OnInit {
             .subscribe({
                 next: () => {
                     this.router
-                        .navigateByUrl('/');
+                        .navigateByUrl(
+                            this.returnUrl
+                        );
                 },
                 error: (erro: unknown) => {
                     const mensagem =
@@ -171,7 +184,9 @@ export class LoginComponent implements OnInit {
             .subscribe({
                 next: () => {
                     this.router
-                        .navigateByUrl('/');
+                        .navigateByUrl(
+                            this.returnUrl
+                        );
                 },
                 error: (erro: unknown) => {
                     const mensagem =
@@ -185,6 +200,24 @@ export class LoginComponent implements OnInit {
                     );
                 }
             });
+    }
+
+    private normalizarReturnUrl(
+        returnUrl: string | null
+    ): string {
+        const url =
+            returnUrl?.trim() ?? '';
+
+        if (
+            !url ||
+            !url.startsWith('/') ||
+            url.startsWith('//') ||
+            url.startsWith('/login')
+        ) {
+            return '/';
+        }
+
+        return url;
     }
 
     private carregarPermissoesAposLogin():

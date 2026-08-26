@@ -2,7 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import {
     ActivatedRouteSnapshot,
     Router,
-    RouterStateSnapshot
+    RouterStateSnapshot,
+    convertToParamMap
 } from '@angular/router';
 
 import { TokenService } from '@/core/autenticacao/services/token.service';
@@ -14,7 +15,6 @@ describe('NaoAutenticadoGuard', () => {
     let routerMock: jasmine.SpyObj<Router>;
     let tokenServiceMock: jasmine.SpyObj<TokenService>;
 
-    const routeSnapshot = {} as ActivatedRouteSnapshot;
     const routerStateSnapshot = {
         url: '/login'
     } as RouterStateSnapshot;
@@ -22,13 +22,14 @@ describe('NaoAutenticadoGuard', () => {
     beforeEach(() => {
         routerMock = jasmine.createSpyObj<Router>(
             'Router',
-            ['navigate']
+            ['navigateByUrl']
         );
 
-        tokenServiceMock = jasmine.createSpyObj<TokenService>(
-            'TokenService',
-            ['possuiToken']
-        );
+        tokenServiceMock =
+            jasmine.createSpyObj<TokenService>(
+                'TokenService',
+                ['possuiToken']
+            );
 
         TestBed.configureTestingModule({
             providers: [
@@ -51,39 +52,126 @@ describe('NaoAutenticadoGuard', () => {
         expect(guard).toBeTruthy();
     });
 
-    it('deve permitir acesso quando não houver token', () => {
+    it('deve permitir acesso quando nao houver token', () => {
         tokenServiceMock.possuiToken.and.returnValue(false);
 
         const resultado = guard.canActivate(
-            routeSnapshot,
+            criarRouteSnapshot(),
             routerStateSnapshot
         );
 
         expect(resultado).toBeTrue();
-        expect(routerMock.navigate).not.toHaveBeenCalled();
+
+        expect(routerMock.navigateByUrl)
+            .not.toHaveBeenCalled();
     });
 
-    it('deve bloquear acesso e redirecionar quando houver token', () => {
+    it('deve bloquear acesso e redirecionar para inicio quando houver token sem returnUrl', () => {
         tokenServiceMock.possuiToken.and.returnValue(true);
 
         const resultado = guard.canActivate(
-            routeSnapshot,
+            criarRouteSnapshot(),
             routerStateSnapshot
         );
 
         expect(resultado).toBeFalse();
-        expect(routerMock.navigate).toHaveBeenCalledOnceWith(['/']);
+
+        expect(routerMock.navigateByUrl)
+            .toHaveBeenCalledOnceWith('/');
+    });
+
+    it('deve bloquear acesso e redirecionar para returnUrl interna quando houver token', () => {
+        tokenServiceMock.possuiToken.and.returnValue(true);
+
+        const resultado = guard.canActivate(
+            criarRouteSnapshot(
+                '/convites/organizacao/aceitar?token=token-convite'
+            ),
+            routerStateSnapshot
+        );
+
+        expect(resultado).toBeFalse();
+
+        expect(routerMock.navigateByUrl)
+            .toHaveBeenCalledOnceWith(
+                '/convites/organizacao/aceitar?token=token-convite'
+            );
+    });
+
+    it('deve ignorar returnUrl externa quando houver token', () => {
+        tokenServiceMock.possuiToken.and.returnValue(true);
+
+        const resultado = guard.canActivate(
+            criarRouteSnapshot(
+                'https://exemplo.com/externo'
+            ),
+            routerStateSnapshot
+        );
+
+        expect(resultado).toBeFalse();
+
+        expect(routerMock.navigateByUrl)
+            .toHaveBeenCalledOnceWith('/');
+    });
+
+    it('deve ignorar returnUrl iniciada por // quando houver token', () => {
+        tokenServiceMock.possuiToken.and.returnValue(true);
+
+        const resultado = guard.canActivate(
+            criarRouteSnapshot(
+                '//exemplo.com/externo'
+            ),
+            routerStateSnapshot
+        );
+
+        expect(resultado).toBeFalse();
+
+        expect(routerMock.navigateByUrl)
+            .toHaveBeenCalledOnceWith('/');
+    });
+
+    it('deve ignorar returnUrl de login quando houver token', () => {
+        tokenServiceMock.possuiToken.and.returnValue(true);
+
+        const resultado = guard.canActivate(
+            criarRouteSnapshot(
+                '/login?returnUrl=/convites/organizacao/aceitar'
+            ),
+            routerStateSnapshot
+        );
+
+        expect(resultado).toBeFalse();
+
+        expect(routerMock.navigateByUrl)
+            .toHaveBeenCalledOnceWith('/');
     });
 
     it('deve aplicar a mesma regra nas rotas filhas', () => {
         tokenServiceMock.possuiToken.and.returnValue(false);
 
         const resultado = guard.canActivateChild(
-            routeSnapshot,
+            criarRouteSnapshot(),
             routerStateSnapshot
         );
 
         expect(resultado).toBeTrue();
-        expect(tokenServiceMock.possuiToken).toHaveBeenCalled();
+
+        expect(tokenServiceMock.possuiToken)
+            .toHaveBeenCalled();
     });
+
+    function criarRouteSnapshot(
+        returnUrl?: string
+    ): ActivatedRouteSnapshot {
+        return {
+            queryParamMap:
+                convertToParamMap(
+                    returnUrl
+                        ? {
+                            returnUrl
+                        }
+                        : {}
+                )
+        } as ActivatedRouteSnapshot;
+    }
 });

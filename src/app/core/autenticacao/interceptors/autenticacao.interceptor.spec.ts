@@ -327,7 +327,9 @@ describe('AutenticacaoInterceptor', () => {
         '/login',
         '/login/refresh',
         '/login/logout',
-        '/login/sso'
+        '/login/sso',
+        '/plataforma/organizacao/convite/consulta',
+        '/plataforma/organizacao/convite/aceite/novo-usuario'
     ].forEach((rota) => {
         it(`nao deve adicionar bearer em ${rota}`, () => {
             const request = new HttpRequest(
@@ -354,6 +356,52 @@ describe('AutenticacaoInterceptor', () => {
                 autenticacaoServiceMock.renovarToken
             ).not.toHaveBeenCalled();
         });
+    });
+
+    it('deve manter aceite de convite para usuario existente como rota protegida', () => {
+        const request = new HttpRequest(
+            'POST',
+            `${environment.api}/plataforma/organizacao/convite/aceite/usuario-existente`,
+            {
+                token: 'token-convite'
+            }
+        );
+
+        interceptor
+            .intercept(
+                request,
+                httpHandlerMock
+            )
+            .subscribe();
+
+        const requestEnviada =
+            obterRequestDaChamada(0);
+
+        expect(
+            requestEnviada.headers.get(
+                'Authorization'
+            )
+        ).toBe(
+            'Bearer access-token'
+        );
+
+        expect(
+            requestEnviada.headers.has(
+                'X-Organizacao-Id'
+            )
+        ).toBeFalse();
+
+        expect(
+            tokenServiceMock.possuiToken
+        ).toHaveBeenCalled();
+
+        expect(
+            tokenServiceMock.retornarToken
+        ).toHaveBeenCalled();
+
+        expect(
+            autenticacaoServiceMock.renovarToken
+        ).not.toHaveBeenCalled();
     });
 
     it('nao deve adicionar contexto ao listar organizacoes disponiveis', () => {

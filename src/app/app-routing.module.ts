@@ -86,6 +86,14 @@ import {
     OrganizacaoPlataformaComponent
 } from '@/domain/plataforma/organizacao/organizacao-plataforma.component';
 
+import {
+    ConviteOrganizacaoComponent
+} from '@/domain/plataforma/organizacao/convite/convite-organizacao.component';
+
+import {
+    AceiteConviteOrganizacaoComponent
+} from '@/domain/plataforma/organizacao/convite/aceite/aceite-convite-organizacao.component';
+
 //import {RegisterComponent} from '@modules/register/register.component';
 //import {DashboardComponent} from '@pages/dashboard/dashboard.component';
 //import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
@@ -122,6 +130,18 @@ const routes: Routes = [
             {
                 path: 'plataforma/organizacoes',
                 component: OrganizacaoPlataformaComponent,
+                canActivate: [
+                    PermissaoGuard
+                ],
+                data: {
+                    permissao:
+                        ChavePermissao
+                            .PlataformaOrganizacaoListar
+                }
+            },
+            {
+                path: 'plataforma/organizacoes/convites',
+                component: ConviteOrganizacaoComponent,
                 canActivate: [
                     PermissaoGuard
                 ],
@@ -264,6 +284,10 @@ const routes: Routes = [
         path: 'login',
         component: LoginComponent,
         canActivate: [NaoAutenticadoGuard]
+    },
+    {
+        path: 'convites/organizacao/aceitar',
+        component: AceiteConviteOrganizacaoComponent
     },
     //{ path: "cadastro"  , component: CadastroComponent },
     //{ path: "perfil"    , component: PerfilComponent },

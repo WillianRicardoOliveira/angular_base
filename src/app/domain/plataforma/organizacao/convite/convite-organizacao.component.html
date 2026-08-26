@@ -1,0 +1,422 @@
+<app-cabecalho-pagina
+    [pagina]="pagina"
+    [descricao]="descricao"
+    [breadcrumb]="breadcrumb">
+</app-cabecalho-pagina>
+
+@if (isLista) {
+    <section class="content">
+        <mat-card class="card">
+            <mat-card-header class="card-header">
+                <mat-card-title class="card-title">
+                    @if (podeCriar) {
+                        <button
+                            type="button"
+                            mat-stroked-button
+                            color="primary"
+                            (click)="botaoAdicionar()">
+
+                            <mat-icon>
+                                add
+                            </mat-icon>
+
+                            Novo convite
+                        </button>
+                    }
+                </mat-card-title>
+
+                <mat-card-actions class="card-tools filtros">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Status</mat-label>
+
+                        <mat-select
+                            [(ngModel)]="statusFiltro"
+                            (selectionChange)="pesquisar()">
+
+                            <mat-option [value]="null">
+                                Todos
+                            </mat-option>
+
+                            <mat-option value="PENDENTE">
+                                Pendente
+                            </mat-option>
+
+                            <mat-option value="ACEITO">
+                                Aceito
+                            </mat-option>
+
+                            <mat-option value="REVOGADO">
+                                Revogado
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <div class="grid-search-field">
+                        <mat-icon aria-hidden="true">
+                            search
+                        </mat-icon>
+
+                        <input
+                            type="search"
+                            class="form-control"
+                            placeholder="Pesquisar convites..."
+                            aria-label="Pesquisar convites"
+                            [(ngModel)]="filtro"
+                            (keyup)="pesquisar()">
+                    </div>
+                </mat-card-actions>
+            </mat-card-header>
+
+            <mat-card-content class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Organizacao</th>
+                            <th>Administrador</th>
+                            <th>Criado em</th>
+                            <th>Expira em</th>
+                            <th>Status</th>
+                            <th>Expirado</th>
+                            <th class="grid-actions-header">
+                                Acoes
+                            </th>
+                        </tr>
+                    </thead>
+
+                    @if (lista.length > 0) {
+                        <tbody>
+                            @for (
+                                convite of lista;
+                                track convite.id
+                            ) {
+                                <tr>
+                                    <td>
+                                        {{ convite.id }}
+                                    </td>
+
+                                    <td>
+                                        <div>
+                                            {{
+                                                convite.nomeOrganizacao
+                                            }}
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div>
+                                            {{
+                                                convite.emailAdministrador
+                                            }}
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        {{
+                                            convite.criadoEm
+                                                | date:
+                                                    'dd/MM/yyyy HH:mm'
+                                        }}
+                                    </td>
+
+                                    <td>
+                                        {{
+                                            convite.expiraEm
+                                                | date:
+                                                    'dd/MM/yyyy HH:mm'
+                                        }}
+                                    </td>
+
+                                    <td>
+                                        <span
+                                            class="convite-status"
+                                            [ngClass]="
+                                                classeStatus(
+                                                    convite.status
+                                                )
+                                            ">
+
+                                            {{
+                                                textoStatus(
+                                                    convite.status
+                                                )
+                                            }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        {{
+                                            convite.expirado
+                                                ? 'Sim'
+                                                : 'Nao'
+                                        }}
+                                    </td>
+
+                                    <td>
+                                        <div class="grid-actions">
+                                            @if (podeDetalhar) {
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-tool"
+                                                    matTooltip="Visualizar"
+                                                    aria-label="Visualizar"
+                                                    (click)="
+                                                        botaoVisualizar(
+                                                            convite.id!
+                                                        )
+                                                    ">
+
+                                                    <mat-icon>
+                                                        visibility
+                                                    </mat-icon>
+                                                </button>
+                                            }
+
+                                            @if (
+                                                podeReenviar(
+                                                    convite
+                                                )
+                                            ) {
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-tool"
+                                                    matTooltip="Reenviar"
+                                                    aria-label="Reenviar"
+                                                    (click)="
+                                                        botaoReenviar(
+                                                            convite
+                                                        )
+                                                    ">
+
+                                                    <mat-icon>
+                                                        send
+                                                    </mat-icon>
+                                                </button>
+                                            }
+
+                                            @if (
+                                                podeRevogar(
+                                                    convite
+                                                )
+                                            ) {
+                                                <button
+                                                    type="button"
+                                                    class="
+                                                        btn
+                                                        btn-tool
+                                                        grid-action-danger
+                                                    "
+                                                    matTooltip="Revogar"
+                                                    aria-label="Revogar"
+                                                    (click)="
+                                                        botaoRevogar(
+                                                            convite
+                                                        )
+                                                    ">
+
+                                                    <mat-icon>
+                                                        block
+                                                    </mat-icon>
+                                                </button>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    } @else {
+                        <tbody>
+                            <tr>
+                                <td
+                                    class="grid-empty-cell"
+                                    colspan="8">
+
+                                    <div class="grid-empty-state">
+                                        <mat-icon>
+                                            mail_outline
+                                        </mat-icon>
+
+                                        <strong>
+                                            Nenhum convite encontrado
+                                        </strong>
+
+                                        <span>
+                                            Ainda nao ha convites para exibir.
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    }
+                </table>
+            </mat-card-content>
+
+            <mat-card-actions
+                class="
+                    card-footer
+                    centraliza-paginator
+                ">
+
+                <mat-paginator
+                    class="cor-paginator"
+                    [length]="totalRegistros"
+                    [pageIndex]="paginaAtual"
+                    [pageSize]="tamanhoPagina"
+                    [pageSizeOptions]="[
+                        10,
+                        20
+                    ]"
+                    (page)="
+                        quantidadePorPagina(
+                            $event
+                        )
+                    ">
+                </mat-paginator>
+            </mat-card-actions>
+        </mat-card>
+    </section>
+}
+
+<div class="formulario">
+    <section class="content">
+        @if (isFormulario && formulario) {
+            <form
+                [formGroup]="formulario"
+                (ngSubmit)="salvar()">
+
+                <div class="row">
+                    <div class="col-md-12 titulo-formulario">
+                        @if (isVisualizacao) {
+                            Detalhes do convite
+                        } @else {
+                            Novo convite
+                        }
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 titulo-campo">
+                        Organizacao
+                    </div>
+
+                    <div class="col-md-10">
+                        <mat-form-field
+                            appearance="outline"
+                            class="full-width">
+
+                            <input
+                                matInput
+                                type="text"
+                                formControlName="nomeOrganizacao"
+                                maxlength="100"
+                                autocomplete="off">
+
+                            @if (
+                                formulario
+                                    .get('nomeOrganizacao')
+                                    ?.hasError('required')
+                            ) {
+                                <mat-error>
+                                    O nome da organizacao e obrigatorio.
+                                </mat-error>
+                            }
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 titulo-campo">
+                        Administrador
+                    </div>
+
+                    <div class="col-md-10">
+                        <mat-form-field
+                            appearance="outline"
+                            class="full-width">
+
+                            <input
+                                matInput
+                                type="email"
+                                formControlName="emailAdministrador"
+                                maxlength="100"
+                                autocomplete="off">
+
+                            @if (
+                                formulario
+                                    .get('emailAdministrador')
+                                    ?.hasError('required')
+                            ) {
+                                <mat-error>
+                                    O e-mail do administrador e obrigatorio.
+                                </mat-error>
+                            }
+
+                            @if (
+                                formulario
+                                    .get('emailAdministrador')
+                                    ?.hasError('email')
+                            ) {
+                                <mat-error>
+                                    Informe um e-mail valido.
+                                </mat-error>
+                            }
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                @if (isVisualizacao) {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Status
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    matInput
+                                    type="text"
+                                    formControlName="status"
+                                    readonly>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                }
+
+                <div class="row">
+                    <div class="col-md-12 botao">
+                        @if (
+                            !isVisualizacao &&
+                            podeCriar
+                        ) {
+                            <button
+                                type="submit"
+                                mat-stroked-button
+                                color="primary"
+                                [disabled]="
+                                    formulario.invalid
+                                ">
+                                Enviar convite
+                            </button>
+                        }
+
+                        <button
+                            type="button"
+                            mat-stroked-button
+                            color="primary"
+                            (click)="cancelar()">
+
+                            @if (isVisualizacao) {
+                                Fechar
+                            } @else {
+                                Cancelar
+                            }
+                        </button>
+                    </div>
+                </div>
+            </form>
+        }
+    </section>
+</div>

@@ -840,6 +840,17 @@ export const MENU_CONFIGURACOES:
                     permissao:
                         ChavePermissao
                             .PlataformaOrganizacaoListar
+                },
+                {
+                    name: 'Convites',
+                    iconClasses:
+                        'fas fa-envelope',
+                    path: [
+                        '/plataforma/organizacoes/convites'
+                    ],
+                    permissao:
+                        ChavePermissao
+                            .PlataformaOrganizacaoListar
                 }
             ]
         },

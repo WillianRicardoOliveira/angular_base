@@ -1,0 +1,192 @@
+@use '../../../../components/shared/styles/formulario';
+
+.filtros {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+
+    margin-left: auto;
+}
+
+.filtros mat-form-field {
+    width: 180px;
+}
+
+.grid-search-field {
+    position: relative;
+
+    width: 320px;
+}
+
+.grid-search-field mat-icon {
+    position: absolute;
+    top: 50%;
+    left: 13px;
+
+    z-index: 1;
+
+    width: 18px;
+    height: 18px;
+
+    color: #64748b;
+
+    font-size: 18px;
+    line-height: 18px;
+
+    pointer-events: none;
+
+    transform: translateY(-50%);
+}
+
+.grid-search-field input {
+    width: 100%;
+    height: 40px;
+    padding: 0 14px 0 42px;
+
+    color: #1e293b;
+
+    font-size: 14px;
+
+    background-color: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+
+    outline: none;
+}
+
+.table tbody td > div {
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.convite-status {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 26px;
+    padding: 4px 10px;
+
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+
+    border: 1px solid transparent;
+    border-radius: 999px;
+}
+
+.convite-status--pendente {
+    color: #a16207;
+
+    background-color: #fffbeb;
+
+    border-color: #fde68a;
+}
+
+.convite-status--aceito {
+    color: #15803d;
+
+    background-color: #f0fdf4;
+
+    border-color: #bbf7d0;
+}
+
+.convite-status--revogado {
+    color: #b91c1c;
+
+    background-color: #fef2f2;
+
+    border-color: #fecaca;
+}
+
+.grid-actions-header {
+    text-align: right !important;
+}
+
+.grid-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+
+    white-space: nowrap;
+}
+
+.grid-actions .btn-tool {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    padding: 0;
+
+    color: #64748b;
+
+    background-color: transparent;
+
+    border: 1px solid transparent;
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.grid-actions .btn-tool:hover {
+    color: #08979c;
+
+    background-color: #ecfeff;
+
+    border-color: #a5f3fc;
+}
+
+.grid-actions .grid-action-danger:hover,
+.grid-actions .grid-action-danger:focus-visible {
+    color: #dc2626;
+
+    background-color: #fef2f2;
+
+    border-color: #fecaca;
+}
+
+.grid-empty-cell {
+    padding: 0 !important;
+
+    text-align: center;
+}
+
+.grid-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    min-height: 180px;
+    padding: 32px 20px;
+
+    color: #64748b;
+}
+
+.centraliza-paginator {
+    display: flex;
+    justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+    .filtros {
+        flex-wrap: wrap;
+
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .filtros mat-form-field,
+    .grid-search-field {
+        width: 100%;
+    }
+}

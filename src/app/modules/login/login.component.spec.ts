@@ -6,7 +6,9 @@ import {
     ReactiveFormsModule
 } from '@angular/forms';
 import {
-    Router
+    ActivatedRoute,
+    Router,
+    convertToParamMap
 } from '@angular/router';
 import {
     NoopAnimationsModule
@@ -115,6 +117,13 @@ describe('LoginComponent', () => {
         )
     };
 
+    const activatedRouteMock = {
+        snapshot: {
+            queryParamMap:
+                convertToParamMap({})
+        }
+    };
+
     const toastrMock = {
         error: jasmine.createSpy('error'),
         info: jasmine.createSpy('info')
@@ -172,6 +181,10 @@ describe('LoginComponent', () => {
                         mensagemAutenticacaoServiceMock
                 },
                 {
+                    provide: ActivatedRoute,
+                    useValue: activatedRouteMock
+                },
+                {
                     provide: Router,
                     useValue: routerMock
                 },
@@ -194,6 +207,9 @@ describe('LoginComponent', () => {
     });
 
     afterEach(() => {
+        activatedRouteMock.snapshot.queryParamMap =
+            convertToParamMap({});
+
         autenticacaoServiceMock
             .login
             .calls
@@ -356,6 +372,66 @@ describe('LoginComponent', () => {
             'contexto',
             'permissoes'
         ]);
+
+        expect(
+            routerMock.navigateByUrl
+        ).toHaveBeenCalledOnceWith('/');
+    });
+
+    it('deve redirecionar para returnUrl interna apos login comum', () => {
+        activatedRouteMock.snapshot.queryParamMap =
+            convertToParamMap({
+                returnUrl:
+                    '/convites/organizacao/aceitar?token=token-convite'
+            });
+
+        fixture =
+            TestBed.createComponent(
+                LoginComponent
+            );
+
+        component =
+            fixture.componentInstance;
+
+        fixture.detectChanges();
+
+        component.loginForm.setValue({
+            email: 'usuario@teste.com',
+            senha: '123456'
+        });
+
+        component.login();
+
+        expect(
+            routerMock.navigateByUrl
+        ).toHaveBeenCalledOnceWith(
+            '/convites/organizacao/aceitar?token=token-convite'
+        );
+    });
+
+    it('deve ignorar returnUrl externa apos login comum', () => {
+        activatedRouteMock.snapshot.queryParamMap =
+            convertToParamMap({
+                returnUrl:
+                    'https://exemplo.com/externo'
+            });
+
+        fixture =
+            TestBed.createComponent(
+                LoginComponent
+            );
+
+        component =
+            fixture.componentInstance;
+
+        fixture.detectChanges();
+
+        component.loginForm.setValue({
+            email: 'usuario@teste.com',
+            senha: '123456'
+        });
+
+        component.login();
 
         expect(
             routerMock.navigateByUrl
@@ -851,6 +927,32 @@ describe('LoginComponent', () => {
         expect(
             routerMock.navigateByUrl
         ).toHaveBeenCalledOnceWith('/');
+    });
+
+    it('deve redirecionar para returnUrl interna apos login Microsoft', () => {
+        activatedRouteMock.snapshot.queryParamMap =
+            convertToParamMap({
+                returnUrl:
+                    '/convites/organizacao/aceitar?token=token-convite'
+            });
+
+        fixture =
+            TestBed.createComponent(
+                LoginComponent
+            );
+
+        component =
+            fixture.componentInstance;
+
+        fixture.detectChanges();
+
+        component.loginWithMicrosoft();
+
+        expect(
+            routerMock.navigateByUrl
+        ).toHaveBeenCalledOnceWith(
+            '/convites/organizacao/aceitar?token=token-convite'
+        );
     });
 
     it('deve encerrar a sessao quando as permissoes falharem apos o login Microsoft', () => {
