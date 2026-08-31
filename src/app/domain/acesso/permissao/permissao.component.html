@@ -11,15 +11,11 @@
         [coluna]="coluna"
         [placeholderPesquisa]="'Pesquisar permissões...'"
         [ariaLabelPesquisa]="'Pesquisar permissões'"
-        [b_adicionar]="podeCriar"
-        [textoAdicionar]="'Nova permissão'"
-        [b_editar]="podeEditar"
-        [b_excluir]="podeExcluir"
+        [b_adicionar]="false"
+        [b_editar]="false"
+        [b_excluir]="false"
         [b_visualizar]="podeDetalhar"
         (pesquisa)="pesquisar($event)"
-        (adicionar)="botaoAdicionar()"
-        (editar)="botaoEditar($event)"
-        (excluir)="botaoExcluir($event)"
         (visualizar)="botaoVisualizar($event)"
         (p_paginacao)="quantidadePorPagina($event)">
     </app-grid>
@@ -28,20 +24,12 @@
 <div class="formulario">
     <section class="content">
         @if (isFormulario && formulario) {
-            <form
-                [formGroup]="formulario"
-                (ngSubmit)="salvar()">
+            <form [formGroup]="formulario">
 
                 <div class="row">
                     <div
                         class="col-md-12 titulo-formulario">
-                        @if (isVisualizacao) {
-                            Detalhes da permissão
-                        } @else if (formulario.get('id')?.value) {
-                            Editar permissão
-                        } @else {
-                            Nova permissão
-                        }
+                        Detalhes da permissão
                     </div>
                 </div>
 
@@ -61,16 +49,6 @@
                                     type="text"
                                     formControlName="nome"
                                     autocomplete="off">
-
-                                @if (
-                                    formulario
-                                        .get('nome')
-                                        ?.hasError('required')
-                                ) {
-                                    <mat-error>
-                                        O nome é obrigatório.
-                                    </mat-error>
-                                }
                             </mat-form-field>
                         </div>
                     </div>
@@ -92,16 +70,6 @@
                                     type="text"
                                     formControlName="chave"
                                     autocomplete="off">
-
-                                @if (
-                                    formulario
-                                        .get('chave')
-                                        ?.hasError('required')
-                                ) {
-                                    <mat-error>
-                                        A chave é obrigatória.
-                                    </mat-error>
-                                }
                             </mat-form-field>
                         </div>
                     </div>
@@ -130,26 +98,12 @@
 
                 <div class="row">
                     <div class="col-md-12 botao">
-                        @if (!isVisualizacao && podeSalvar) {
-                            <button
-                                type="submit"
-                                mat-stroked-button
-                                color="primary"
-                                [disabled]="formulario.invalid">
-                                Salvar
-                            </button>
-                        }
-
                         <button
                             type="button"
                             mat-stroked-button
                             color="primary"
                             (click)="cancelar()">
-                            @if (isVisualizacao) {
-                                Fechar
-                            } @else {
-                                Cancelar
-                            }
+                            Fechar
                         </button>
                     </div>
                 </div>

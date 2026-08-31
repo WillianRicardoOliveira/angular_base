@@ -1,7 +1,12 @@
 import {
     Component,
+    DestroyRef,
     inject
 } from '@angular/core';
+
+import {
+    takeUntilDestroyed
+} from '@angular/core/rxjs-interop';
 
 import {
     FormGroup,
@@ -9,8 +14,26 @@ import {
 } from '@angular/forms';
 
 import {
+    Router
+} from '@angular/router';
+
+import {
+    skip
+} from 'rxjs';
+
+import {
     Base
 } from '@components/grid/base/base';
+
+import {
+    AcaoExtraGrid,
+    EventoAcaoExtraGrid
+} from '@components/grid/grid.component';
+
+import {
+    ItemBreadcrumbPagina
+} from '@components/cabecalho-pagina/cabecalho-pagina.component';
+
 import {
     Usuario
 } from '@/interfaces/interfaces';
@@ -24,82 +47,60 @@ import {
 } from '@/core/autorizacao/services/autorizacao.service';
 
 import {
-    AlterarSenhaUsuario,
-    UsuarioService
-} from './services/usuario.service';
-
-import {
-    ToastrService
-} from 'ngx-toastr';
-
-import {
-    Router
-} from '@angular/router';
-
-import {
-    ItemBreadcrumbPagina
-} from '@components/cabecalho-pagina/cabecalho-pagina.component';
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 @Component({
     selector: 'app-usuario',
     templateUrl: './usuario.component.html',
-    styleUrls: ['./usuario.component.scss'],
+    styleUrls: [
+        './usuario.component.scss'
+    ],
     standalone: false
 })
 export class UsuarioComponent extends Base {
 
     private readonly autorizacaoService =
-    inject(
-        AutorizacaoService
-    );
+        inject(
+            AutorizacaoService
+        );
 
-    private readonly usuarioService =
-    inject(
-        UsuarioService
-    );
+    private readonly contextoOrganizacaoService =
+        inject(
+            ContextoOrganizacaoService
+        );
 
-    private readonly toastrUsuario =
-    inject(
-        ToastrService
-    );
+    private readonly destroyRef =
+        inject(
+            DestroyRef
+        );
 
     private readonly routerUsuario =
-    inject(
-        Router
-    );
+        inject(
+            Router
+        );
 
     get podeCriar(): boolean {
         return this.autorizacaoService
             .possuiPermissao(
-                ChavePermissao.UsuarioCriar
-            );
-    }
-
-    get podeEditar(): boolean {
-        return this.autorizacaoService
-            .possuiPermissao(
-                ChavePermissao.UsuarioEditar
+                ChavePermissao
+                    .UsuarioCriar
             );
     }
 
     get podeExcluir(): boolean {
         return this.autorizacaoService
             .possuiPermissao(
-                ChavePermissao.UsuarioExcluir
+                ChavePermissao
+                    .UsuarioExcluir
             );
     }
 
     get podeDetalhar(): boolean {
         return this.autorizacaoService
             .possuiPermissao(
-                ChavePermissao.UsuarioDetalhar
-            );
-    }
-
-    get podeAlterarSenha(): boolean {
-        return this.autorizacaoService
-            .possuiPermissao(
-                ChavePermissao.UsuarioSenhaEditar
+                ChavePermissao
+                    .UsuarioDetalhar
             );
     }
 
@@ -111,30 +112,59 @@ export class UsuarioComponent extends Base {
             );
     }
 
-    get podeSalvar(): boolean {
-        if (this.isAlteracaoSenha) {
-            return this.podeAlterarSenha;
+    get podeGerenciarEmpresas(): boolean {
+        return this.autorizacaoService
+            .possuiPermissao(
+                ChavePermissao
+                    .UsuarioEmpresaListar
+            );
+    }
+
+    get acoesExtras(): AcaoExtraGrid[] {
+        const acoes:
+            AcaoExtraGrid[] = [];
+
+        if (this.podeGerenciarPerfis) {
+            acoes.push({
+                chave: 'perfis',
+                icone:
+                    'manage_accounts',
+                tooltip:
+                    'Gerenciar perfis'
+            });
         }
 
+        if (this.podeGerenciarEmpresas) {
+            acoes.push({
+                chave: 'empresas',
+                icone: 'business',
+                tooltip:
+                    'Gerenciar empresas'
+            });
+        }
+
+        return acoes;
+    }
+
+    get podeSalvar(): boolean {
         const possuiId =
             !!this.formulario
                 ?.get('id')
                 ?.value;
 
-        return possuiId
-            ? this.podeEditar
-            : this.podeCriar;
+        return !possuiId &&
+            this.podeCriar;
     }
-
-    isAlteracaoSenha = false;
 
     pagina = 'Usuários';
 
-    descricao = 'Gerencie usuários, acessos e perfis do sistema';
+    descricao =
+        'Gerencie usuários, acessos e perfis do sistema';
 
     breadcrumb: ItemBreadcrumbPagina[] = [
         {
-            titulo: 'Acesso e Segurança'
+            titulo:
+                'Acesso e Segurança'
         }
     ];
 
@@ -144,6 +174,30 @@ export class UsuarioComponent extends Base {
         'E-mail',
         'Status'
     ];
+
+    override ngOnInit(): void {
+        this.configurarAtualizacaoPorOrganizacao();
+
+        super.ngOnInit();
+    }
+
+    botaoAcaoExtra(
+        evento: EventoAcaoExtraGrid
+    ): void {
+        if (evento.chave === 'perfis') {
+            this.botaoPerfis(
+                evento.id
+            );
+
+            return;
+        }
+
+        if (evento.chave === 'empresas') {
+            this.botaoEmpresas(
+                evento.id
+            );
+        }
+    }
 
     botaoPerfis(
         id: number
@@ -159,77 +213,18 @@ export class UsuarioComponent extends Base {
         ]);
     }
 
-    override salvar(): void {
-        if (!this.isAlteracaoSenha) {
-            super.salvar();
+    botaoEmpresas(
+        id: number
+    ): void {
+        if (!this.podeGerenciarEmpresas) {
             return;
         }
 
-        if (
-            !this.podeAlterarSenha ||
-            this.formulario.invalid
-        ) {
-            return;
-        }
-
-        const dados:
-            AlterarSenhaUsuario =
-                this.formulario.getRawValue();
-
-        this.usuarioService
-            .alterarSenha(dados)
-            .subscribe({
-                next: () => {
-                    this.cancelar();
-                    this.carregarLista();
-
-                    this.toastrUsuario.success(
-                        'Senha alterada com sucesso'
-                    );
-                },
-                error: () => {
-                    this.toastrUsuario.error(
-                        'Não foi possível alterar a senha'
-                    );
-                }
-            });
-    }
-
-    botaoAlterarSenha(id: number): void {
-        if (!this.podeAlterarSenha) {
-            return;
-        }
-
-        this.resetForm();
-
-        this.isAlteracaoSenha = true;
-        this.isVisualizacao = false;
-        this.isLista = false;
-        this.isFormulario = true;
-
-        this.formulario =
-            this.builder.group({
-                id: [
-                    id,
-                    Validators.required
-                ],
-                senha: [
-                    '',
-                    [
-                        Validators.required,
-                        Validators.minLength(8),
-                        Validators.pattern(
-                            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/
-                        )
-                    ]
-                ]
-            });
-    }
-
-    override cancelar(): void {
-        this.isAlteracaoSenha = false;
-
-        super.cancelar();
+        this.routerUsuario.navigate([
+            '/acesso/usuarios',
+            id,
+            'empresas'
+        ]);
     }
 
     campos(
@@ -262,12 +257,37 @@ export class UsuarioComponent extends Base {
                 '',
                 [
                     Validators.required,
-                    Validators.minLength(8),
+                    Validators.minLength(
+                        8
+                    ),
                     Validators.pattern(
                         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/
                     )
                 ]
             ]
         });
+    }
+
+    private configurarAtualizacaoPorOrganizacao(): void {
+        this.contextoOrganizacaoService
+            .retornarOrganizacaoAtivaObservable()
+            .pipe(
+                skip(1),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe((organizacao) => {
+                this.limparEstadoPorTrocaOrganizacao();
+
+                if (organizacao) {
+                    this.carregarLista();
+                }
+            });
+    }
+
+    private limparEstadoPorTrocaOrganizacao(): void {
+        this.cancelar();
+
+        this.lista = [];
+        this.totalRegistros = 0;
     }
 }

@@ -1,0 +1,210 @@
+<app-cabecalho-pagina
+    [pagina]="pagina"
+    [descricao]="descricao"
+    [breadcrumb]="breadcrumb">
+</app-cabecalho-pagina>
+
+@if (isLista) {
+    <app-grid
+        [totalRegistros]="totalRegistros"
+        [lista]="lista"
+        [coluna]="coluna"
+        [b_adicionar]="podeCriar"
+        [textoAdicionar]="'Vincular subsidiaria'"
+        [b_editar]="false"
+        [b_excluir]="podeExcluir"
+        [tituloExclusao]="'Remover subsidiaria'"
+        [mensagemExclusao]="
+            'Deseja realmente remover esta subsidiaria do usuario?'
+        "
+        [textoConfirmarExclusao]="'Remover'"
+        [b_visualizar]="podeDetalhar"
+        [b_pesquisa]="false"
+        [b_paginacao]="true"
+        (adicionar)="botaoAdicionar()"
+        (excluir)="botaoExcluir($event)"
+        (visualizar)="botaoVisualizar($event)"
+        (p_paginacao)="
+            quantidadePorPagina($event)
+        ">
+    </app-grid>
+
+    <div class="botao-voltar">
+        <button
+            type="button"
+            mat-stroked-button
+            color="primary"
+            (click)="voltar()">
+            Voltar
+        </button>
+    </div>
+}
+
+<div class="formulario">
+    <section class="content">
+        @if (isFormulario && formulario) {
+            <form
+                [formGroup]="formulario"
+                (ngSubmit)="salvar()">
+
+                <div class="row">
+                    <div class="col-md-12 titulo-formulario">
+                        @if (isVisualizacao) {
+                            Detalhes da subsidiaria do usuario
+                        } @else {
+                            Vincular subsidiaria ao usuario
+                        }
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 titulo-campo">
+                        Usuario
+                    </div>
+
+                    <div class="col-md-10">
+                        <mat-form-field
+                            appearance="outline"
+                            class="full-width">
+
+                            <input
+                                matInput
+                                type="text"
+                                [value]="usuarioNome"
+                                readonly>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2 titulo-campo">
+                        Empresa
+                    </div>
+
+                    <div class="col-md-10">
+                        <mat-form-field
+                            appearance="outline"
+                            class="full-width">
+
+                            <input
+                                matInput
+                                type="text"
+                                [value]="empresaNome"
+                                readonly>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                @if (!isVisualizacao) {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Subsidiaria
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    matInput
+                                    type="text"
+                                    autocomplete="off"
+                                    [formControl]="
+                                        subsidiariaPesquisaControl
+                                    "
+                                    [matAutocomplete]="
+                                        subsidiariasAutocomplete
+                                    ">
+
+                                <mat-autocomplete
+                                    #subsidiariasAutocomplete=
+                                        "matAutocomplete"
+                                    [displayWith]="
+                                        exibirSubsidiaria
+                                    "
+                                    (optionSelected)="
+                                        selecionarSubsidiaria(
+                                            $event.option.value
+                                        )
+                                    ">
+
+                                    @for (
+                                        subsidiaria of subsidiarias;
+                                        track subsidiaria.id
+                                    ) {
+                                        <mat-option
+                                            [value]="subsidiaria">
+                                            {{ subsidiaria.nome }}
+                                        </mat-option>
+                                    }
+                                </mat-autocomplete>
+                            </mat-form-field>
+
+                            @if (
+                                formulario
+                                    .get('idSubsidiaria')
+                                    ?.hasError('required') &&
+                                formulario
+                                    .get('idSubsidiaria')
+                                    ?.touched
+                            ) {
+                                <div class="mensagem-validacao">
+                                    A subsidiaria e obrigatoria.
+                                </div>
+                            }
+                        </div>
+                    </div>
+                } @else {
+                    <div class="row">
+                        <div class="col-md-2 titulo-campo">
+                            Subsidiaria
+                        </div>
+
+                        <div class="col-md-10">
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    matInput
+                                    type="text"
+                                    [value]="subsidiariaNome"
+                                    readonly>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                }
+
+                <div class="row">
+                    <div class="col-md-12 botao">
+                        @if (
+                            !isVisualizacao &&
+                            podeCriar
+                        ) {
+                            <button
+                                type="submit"
+                                mat-stroked-button
+                                color="primary"
+                                [disabled]="formulario.invalid">
+                                Vincular
+                            </button>
+                        }
+
+                        <button
+                            type="button"
+                            mat-stroked-button
+                            color="primary"
+                            (click)="cancelar()">
+                            @if (isVisualizacao) {
+                                Fechar
+                            } @else {
+                                Cancelar
+                            }
+                        </button>
+                    </div>
+                </div>
+            </form>
+        }
+    </section>
+</div>

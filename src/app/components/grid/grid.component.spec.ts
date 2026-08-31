@@ -20,6 +20,7 @@ import {
 } from '@components/shared/app-shared-confirmacao/app-shared-confirmacao.component';
 
 import {
+    AcaoExtraGrid,
     GridComponent
 } from './grid.component';
 
@@ -216,7 +217,83 @@ describe('GridComponent', () => {
     );
 
     it(
-        'deve emitir o identificador na ação contextual',
+        'deve manter ações extras vazias por padrão',
+        () => {
+            expect(
+                component.acoesExtras
+            ).toEqual([]);
+        }
+    );
+
+    it(
+        'deve permitir configurar ações extras',
+        () => {
+            const acoes:
+                AcaoExtraGrid[] = [
+                    {
+                        chave: 'perfis',
+                        icone:
+                            'manage_accounts',
+                        tooltip:
+                            'Gerenciar perfis'
+                    },
+                    {
+                        chave: 'empresas',
+                        icone: 'business',
+                        tooltip:
+                            'Gerenciar empresas'
+                    }
+                ];
+
+            component.acoesExtras =
+                acoes;
+
+            expect(
+                component.acoesExtras
+            ).toEqual(acoes);
+
+            expect(
+                component.acoesExtras
+            ).toHaveSize(2);
+        }
+    );
+
+    it(
+        'deve emitir ação extra com chave e identificador',
+        () => {
+            const acao:
+                AcaoExtraGrid = {
+                    chave: 'empresas',
+                    icone: 'business',
+                    tooltip:
+                        'Gerenciar empresas'
+                };
+
+            const acaoExtraSpy =
+                jasmine.createSpy(
+                    'acaoExtra'
+                );
+
+            component.acaoExtra.subscribe(
+                acaoExtraSpy
+            );
+
+            component.executarAcaoExtra(
+                acao,
+                10
+            );
+
+            expect(
+                acaoExtraSpy
+            ).toHaveBeenCalledOnceWith({
+                chave: 'empresas',
+                id: 10
+            });
+        }
+    );
+
+    it(
+        'deve preservar a ação contextual antiga',
         () => {
             const chamarSpy =
                 jasmine.createSpy(

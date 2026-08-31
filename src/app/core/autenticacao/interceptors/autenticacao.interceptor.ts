@@ -25,6 +25,7 @@ import { AutenticacaoService } from '@/core/autenticacao/services/autenticacao.s
 import { MensagemAutenticacaoService } from '@/core/autenticacao/services/mensagem-autenticacao.service';
 import { TokenService } from '@/core/autenticacao/services/token.service';
 import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
+import { ContextoOrganizacaoService } from '@/core/organizacao/services/contexto-organizacao.service';
 import { environment } from 'environments/environment';
 
 @Injectable()
@@ -112,7 +113,9 @@ export class AutenticacaoInterceptor implements HttpInterceptor {
                 `${api}/login`,
                 `${api}/login/refresh`,
                 `${api}/login/logout`,
-                `${api}/login/sso`
+                `${api}/login/sso`,
+                `${api}/plataforma/organizacao/convite/consulta`,
+                `${api}/plataforma/organizacao/convite/aceite/novo-usuario`
             ]);
 
         return !rotasPublicas.has(
@@ -129,10 +132,16 @@ export class AutenticacaoInterceptor implements HttpInterceptor {
 
         this.sessaoEncerrada = false;
 
-        return this.adicionarToken(
-            request,
-            this.tokenService.retornarToken()
-        );
+        const requestComToken =
+            this.adicionarToken(
+                request,
+                this.tokenService.retornarToken()
+            );
+
+        return this
+            .adicionarContextoOrganizacaoSeDisponivel(
+                requestComToken
+            );
     }
 
     private adicionarToken(
@@ -144,6 +153,54 @@ export class AutenticacaoInterceptor implements HttpInterceptor {
                 Authorization: `Bearer ${token}`
             }
         });
+    }
+
+    private adicionarContextoOrganizacaoSeDisponivel(
+        request: HttpRequest<unknown>
+    ): HttpRequest<unknown> {
+        if (!this.deveAdicionarContextoOrganizacao(request)) {
+            return request;
+        }
+
+        const idOrganizacao =
+            this.injector
+                .get(ContextoOrganizacaoService)
+                .retornarIdOrganizacaoAtiva();
+
+        if (!idOrganizacao) {
+            return request;
+        }
+
+        return request.clone({
+            setHeaders: {
+                'X-Organizacao-Id':
+                    String(idOrganizacao)
+            }
+        });
+    }
+
+    private deveAdicionarContextoOrganizacao(
+        request: HttpRequest<unknown>
+    ): boolean {
+        const api =
+            environment.api.replace(
+                /\/+$/,
+                ''
+            );
+
+        const urlSemParametros =
+            request.url.split('?')[0];
+
+        if (
+            urlSemParametros ===
+            `${api}/organizacao/disponiveis`
+        ) {
+            return false;
+        }
+
+        return !urlSemParametros.startsWith(
+            `${api}/plataforma/`
+        );
     }
 
     private ehErroNaoAutenticado(
@@ -170,11 +227,17 @@ export class AutenticacaoInterceptor implements HttpInterceptor {
     ): Observable<HttpEvent<unknown>> {
         return this.obterRefreshCompartilhado().pipe(
             switchMap((tokens) => {
-                const requestRenovada =
+                const requestComToken =
                     this.adicionarToken(
                         request,
                         tokens.token
                     );
+
+                const requestRenovada =
+                    this
+                        .adicionarContextoOrganizacaoSeDisponivel(
+                            requestComToken
+                        );
 
                 return next.handle(
                     requestRenovada
@@ -222,6 +285,10 @@ export class AutenticacaoInterceptor implements HttpInterceptor {
         this.sessaoEncerrada = true;
 
         this.usuarioAutenticadoService.logout();
+
+        this.injector
+            .get(ContextoOrganizacaoService)
+            .limpar();
 
         this.toastr.warning(
             this.mensagemAutenticacaoService

@@ -1,22 +1,90 @@
 export enum ChavePermissao {
-    UsuarioCriar = 'ACESSO_USUARIO_CRIAR',
-    UsuarioListar = 'ACESSO_USUARIO_LISTAR',
-    UsuarioEditar = 'ACESSO_USUARIO_EDITAR',
-    UsuarioExcluir = 'ACESSO_USUARIO_EXCLUIR',
-    UsuarioDetalhar = 'ACESSO_USUARIO_DETALHAR',
-    UsuarioSenhaEditar = 'ACESSO_USUARIO_SENHA_EDITAR',
 
-    PerfilCriar = 'ACESSO_PERFIL_CRIAR',
-    PerfilListar = 'ACESSO_PERFIL_LISTAR',
-    PerfilEditar = 'ACESSO_PERFIL_EDITAR',
-    PerfilExcluir = 'ACESSO_PERFIL_EXCLUIR',
-    PerfilDetalhar = 'ACESSO_PERFIL_DETALHAR',
+    PlataformaOrganizacaoCriar =
+        'PLATAFORMA_ORGANIZACAO_CRIAR',
+    PlataformaOrganizacaoListar =
+        'PLATAFORMA_ORGANIZACAO_LISTAR',
+    PlataformaOrganizacaoDetalhar =
+        'PLATAFORMA_ORGANIZACAO_DETALHAR',
+    PlataformaOrganizacaoEditar =
+        'PLATAFORMA_ORGANIZACAO_EDITAR',
+    PlataformaOrganizacaoStatus =
+        'PLATAFORMA_ORGANIZACAO_STATUS',
+    PlataformaOrganizacaoExcluir =
+        'PLATAFORMA_ORGANIZACAO_EXCLUIR',
 
-    PermissaoCriar = 'ACESSO_PERMISSAO_CRIAR',
-    PermissaoListar = 'ACESSO_PERMISSAO_LISTAR',
-    PermissaoEditar = 'ACESSO_PERMISSAO_EDITAR',
-    PermissaoExcluir = 'ACESSO_PERMISSAO_EXCLUIR',
-    PermissaoDetalhar = 'ACESSO_PERMISSAO_DETALHAR',
+    EmpresaCriar =
+        'CONFIGURACAO_EMPRESA_CRIAR',
+    EmpresaListar =
+        'CONFIGURACAO_EMPRESA_LISTAR',
+    EmpresaEditar =
+        'CONFIGURACAO_EMPRESA_EDITAR',
+    EmpresaExcluir =
+        'CONFIGURACAO_EMPRESA_EXCLUIR',
+    EmpresaDetalhar =
+        'CONFIGURACAO_EMPRESA_DETALHAR',
+
+    SubsidiariaCriar =
+        'CONFIGURACAO_SUBSIDIARIA_CRIAR',
+    SubsidiariaListar =
+        'CONFIGURACAO_SUBSIDIARIA_LISTAR',
+    SubsidiariaEditar =
+        'CONFIGURACAO_SUBSIDIARIA_EDITAR',
+    SubsidiariaExcluir =
+        'CONFIGURACAO_SUBSIDIARIA_EXCLUIR',
+    SubsidiariaDetalhar =
+        'CONFIGURACAO_SUBSIDIARIA_DETALHAR',
+
+    UsuarioEmpresaCriar =
+        'ACESSO_USUARIO_EMPRESA_CRIAR',
+    UsuarioEmpresaListar =
+        'ACESSO_USUARIO_EMPRESA_LISTAR',
+    UsuarioEmpresaEditar =
+        'ACESSO_USUARIO_EMPRESA_EDITAR',
+    UsuarioEmpresaExcluir =
+        'ACESSO_USUARIO_EMPRESA_EXCLUIR',
+    UsuarioEmpresaDetalhar =
+        'ACESSO_USUARIO_EMPRESA_DETALHAR',
+
+    UsuarioSubsidiariaCriar =
+        'ACESSO_USUARIO_SUBSIDIARIA_CRIAR',
+    UsuarioSubsidiariaListar =
+        'ACESSO_USUARIO_SUBSIDIARIA_LISTAR',
+    UsuarioSubsidiariaExcluir =
+        'ACESSO_USUARIO_SUBSIDIARIA_EXCLUIR',
+    UsuarioSubsidiariaDetalhar =
+        'ACESSO_USUARIO_SUBSIDIARIA_DETALHAR',
+
+    UsuarioCriar =
+        'ACESSO_USUARIO_CRIAR',
+    UsuarioListar =
+        'ACESSO_USUARIO_LISTAR',
+    UsuarioExcluir =
+        'ACESSO_USUARIO_EXCLUIR',
+    UsuarioDetalhar =
+        'ACESSO_USUARIO_DETALHAR',
+
+    PerfilCriar =
+        'ACESSO_PERFIL_CRIAR',
+    PerfilListar =
+        'ACESSO_PERFIL_LISTAR',
+    PerfilEditar =
+        'ACESSO_PERFIL_EDITAR',
+    PerfilExcluir =
+        'ACESSO_PERFIL_EXCLUIR',
+    PerfilDetalhar =
+        'ACESSO_PERFIL_DETALHAR',
+
+    PermissaoCriar =
+        'ACESSO_PERMISSAO_CRIAR',
+    PermissaoListar =
+        'ACESSO_PERMISSAO_LISTAR',
+    PermissaoEditar =
+        'ACESSO_PERMISSAO_EDITAR',
+    PermissaoExcluir =
+        'ACESSO_PERMISSAO_EXCLUIR',
+    PermissaoDetalhar =
+        'ACESSO_PERMISSAO_DETALHAR',
 
     PerfilPermissaoCriar =
         'ACESSO_PERFIL_PERMISSAO_CRIAR',

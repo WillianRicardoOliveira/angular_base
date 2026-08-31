@@ -17,6 +17,7 @@ import {
 } from 'ngx-toastr';
 
 import {
+    BehaviorSubject,
     of,
     throwError
 } from 'rxjs';
@@ -28,6 +29,14 @@ import {
 import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
+
+import {
+    OrganizacaoDisponivel
+} from '@/core/organizacao/models/organizacao-disponivel.model';
+
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 import {
     UsuarioPerfilComponent
@@ -50,6 +59,16 @@ describe('UsuarioPerfilComponent', () => {
         jasmine.SpyObj<
             UsuarioPerfilService
         >;
+
+    let organizacaoAtivaSubject:
+        BehaviorSubject<OrganizacaoDisponivel | null>;
+
+    const contextoOrganizacaoServiceMock = {
+        retornarOrganizacaoAtivaObservable:
+            jasmine.createSpy(
+                'retornarOrganizacaoAtivaObservable'
+            )
+    };
 
     const autorizacaoServiceMock = {
         possuiPermissao:
@@ -105,6 +124,26 @@ describe('UsuarioPerfilComponent', () => {
     };
 
     beforeEach(async () => {
+        organizacaoAtivaSubject =
+            new BehaviorSubject<
+                OrganizacaoDisponivel | null
+            >({
+                id: 1,
+                nome: 'Organização 1'
+            });
+
+        contextoOrganizacaoServiceMock
+            .retornarOrganizacaoAtivaObservable
+            .calls
+            .reset();
+
+        contextoOrganizacaoServiceMock
+            .retornarOrganizacaoAtivaObservable
+            .and.returnValue(
+                organizacaoAtivaSubject
+                    .asObservable()
+            );
+
         autorizacaoServiceMock
             .possuiPermissao
             .calls
@@ -178,6 +217,12 @@ describe('UsuarioPerfilComponent', () => {
                             AutorizacaoService,
                         useValue:
                             autorizacaoServiceMock
+                    },
+                    {
+                        provide:
+                            ContextoOrganizacaoService,
+                        useValue:
+                            contextoOrganizacaoServiceMock
                     },
                     {
                         provide:
@@ -260,6 +305,135 @@ describe('UsuarioPerfilComponent', () => {
             ).toHaveBeenCalledOnceWith(
                 2
             );
+        }
+    );
+
+    it(
+        'deve voltar para usuários ao trocar a organização ativa',
+        () => {
+            serviceMock
+                .listarPorUsuario
+                .calls
+                .reset();
+
+            routerMock
+                .navigate
+                .calls
+                .reset();
+
+            component.formulario =
+                new FormBuilder().group({
+                    idUsuario: [2],
+                    idPerfil: [3]
+                });
+
+            component.lista = [
+                vinculo
+            ];
+
+            component.totalRegistros = 1;
+            component.isLista = false;
+            component.isFormulario = true;
+            component.isVisualizacao = true;
+
+            organizacaoAtivaSubject.next({
+                id: 2,
+                nome: 'Organização 2'
+            });
+
+            expect(
+                component.isLista
+            ).toBeTrue();
+
+            expect(
+                component.isFormulario
+            ).toBeFalse();
+
+            expect(
+                component.isVisualizacao
+            ).toBeFalse();
+
+            expect(
+                component.lista
+            ).toEqual([]);
+
+            expect(
+                component.totalRegistros
+            ).toBe(0);
+
+            expect(
+                serviceMock
+                    .listarPorUsuario
+            ).not.toHaveBeenCalled();
+
+            expect(
+                routerMock.navigate
+            ).toHaveBeenCalledOnceWith([
+                '/acesso/usuarios'
+            ]);
+        }
+    );
+
+    it(
+        'deve limpar dados e voltar para usuários quando não houver organização ativa',
+        () => {
+            serviceMock
+                .listarPorUsuario
+                .calls
+                .reset();
+
+            routerMock
+                .navigate
+                .calls
+                .reset();
+
+            component.formulario =
+                new FormBuilder().group({
+                    idUsuario: [2],
+                    idPerfil: [3]
+                });
+
+            component.lista = [
+                vinculo
+            ];
+
+            component.totalRegistros = 1;
+            component.isLista = false;
+            component.isFormulario = true;
+            component.isVisualizacao = true;
+
+            organizacaoAtivaSubject.next(null);
+
+            expect(
+                component.isLista
+            ).toBeTrue();
+
+            expect(
+                component.isFormulario
+            ).toBeFalse();
+
+            expect(
+                component.isVisualizacao
+            ).toBeFalse();
+
+            expect(
+                component.lista
+            ).toEqual([]);
+
+            expect(
+                component.totalRegistros
+            ).toBe(0);
+
+            expect(
+                serviceMock
+                    .listarPorUsuario
+            ).not.toHaveBeenCalled();
+
+            expect(
+                routerMock.navigate
+            ).toHaveBeenCalledOnceWith([
+                '/acesso/usuarios'
+            ]);
         }
     );
 

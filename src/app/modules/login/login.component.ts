@@ -8,6 +8,7 @@ import {
     Validators
 } from '@angular/forms';
 import {
+    ActivatedRoute,
     Router
 } from '@angular/router';
 import {
@@ -34,6 +35,9 @@ import {
 import {
     PermissoesUsuarioService
 } from '@/core/autorizacao/services/permissoes-usuario.service';
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 @Component({
     selector: 'app-login',
@@ -48,14 +52,19 @@ export class LoginComponent implements OnInit {
 
     isPasswordVisible = false;
 
+    private returnUrl = '/';
+
     constructor(
         private formBuilder: FormBuilder,
         private service:
             AutenticacaoService,
         private permissoesUsuarioService:
             PermissoesUsuarioService,
+        private contextoOrganizacaoService:
+            ContextoOrganizacaoService,
         private microsoftSsoService:
             MicrosoftSsoService,
+        private route: ActivatedRoute,
         private router: Router,
         private toastr: ToastrService,
         private mensagemAutenticacaoService:
@@ -63,6 +72,13 @@ export class LoginComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
+        this.returnUrl =
+            this.normalizarReturnUrl(
+                this.route.snapshot
+                    .queryParamMap
+                    .get('returnUrl')
+            );
+
         this.loginForm =
             this.formBuilder.group({
                 email: [
@@ -112,7 +128,9 @@ export class LoginComponent implements OnInit {
             .subscribe({
                 next: () => {
                     this.router
-                        .navigateByUrl('/');
+                        .navigateByUrl(
+                            this.returnUrl
+                        );
                 },
                 error: (erro: unknown) => {
                     const mensagem =
@@ -135,7 +153,7 @@ export class LoginComponent implements OnInit {
 
     recoverPassword(): void {
         this.toastr.info(
-            'Recuperação de senha ainda não configurada.'
+            'Recuperacao de senha ainda nao configurada.'
         );
     }
 
@@ -166,7 +184,9 @@ export class LoginComponent implements OnInit {
             .subscribe({
                 next: () => {
                     this.router
-                        .navigateByUrl('/');
+                        .navigateByUrl(
+                            this.returnUrl
+                        );
                 },
                 error: (erro: unknown) => {
                     const mensagem =
@@ -182,11 +202,33 @@ export class LoginComponent implements OnInit {
             });
     }
 
+    private normalizarReturnUrl(
+        returnUrl: string | null
+    ): string {
+        const url =
+            returnUrl?.trim() ?? '';
+
+        if (
+            !url ||
+            !url.startsWith('/') ||
+            url.startsWith('//') ||
+            url.startsWith('/login')
+        ) {
+            return '/';
+        }
+
+        return url;
+    }
+
     private carregarPermissoesAposLogin():
         Observable<void> {
-        return this.permissoesUsuarioService
-            .carregarPermissoes()
+        return this.contextoOrganizacaoService
+            .carregarESelecionarPadrao()
             .pipe(
+                switchMap(() =>
+                    this.permissoesUsuarioService
+                        .carregarPermissoes()
+                ),
                 catchError(
                     (erro: unknown) =>
                         this.service

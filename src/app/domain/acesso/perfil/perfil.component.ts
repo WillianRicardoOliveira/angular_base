@@ -1,12 +1,25 @@
 import {
     Component,
+    DestroyRef,
     inject
 } from '@angular/core';
+
+import {
+    takeUntilDestroyed
+} from '@angular/core/rxjs-interop';
 
 import {
     FormGroup,
     Validators
 } from '@angular/forms';
+
+import {
+    Router
+} from '@angular/router';
+
+import {
+    skip
+} from 'rxjs';
 
 import {
     ChavePermissao
@@ -17,16 +30,16 @@ import {
 } from '@/core/autorizacao/services/autorizacao.service';
 
 import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
+
+import {
     Perfil
 } from '@/interfaces/interfaces';
 
 import {
     Base
 } from '@components/grid/base/base';
-
-import {
-    Router
-} from '@angular/router';
 
 import {
     ItemBreadcrumbPagina
@@ -45,10 +58,20 @@ export class PerfilComponent extends Base {
             AutorizacaoService
         );
 
+    private readonly contextoOrganizacaoService =
+        inject(
+            ContextoOrganizacaoService
+        );
+
+    private readonly destroyRef =
+        inject(
+            DestroyRef
+        );
+
     private readonly routerPerfil =
-    inject(
-        Router
-    );
+        inject(
+            Router
+        );
 
     get podeCriar(): boolean {
         return this.autorizacaoService
@@ -116,6 +139,12 @@ export class PerfilComponent extends Base {
         'Status'
     ];
 
+    override ngOnInit(): void {
+        this.configurarAtualizacaoPorOrganizacao();
+
+        super.ngOnInit();
+    }
+
     botaoPermissoes(
         id: number
     ): void {
@@ -157,5 +186,28 @@ export class PerfilComponent extends Base {
                 ''
             ]
         });
+    }
+
+    private configurarAtualizacaoPorOrganizacao(): void {
+        this.contextoOrganizacaoService
+            .retornarOrganizacaoAtivaObservable()
+            .pipe(
+                skip(1),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe((organizacao) => {
+                this.limparEstadoPorTrocaOrganizacao();
+
+                if (organizacao) {
+                    this.carregarLista();
+                }
+            });
+    }
+
+    private limparEstadoPorTrocaOrganizacao(): void {
+        this.cancelar();
+
+        this.lista = [];
+        this.totalRegistros = 0;
     }
 }

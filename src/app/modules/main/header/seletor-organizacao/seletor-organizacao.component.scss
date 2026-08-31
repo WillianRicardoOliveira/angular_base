@@ -1,0 +1,148 @@
+:host {
+    display: inline-flex;
+    align-items: center;
+
+    min-width: 0;
+    width: min(320px, 42vw);
+}
+
+.organizacao-selector {
+    position: relative;
+
+    display: grid;
+    grid-template-columns:
+        36px minmax(0, 1fr) 30px;
+    align-items: center;
+
+    width: 100%;
+    height: 40px;
+
+    color:
+        var(--app-text, #1e293b);
+
+    background:
+        var(--app-surface, #ffffff);
+
+    border: 1px solid
+        var(--app-border, #e2e8f0);
+
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.organizacao-selector:focus-within {
+    border-color:
+        var(--app-primary, #0f9ea6);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(15, 158, 166, 0.12);
+}
+
+.organizacao-selector__icon,
+.organizacao-selector__status {
+    position: relative;
+    z-index: 1;
+
+    color:
+        var(--app-text-muted, #64748b);
+
+    font-size: 0.82rem;
+    text-align: center;
+
+    pointer-events: none;
+}
+
+.organizacao-selector__control {
+    grid-column: 1 / -1;
+    grid-row: 1;
+
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 0 32px 0 38px;
+
+    color:
+        var(--app-text, #1e293b);
+
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+
+    background: transparent;
+    border: 0;
+    outline: none;
+
+    appearance: none;
+    cursor: pointer;
+}
+
+.organizacao-selector__control:disabled {
+    color:
+        var(--app-text-muted, #64748b);
+
+    cursor: default;
+    opacity: 0.78;
+}
+
+.organizacao-selector__empty {
+    grid-column: 1 / -1;
+    grid-row: 1;
+
+    width: 100%;
+    height: 100%;
+    padding: 0 32px 0 38px;
+
+    color:
+        var(--app-text-muted, #64748b);
+
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-align: left;
+
+    background: transparent;
+    border: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.organizacao-selector__status {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+.organizacao-selector__icon {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.organizacao-selector--loading {
+    opacity: 0.86;
+}
+
+@media (max-width: 768px) {
+    :host {
+        width: min(260px, 46vw);
+    }
+
+    .organizacao-selector {
+        grid-template-columns:
+            32px minmax(0, 1fr) 26px;
+    }
+
+    .organizacao-selector__control,
+    .organizacao-selector__empty {
+        padding-right: 28px;
+        padding-left: 34px;
+
+        font-size: 0.76rem;
+    }
+}

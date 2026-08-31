@@ -30,7 +30,10 @@ export class NaoAutenticadoGuard {
             return true;
         }
 
-        this.router.navigate(['/']);
+        this.router.navigateByUrl(
+            this.obterUrlDestino(next)
+        );
+
         return false;
     }
 
@@ -43,5 +46,31 @@ export class NaoAutenticadoGuard {
         | boolean
         | UrlTree {
         return this.canActivate(next, state);
+    }
+
+    private obterUrlDestino(
+        next: ActivatedRouteSnapshot
+    ): string {
+        return this.normalizarReturnUrl(
+            next.queryParamMap.get('returnUrl')
+        );
+    }
+
+    private normalizarReturnUrl(
+        returnUrl: string | null
+    ): string {
+        const url =
+            returnUrl?.trim() ?? '';
+
+        if (
+            !url ||
+            !url.startsWith('/') ||
+            url.startsWith('//') ||
+            url.startsWith('/login')
+        ) {
+            return '/';
+        }
+
+        return url;
     }
 }

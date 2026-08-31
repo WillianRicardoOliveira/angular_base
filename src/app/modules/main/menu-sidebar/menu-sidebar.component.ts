@@ -128,19 +128,16 @@ export class MenuSidebarComponent
     }
 
     ngOnInit(): void {
-        this.menu =
-            this.filtrarMenu(
-                MENU
-            );
-
-        this.menuConfiguracoes =
-            this.filtrarMenu(
-                MENU_CONFIGURACOES
-            );
-
-        this.selecionarModuloPelaRota(
-            this.router.url
-        );
+        this.autorizacaoService
+            .retornarEstado()
+            .pipe(
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
+            )
+            .subscribe(() => {
+                this.atualizarMenusAutorizados();
+            });
 
         this.router.events
             .pipe(
@@ -648,6 +645,24 @@ export class MenuSidebarComponent
             ) ?? null;
     }
 
+    private atualizarMenusAutorizados(): void {
+        this.menu =
+            this.filtrarMenu(
+                MENU
+            );
+
+        this.menuConfiguracoes =
+            this.filtrarMenu(
+                MENU_CONFIGURACOES
+            );
+
+        this.selecionarModuloPelaRota(
+            this.router.url
+        );
+
+        this.atualizarIndicadoresRolagem();
+    }
+
     private filtrarMenu(
         itens: readonly MenuItem[]
     ): MenuItem[] {
@@ -811,6 +826,35 @@ export const MENU: MenuItem[] = [
 export const MENU_CONFIGURACOES:
     MenuItem[] = [
         {
+            name: 'Plataforma',
+            iconClasses:
+                'fas fa-layer-group',
+            children: [
+                {
+                    name: 'Organizacoes',
+                    iconClasses:
+                        'fas fa-building',
+                    path: [
+                        '/plataforma/organizacoes'
+                    ],
+                    permissao:
+                        ChavePermissao
+                            .PlataformaOrganizacaoListar
+                },
+                {
+                    name: 'Convites',
+                    iconClasses:
+                        'fas fa-envelope',
+                    path: [
+                        '/plataforma/organizacoes/convites'
+                    ],
+                    permissao:
+                        ChavePermissao
+                            .PlataformaOrganizacaoListar
+                }
+            ]
+        },
+        {
             name:
                 'Acesso e Segurança',
             iconClasses:
@@ -848,6 +892,35 @@ export const MENU_CONFIGURACOES:
                     permissao:
                         ChavePermissao
                             .UsuarioListar
+                }
+            ]
+        },
+        {
+            name: 'Configuração',
+            iconClasses:
+                'fas fa-cogs',
+            children: [
+                {
+                    name: 'Empresas',
+                    iconClasses:
+                        'fas fa-building',
+                    path: [
+                        '/configuracao/empresas'
+                    ],
+                    permissao:
+                        ChavePermissao
+                            .EmpresaListar
+                },
+                {
+                    name: 'Subsidiárias',
+                    iconClasses:
+                        'fas fa-code-branch',
+                    path: [
+                        '/configuracao/subsidiarias'
+                    ],
+                    permissao:
+                        ChavePermissao
+                            .SubsidiariaListar
                 }
             ]
         }

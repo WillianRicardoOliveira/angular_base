@@ -51,6 +51,31 @@ export class UserComponent
 
     menuAberto = false;
 
+    get userInitials(): string {
+        const partesNome =
+            this.userName
+                .trim()
+                .split(/\s+/)
+                .filter(Boolean);
+
+        if (partesNome.length === 0) {
+            return 'U';
+        }
+
+        if (partesNome.length === 1) {
+            return partesNome[0]
+                .charAt(0)
+                .toUpperCase();
+        }
+
+        return (
+            partesNome[0].charAt(0) +
+            partesNome[
+                partesNome.length - 1
+            ].charAt(0)
+        ).toUpperCase();
+    }
+
     private readonly destroy$ =
         new Subject<void>();
 

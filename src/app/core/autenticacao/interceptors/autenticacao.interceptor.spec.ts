@@ -14,6 +14,7 @@ import { AutenticacaoService } from '@/core/autenticacao/services/autenticacao.s
 import { MensagemAutenticacaoService } from '@/core/autenticacao/services/mensagem-autenticacao.service';
 import { TokenService } from '@/core/autenticacao/services/token.service';
 import { UsuarioAutenticadoService } from '@/core/autenticacao/services/usuario-autenticado.service';
+import { ContextoOrganizacaoService } from '@/core/organizacao/services/contexto-organizacao.service';
 import { environment } from 'environments/environment';
 
 import { AutenticacaoInterceptor } from './autenticacao.interceptor';
@@ -26,6 +27,8 @@ describe('AutenticacaoInterceptor', () => {
         jasmine.SpyObj<UsuarioAutenticadoService>;
     let mensagemAutenticacaoServiceMock:
         jasmine.SpyObj<MensagemAutenticacaoService>;
+    let contextoOrganizacaoServiceMock:
+        jasmine.SpyObj<ContextoOrganizacaoService>;
     let toastrMock: jasmine.SpyObj<ToastrService>;
     let routerMock: jasmine.SpyObj<Router>;
     let httpHandlerMock: jasmine.SpyObj<HttpHandler>;
@@ -61,6 +64,15 @@ describe('AutenticacaoInterceptor', () => {
                 ]
             );
 
+        contextoOrganizacaoServiceMock =
+            jasmine.createSpyObj<ContextoOrganizacaoService>(
+                'ContextoOrganizacaoService',
+                [
+                    'retornarIdOrganizacaoAtiva',
+                    'limpar'
+                ]
+            );
+
         toastrMock = jasmine.createSpyObj<ToastrService>(
             'ToastrService',
             ['warning', 'error']
@@ -84,6 +96,10 @@ describe('AutenticacaoInterceptor', () => {
             true
         );
 
+        contextoOrganizacaoServiceMock
+            .retornarIdOrganizacaoAtiva
+            .and.returnValue(null);
+
         autenticacaoServiceMock.renovarToken.and.returnValue(
             of({
                 token: 'novo-access-token',
@@ -94,13 +110,13 @@ describe('AutenticacaoInterceptor', () => {
         mensagemAutenticacaoServiceMock
             .obterMensagemSessaoExpirada
             .and.returnValue(
-                'Sua sessão expirou. Entre novamente.'
+                'Sua sessao expirou. Entre novamente.'
             );
 
         mensagemAutenticacaoServiceMock
             .obterMensagemAcessoNegado
             .and.returnValue(
-                'Você não possui permissão para executar esta ação.'
+                'Voce nao possui permissao para executar esta acao.'
             );
 
         httpHandlerMock.handle.and.returnValue(
@@ -127,6 +143,10 @@ describe('AutenticacaoInterceptor', () => {
                     useValue: mensagemAutenticacaoServiceMock
                 },
                 {
+                    provide: ContextoOrganizacaoService,
+                    useValue: contextoOrganizacaoServiceMock
+                },
+                {
                     provide: ToastrService,
                     useValue: toastrMock
                 },
@@ -146,7 +166,7 @@ describe('AutenticacaoInterceptor', () => {
         expect(interceptor).toBeTruthy();
     });
 
-    it('deve adicionar bearer em requisição protegida da API', () => {
+    it('deve adicionar bearer em requisicao protegida da API', () => {
         interceptor
             .intercept(
                 criarRequestProtegida('/perfil'),
@@ -161,6 +181,10 @@ describe('AutenticacaoInterceptor', () => {
         ).toBe('Bearer access-token');
 
         expect(
+            request.headers.has('X-Organizacao-Id')
+        ).toBeFalse();
+
+        expect(
             tokenServiceMock.possuiToken
         ).toHaveBeenCalled();
 
@@ -169,7 +193,30 @@ describe('AutenticacaoInterceptor', () => {
         ).toHaveBeenCalled();
     });
 
-    it('deve adicionar bearer ao consultar permissões do usuário', () => {
+    it('deve adicionar contexto de organizacao em rota operacional', () => {
+        contextoOrganizacaoServiceMock
+            .retornarIdOrganizacaoAtiva
+            .and.returnValue(10);
+
+        interceptor
+            .intercept(
+                criarRequestProtegida('/perfil'),
+                httpHandlerMock
+            )
+            .subscribe();
+
+        const request = obterRequestDaChamada(0);
+
+        expect(
+            request.headers.get('Authorization')
+        ).toBe('Bearer access-token');
+
+        expect(
+            request.headers.get('X-Organizacao-Id')
+        ).toBe('10');
+    });
+
+    it('deve adicionar bearer ao consultar permissoes do usuario', () => {
         const request = new HttpRequest(
             'GET',
             `${environment.api}/login/permissoes`
@@ -194,6 +241,12 @@ describe('AutenticacaoInterceptor', () => {
         );
 
         expect(
+            requestEnviada.headers.has(
+                'X-Organizacao-Id'
+            )
+        ).toBeFalse();
+
+        expect(
             tokenServiceMock.possuiToken
         ).toHaveBeenCalled();
 
@@ -206,8 +259,47 @@ describe('AutenticacaoInterceptor', () => {
         ).not.toHaveBeenCalled();
     });
 
-    it('não deve adicionar bearer quando não houver token', () => {
+    it('deve adicionar contexto ao consultar permissoes do usuario', () => {
+        contextoOrganizacaoServiceMock
+            .retornarIdOrganizacaoAtiva
+            .and.returnValue(10);
+
+        const request = new HttpRequest(
+            'GET',
+            `${environment.api}/login/permissoes`
+        );
+
+        interceptor
+            .intercept(
+                request,
+                httpHandlerMock
+            )
+            .subscribe();
+
+        const requestEnviada =
+            obterRequestDaChamada(0);
+
+        expect(
+            requestEnviada.headers.get(
+                'Authorization'
+            )
+        ).toBe(
+            'Bearer access-token'
+        );
+
+        expect(
+            requestEnviada.headers.get(
+                'X-Organizacao-Id'
+            )
+        ).toBe('10');
+    });
+
+    it('nao deve adicionar bearer quando nao houver token', () => {
         tokenServiceMock.possuiToken.and.returnValue(false);
+
+        contextoOrganizacaoServiceMock
+            .retornarIdOrganizacaoAtiva
+            .and.returnValue(10);
 
         interceptor
             .intercept(
@@ -223,6 +315,10 @@ describe('AutenticacaoInterceptor', () => {
         ).toBeFalse();
 
         expect(
+            request.headers.has('X-Organizacao-Id')
+        ).toBeFalse();
+
+        expect(
             tokenServiceMock.retornarToken
         ).not.toHaveBeenCalled();
     });
@@ -231,9 +327,11 @@ describe('AutenticacaoInterceptor', () => {
         '/login',
         '/login/refresh',
         '/login/logout',
-        '/login/sso'
+        '/login/sso',
+        '/plataforma/organizacao/convite/consulta',
+        '/plataforma/organizacao/convite/aceite/novo-usuario'
     ].forEach((rota) => {
-        it(`não deve adicionar bearer em ${rota}`, () => {
+        it(`nao deve adicionar bearer em ${rota}`, () => {
             const request = new HttpRequest(
                 'POST',
                 `${environment.api}${rota}`,
@@ -250,12 +348,115 @@ describe('AutenticacaoInterceptor', () => {
             ).toBeFalse();
 
             expect(
+                obterRequestDaChamada(0)
+                    .headers.has('X-Organizacao-Id')
+            ).toBeFalse();
+
+            expect(
                 autenticacaoServiceMock.renovarToken
             ).not.toHaveBeenCalled();
         });
     });
 
-    it('não deve adicionar bearer em endereço externo', () => {
+    it('deve manter aceite de convite para usuario existente como rota protegida', () => {
+        const request = new HttpRequest(
+            'POST',
+            `${environment.api}/plataforma/organizacao/convite/aceite/usuario-existente`,
+            {
+                token: 'token-convite'
+            }
+        );
+
+        interceptor
+            .intercept(
+                request,
+                httpHandlerMock
+            )
+            .subscribe();
+
+        const requestEnviada =
+            obterRequestDaChamada(0);
+
+        expect(
+            requestEnviada.headers.get(
+                'Authorization'
+            )
+        ).toBe(
+            'Bearer access-token'
+        );
+
+        expect(
+            requestEnviada.headers.has(
+                'X-Organizacao-Id'
+            )
+        ).toBeFalse();
+
+        expect(
+            tokenServiceMock.possuiToken
+        ).toHaveBeenCalled();
+
+        expect(
+            tokenServiceMock.retornarToken
+        ).toHaveBeenCalled();
+
+        expect(
+            autenticacaoServiceMock.renovarToken
+        ).not.toHaveBeenCalled();
+    });
+
+    it('nao deve adicionar contexto ao listar organizacoes disponiveis', () => {
+        contextoOrganizacaoServiceMock
+            .retornarIdOrganizacaoAtiva
+            .and.returnValue(10);
+
+        const request = new HttpRequest(
+            'GET',
+            `${environment.api}/organizacao/disponiveis`
+        );
+
+        interceptor
+            .intercept(request, httpHandlerMock)
+            .subscribe();
+
+        const requestEnviada =
+            obterRequestDaChamada(0);
+
+        expect(
+            requestEnviada.headers.get('Authorization')
+        ).toBe('Bearer access-token');
+
+        expect(
+            requestEnviada.headers.has('X-Organizacao-Id')
+        ).toBeFalse();
+    });
+
+    it('nao deve adicionar contexto em endpoint da plataforma', () => {
+        contextoOrganizacaoServiceMock
+            .retornarIdOrganizacaoAtiva
+            .and.returnValue(10);
+
+        const request = new HttpRequest(
+            'GET',
+            `${environment.api}/plataforma/organizacao`
+        );
+
+        interceptor
+            .intercept(request, httpHandlerMock)
+            .subscribe();
+
+        const requestEnviada =
+            obterRequestDaChamada(0);
+
+        expect(
+            requestEnviada.headers.get('Authorization')
+        ).toBe('Bearer access-token');
+
+        expect(
+            requestEnviada.headers.has('X-Organizacao-Id')
+        ).toBeFalse();
+    });
+
+    it('nao deve adicionar bearer em endereco externo', () => {
         const request = new HttpRequest(
             'GET',
             'https://api.externa.com/dados'
@@ -271,11 +472,16 @@ describe('AutenticacaoInterceptor', () => {
         ).toBeFalse();
 
         expect(
+            obterRequestDaChamada(0)
+                .headers.has('X-Organizacao-Id')
+        ).toBeFalse();
+
+        expect(
             autenticacaoServiceMock.renovarToken
         ).not.toHaveBeenCalled();
     });
 
-    it('não deve adicionar bearer em domínio externo parecido com a API', () => {
+    it('nao deve adicionar bearer em dominio externo parecido com a API', () => {
         const request = new HttpRequest(
             'GET',
             `${environment.api}.evil.com/dados`
@@ -298,6 +504,12 @@ describe('AutenticacaoInterceptor', () => {
         ).toBeFalse();
 
         expect(
+            requestEnviada.headers.has(
+                'X-Organizacao-Id'
+            )
+        ).toBeFalse();
+
+        expect(
             tokenServiceMock.possuiToken
         ).not.toHaveBeenCalled();
 
@@ -311,7 +523,7 @@ describe('AutenticacaoInterceptor', () => {
         ).not.toHaveBeenCalled();
     });
 
-    it('deve renovar o token e repetir a requisição após 401', () => {
+    it('deve renovar o token e repetir a requisicao apos 401', () => {
         const erro401 = criarErroHttp(
             401,
             `${environment.api}/perfil`
@@ -347,7 +559,16 @@ describe('AutenticacaoInterceptor', () => {
         ).toBe('Bearer novo-access-token');
 
         expect(
+            obterRequestDaChamada(1)
+                .headers.has('X-Organizacao-Id')
+        ).toBeFalse();
+
+        expect(
             usuarioAutenticadoServiceMock.logout
+        ).not.toHaveBeenCalled();
+
+        expect(
+            contextoOrganizacaoServiceMock.limpar
         ).not.toHaveBeenCalled();
 
         expect(
@@ -363,7 +584,45 @@ describe('AutenticacaoInterceptor', () => {
         ).not.toHaveBeenCalled();
     });
 
-    it('deve encerrar a sessão quando o refresh for inválido', () => {
+    it('deve manter contexto ao repetir requisicao apos refresh', () => {
+        contextoOrganizacaoServiceMock
+            .retornarIdOrganizacaoAtiva
+            .and.returnValue(10);
+
+        const erro401 = criarErroHttp(
+            401,
+            `${environment.api}/perfil`
+        );
+
+        httpHandlerMock.handle.and.returnValues(
+            throwError(() => erro401),
+            of(new HttpResponse({status: 200}))
+        );
+
+        interceptor
+            .intercept(
+                criarRequestProtegida('/perfil'),
+                httpHandlerMock
+            )
+            .subscribe();
+
+        const requestRepetida =
+            obterRequestDaChamada(1);
+
+        expect(
+            requestRepetida.headers.get('Authorization')
+        ).toBe('Bearer novo-access-token');
+
+        expect(
+            requestRepetida.headers.get('X-Organizacao-Id')
+        ).toBe('10');
+
+        expect(
+            contextoOrganizacaoServiceMock.limpar
+        ).not.toHaveBeenCalled();
+    });
+
+    it('deve encerrar a sessao quando o refresh for invalido', () => {
         const erroAccessToken = criarErroHttp(
             401,
             `${environment.api}/perfil`
@@ -387,7 +646,7 @@ describe('AutenticacaoInterceptor', () => {
             )
             .subscribe({
                 next: () => {
-                    fail('A requisição deveria falhar');
+                    fail('A requisicao deveria falhar');
                 },
                 error: (erro) => {
                     expect(erro).toBe(
@@ -400,7 +659,7 @@ describe('AutenticacaoInterceptor', () => {
         expect(toastrMock.error).not.toHaveBeenCalled();
     });
 
-    it('deve encerrar a sessão quando não houver refresh token', () => {
+    it('deve encerrar a sessao quando nao houver refresh token', () => {
         const erro401 = criarErroHttp(
             401,
             `${environment.api}/perfil`
@@ -421,7 +680,7 @@ describe('AutenticacaoInterceptor', () => {
             )
             .subscribe({
                 next: () => {
-                    fail('A requisição deveria falhar');
+                    fail('A requisicao deveria falhar');
                 },
                 error: (erro) => {
                     expect(erro).toBe(erro401);
@@ -436,7 +695,7 @@ describe('AutenticacaoInterceptor', () => {
         expect(toastrMock.error).not.toHaveBeenCalled();
     });
 
-    it('não deve renovar token nem encerrar sessão após 403', () => {
+    it('nao deve renovar token nem encerrar sessao apos 403', () => {
         const erro403 = new HttpErrorResponse({
             status: 403,
             statusText: 'Forbidden',
@@ -459,7 +718,7 @@ describe('AutenticacaoInterceptor', () => {
             )
             .subscribe({
                 next: () => {
-                    fail('A requisição deveria falhar');
+                    fail('A requisicao deveria falhar');
                 },
                 error: (erro) => {
                     expect(erro).toBe(erro403);
@@ -475,6 +734,10 @@ describe('AutenticacaoInterceptor', () => {
         ).not.toHaveBeenCalled();
 
         expect(
+            contextoOrganizacaoServiceMock.limpar
+        ).not.toHaveBeenCalled();
+
+        expect(
             mensagemAutenticacaoServiceMock
                 .obterMensagemAcessoNegado
         ).toHaveBeenCalledTimes(1);
@@ -482,7 +745,7 @@ describe('AutenticacaoInterceptor', () => {
         expect(
             toastrMock.error
         ).toHaveBeenCalledOnceWith(
-            'Você não possui permissão para executar esta ação.'
+            'Voce nao possui permissao para executar esta acao.'
         );
 
         expect(
@@ -494,7 +757,7 @@ describe('AutenticacaoInterceptor', () => {
         ).not.toHaveBeenCalled();
     });
 
-    it('deve compartilhar um único refresh entre requisições simultâneas', () => {
+    it('deve compartilhar um unico refresh entre requisicoes simultaneas', () => {
         const erro401 = criarErroHttp(
             401,
             `${environment.api}/recurso`
@@ -563,6 +826,10 @@ describe('AutenticacaoInterceptor', () => {
         ).not.toHaveBeenCalled();
 
         expect(
+            contextoOrganizacaoServiceMock.limpar
+        ).not.toHaveBeenCalled();
+
+        expect(
             toastrMock.warning
         ).not.toHaveBeenCalled();
 
@@ -575,7 +842,7 @@ describe('AutenticacaoInterceptor', () => {
         ).not.toHaveBeenCalled();
     });
 
-    it('deve encerrar a sessão uma única vez quando o refresh compartilhado falhar', () => {
+    it('deve encerrar a sessao uma unica vez quando o refresh compartilhado falhar', () => {
         const erro401 = criarErroHttp(
             401,
             `${environment.api}/recurso`
@@ -658,7 +925,7 @@ describe('AutenticacaoInterceptor', () => {
             error: {
                 status: 401,
                 erro: 'REFRESH_TOKEN_INVALIDO',
-                mensagem: 'Refresh token inválido'
+                mensagem: 'Refresh token invalido'
             }
         });
     }
@@ -676,6 +943,10 @@ describe('AutenticacaoInterceptor', () => {
         ).toHaveBeenCalledTimes(1);
 
         expect(
+            contextoOrganizacaoServiceMock.limpar
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
             mensagemAutenticacaoServiceMock
                 .obterMensagemSessaoExpirada
         ).toHaveBeenCalledTimes(1);
@@ -683,7 +954,7 @@ describe('AutenticacaoInterceptor', () => {
         expect(
             toastrMock.warning
         ).toHaveBeenCalledOnceWith(
-            'Sua sessão expirou. Entre novamente.'
+            'Sua sessao expirou. Entre novamente.'
         );
 
         expect(

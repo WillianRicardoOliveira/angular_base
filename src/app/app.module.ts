@@ -73,6 +73,10 @@ import {
     UsuarioPerfilComponent
 } from '@/domain/acesso/usuario-perfil/usuario-perfil.component';
 
+import {
+    UsuarioEmpresaComponent
+} from '@/domain/acesso/usuario-empresa/usuario-empresa.component';
+
 /* APP */
 import { AppRoutingModule } from '@/app-routing.module';
 import { AppComponent } from './app.component';
@@ -102,17 +106,41 @@ import { BannerComponent } from './components/site/banner/banner.component';
 
 /* COMPONENTE OUTROS */
 
+import {
+    EmpresaComponent
+} from '@/domain/configuracao/empresa/empresa.component';
 
+import {
+    SubsidiariaComponent
+} from '@/domain/configuracao/subsidiaria/subsidiaria.component';
 
 //import {MainMenuComponent} from './pages/main-menu/main-menu.component';
 //import { interval, take } from 'rxjs';
 //import {RegisterComponent} from '@modules/register/register.component';
 //import {DashboardComponent} from '@pages/dashboard/dashboard.component';
 
-
+import {
+    SeletorOrganizacaoComponent
+} from '@modules/main/header/seletor-organizacao/seletor-organizacao.component';
 
 //import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
 //import {RecoverPasswordComponent} from '@modules/recover-password/recover-password.component';
+
+import {
+    UsuarioSubsidiariaComponent
+} from '@/domain/acesso/usuario-subsidiaria/usuario-subsidiaria.component';
+
+import {
+    OrganizacaoPlataformaComponent
+} from '@/domain/plataforma/organizacao/organizacao-plataforma.component';
+
+import {
+    ConviteOrganizacaoComponent
+} from '@/domain/plataforma/organizacao/convite/convite-organizacao.component';
+
+import {
+    AceiteConviteOrganizacaoComponent
+} from '@/domain/plataforma/organizacao/convite/aceite/aceite-convite-organizacao.component';
 
 import { CabecalhoPaginaComponent } from './components/cabecalho-pagina/cabecalho-pagina.component';
 
@@ -164,6 +192,7 @@ registerLocaleData(localePt);
         /* LAYOUT ADMINLTE */
         MainComponent,
         HeaderComponent,
+        SeletorOrganizacaoComponent,
         UserComponent,
         FooterComponent,
         MenuSidebarComponent,
@@ -180,6 +209,11 @@ registerLocaleData(localePt);
         PermissaoComponent,
         UsuarioComponent,
         UsuarioPerfilComponent,
+        UsuarioEmpresaComponent,
+        UsuarioSubsidiariaComponent,
+        OrganizacaoPlataformaComponent,
+        ConviteOrganizacaoComponent,
+        AceiteConviteOrganizacaoComponent,
 
         /* COMPONENTE SITE */
         BannerComponent,
@@ -191,6 +225,10 @@ registerLocaleData(localePt);
         /* COMPONENTE OUTROS */
         CabecalhoPaginaComponent,
         GridComponent,
+
+        /* DOMAIN CONFIGURACAO */
+        EmpresaComponent,
+        SubsidiariaComponent,
 
         //MainMenuComponent,
         //RegisterComponent,

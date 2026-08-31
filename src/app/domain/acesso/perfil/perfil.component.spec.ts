@@ -17,6 +17,7 @@ import {
 } from 'ngx-toastr';
 
 import {
+    BehaviorSubject,
     of
 } from 'rxjs';
 
@@ -27,6 +28,14 @@ import {
 import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
+
+import {
+    OrganizacaoDisponivel
+} from '@/core/organizacao/models/organizacao-disponivel.model';
+
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
 
 import {
     BaseService
@@ -45,6 +54,16 @@ describe('PerfilComponent', () => {
 
     let baseServiceMock:
         jasmine.SpyObj<BaseService>;
+
+    let organizacaoAtivaSubject:
+        BehaviorSubject<OrganizacaoDisponivel | null>;
+
+    const contextoOrganizacaoServiceMock = {
+        retornarOrganizacaoAtivaObservable:
+            jasmine.createSpy(
+                'retornarOrganizacaoAtivaObservable'
+            )
+    };
 
     const autorizacaoServiceMock = {
         possuiPermissao: jasmine.createSpy(
@@ -88,6 +107,26 @@ describe('PerfilComponent', () => {
     };
 
     beforeEach(async () => {
+        organizacaoAtivaSubject =
+            new BehaviorSubject<
+                OrganizacaoDisponivel | null
+            >({
+                id: 1,
+                nome: 'Organização 1'
+            });
+
+        contextoOrganizacaoServiceMock
+            .retornarOrganizacaoAtivaObservable
+            .calls
+            .reset();
+
+        contextoOrganizacaoServiceMock
+            .retornarOrganizacaoAtivaObservable
+            .and.returnValue(
+                organizacaoAtivaSubject
+                    .asObservable()
+            );
+
         autorizacaoServiceMock
             .possuiPermissao
             .calls
@@ -139,6 +178,12 @@ describe('PerfilComponent', () => {
                             AutorizacaoService,
                         useValue:
                             autorizacaoServiceMock
+                    },
+                    {
+                        provide:
+                            ContextoOrganizacaoService,
+                        useValue:
+                            contextoOrganizacaoServiceMock
                     },
                     {
                         provide: Router,
@@ -268,6 +313,136 @@ describe('PerfilComponent', () => {
                 undefined,
                 NaN
             );
+        }
+    );
+
+    it(
+        'deve recarregar dados ao trocar a organização ativa',
+        () => {
+            baseServiceMock
+                .listar
+                .calls
+                .reset();
+
+            component.formulario =
+                component.campos({
+                    id: 10,
+                    nome: 'Administrador',
+                    descricao:
+                        'Acesso administrativo',
+                    status: 'ATIVO'
+                });
+
+            component.lista = [
+                {
+                    id: 10,
+                    nome: 'Administrador',
+                    descricao:
+                        'Acesso administrativo',
+                    status: 'ATIVO'
+                }
+            ];
+
+            component.totalRegistros = 1;
+            component.isLista = false;
+            component.isFormulario = true;
+            component.isVisualizacao = true;
+
+            organizacaoAtivaSubject.next({
+                id: 2,
+                nome: 'Organização 2'
+            });
+
+            expect(
+                component.isLista
+            ).toBeTrue();
+
+            expect(
+                component.isFormulario
+            ).toBeFalse();
+
+            expect(
+                component.isVisualizacao
+            ).toBeFalse();
+
+            expect(
+                component.lista
+            ).toEqual([]);
+
+            expect(
+                component.totalRegistros
+            ).toBe(0);
+
+            expect(
+                baseServiceMock.listar
+            ).toHaveBeenCalledOnceWith(
+                'perfil',
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                NaN
+            );
+        }
+    );
+
+    it(
+        'deve limpar dados quando não houver organização ativa',
+        () => {
+            baseServiceMock
+                .listar
+                .calls
+                .reset();
+
+            component.formulario =
+                component.campos({
+                    id: 10,
+                    nome: 'Administrador',
+                    descricao:
+                        'Acesso administrativo',
+                    status: 'ATIVO'
+                });
+
+            component.lista = [
+                {
+                    id: 10,
+                    nome: 'Administrador',
+                    descricao:
+                        'Acesso administrativo',
+                    status: 'ATIVO'
+                }
+            ];
+
+            component.totalRegistros = 1;
+            component.isLista = false;
+            component.isFormulario = true;
+            component.isVisualizacao = true;
+
+            organizacaoAtivaSubject.next(null);
+
+            expect(
+                component.isLista
+            ).toBeTrue();
+
+            expect(
+                component.isFormulario
+            ).toBeFalse();
+
+            expect(
+                component.isVisualizacao
+            ).toBeFalse();
+
+            expect(
+                component.lista
+            ).toEqual([]);
+
+            expect(
+                component.totalRegistros
+            ).toBe(0);
+
+            expect(
+                baseServiceMock.listar
+            ).not.toHaveBeenCalled();
         }
     );
 

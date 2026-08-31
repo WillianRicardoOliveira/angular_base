@@ -12,6 +12,7 @@ import {SsoLogin} from '@/core/autenticacao/models/sso-login.model';
 import {TokenJwt} from '@/core/autenticacao/models/token-jwt.model';
 import {TokenService} from '@/core/autenticacao/services/token.service';
 import {UsuarioAutenticadoService} from '@/core/autenticacao/services/usuario-autenticado.service';
+import {ContextoOrganizacaoService} from '@/core/organizacao/services/contexto-organizacao.service';
 import {environment} from 'environments/environment';
 
 @Injectable({
@@ -24,7 +25,9 @@ export class AutenticacaoService {
         private http: HttpClient,
         private usuarioAutenticadoService:
             UsuarioAutenticadoService,
-        private tokenService: TokenService
+        private tokenService: TokenService,
+        private contextoOrganizacaoService:
+            ContextoOrganizacaoService
     ) {}
 
     login(
@@ -105,6 +108,9 @@ export class AutenticacaoService {
                 finalize(() => {
                     this.usuarioAutenticadoService
                         .logout();
+
+                    this.contextoOrganizacaoService
+                        .limpar();
                 })
             );
     }
