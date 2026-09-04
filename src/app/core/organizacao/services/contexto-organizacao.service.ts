@@ -1,7 +1,14 @@
-import {HttpClient} from '@angular/common/http';
-import {Injectable} from '@angular/core';
+import {
+    HttpClient
+} from '@angular/common/http';
+
+import {
+    Injectable
+} from '@angular/core';
+
 import {
     BehaviorSubject,
+    distinctUntilChanged,
     map,
     Observable
 } from 'rxjs';
@@ -9,12 +16,16 @@ import {
 import {
     OrganizacaoDisponivel
 } from '@/core/organizacao/models/organizacao-disponivel.model';
-import {environment} from 'environments/environment';
+
+import {
+    environment
+} from 'environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ContextoOrganizacaoService {
+
     private readonly storageKey =
         'erp.organizacao.ativa.id';
 
@@ -22,21 +33,40 @@ export class ContextoOrganizacaoService {
         `${environment.api}/organizacao/disponiveis`;
 
     private readonly organizacoesSubject =
-        new BehaviorSubject<OrganizacaoDisponivel[]>([]);
+        new BehaviorSubject<
+            OrganizacaoDisponivel[]
+        >([]);
 
     private readonly organizacaoAtivaSubject =
-        new BehaviorSubject<OrganizacaoDisponivel | null>(
+        new BehaviorSubject<
+            OrganizacaoDisponivel | null
+        >(
             null
+        );
+
+    private readonly organizacaoProntaSubject =
+        new BehaviorSubject<
+            OrganizacaoDisponivel | null
+        >(
+            null
+        );
+
+    private readonly trocandoOrganizacaoSubject =
+        new BehaviorSubject<boolean>(
+            false
         );
 
     private carregado = false;
 
     constructor(
-        private http: HttpClient
-    ) {}
+        private readonly http:
+            HttpClient
+    ) {
+    }
 
     carregarESelecionarPadrao():
         Observable<OrganizacaoDisponivel | null> {
+
         return this.http
             .get<OrganizacaoDisponivel[]>(
                 this.url
@@ -65,19 +95,24 @@ export class ContextoOrganizacaoService {
 
     listarDisponiveis():
         Observable<OrganizacaoDisponivel[]> {
-        return this.http.get<OrganizacaoDisponivel[]>(
-            this.url
-        );
+
+        return this.http
+            .get<OrganizacaoDisponivel[]>(
+                this.url
+            );
     }
 
     definirOrganizacaoAtiva(
         idOrganizacao: number
     ): OrganizacaoDisponivel {
+
         const organizacao =
             this.organizacoesSubject
                 .getValue()
-                .find((item) =>
-                    item.id === idOrganizacao
+                .find(
+                    (item) =>
+                        item.id ===
+                        idOrganizacao
                 );
 
         if (!organizacao) {
@@ -97,32 +132,109 @@ export class ContextoOrganizacaoService {
         return organizacao;
     }
 
+    confirmarOrganizacaoPronta():
+        OrganizacaoDisponivel | null {
+
+        const organizacao =
+            this.organizacaoAtivaSubject
+                .getValue();
+
+        this.organizacaoProntaSubject.next(
+            organizacao
+        );
+
+        return organizacao;
+    }
+
+    iniciarTrocaOrganizacao(): void {
+        this.organizacaoProntaSubject.next(
+            null
+        );
+
+        this.trocandoOrganizacaoSubject
+            .next(true);
+    }
+
+    finalizarTrocaOrganizacao(): void {
+        this.trocandoOrganizacaoSubject
+            .next(false);
+    }
+
+    retornarTrocaOrganizacaoObservable():
+        Observable<boolean> {
+
+        return this.trocandoOrganizacaoSubject
+            .asObservable()
+            .pipe(
+                distinctUntilChanged()
+            );
+    }
+
+    estaTrocandoOrganizacao(): boolean {
+        return this.trocandoOrganizacaoSubject
+            .getValue();
+    }
+
     retornarOrganizacoesDisponiveis():
         Observable<OrganizacaoDisponivel[]> {
+
         return this.organizacoesSubject
             .asObservable();
     }
 
     retornarOrganizacaoAtivaObservable():
         Observable<OrganizacaoDisponivel | null> {
+
         return this.organizacaoAtivaSubject
             .asObservable();
     }
 
+    retornarOrganizacaoProntaObservable():
+        Observable<OrganizacaoDisponivel | null> {
+
+        return this.organizacaoProntaSubject
+            .asObservable()
+            .pipe(
+                distinctUntilChanged(
+                    (
+                        anterior,
+                        atual
+                    ) =>
+                        anterior?.id ===
+                        atual?.id
+                )
+            );
+    }
+
     retornarOrganizacaoAtiva():
         OrganizacaoDisponivel | null {
+
         return this.organizacaoAtivaSubject
             .getValue();
     }
 
-    retornarIdOrganizacaoAtiva(): number | null {
-        return this.retornarOrganizacaoAtiva()
-            ?.id ?? null;
+    retornarOrganizacaoPronta():
+        OrganizacaoDisponivel | null {
+
+        return this.organizacaoProntaSubject
+            .getValue();
+    }
+
+    retornarIdOrganizacaoAtiva():
+        number | null {
+
+        return (
+            this.retornarOrganizacaoAtiva()
+                ?.id ??
+            null
+        );
     }
 
     possuiOrganizacaoAtiva(): boolean {
-        return this.retornarIdOrganizacaoAtiva()
-            !== null;
+        return (
+            this.retornarIdOrganizacaoAtiva() !==
+            null
+        );
     }
 
     foiCarregado(): boolean {
@@ -133,14 +245,27 @@ export class ContextoOrganizacaoService {
         this.removerIdOrganizacaoAtiva();
 
         this.organizacoesSubject.next([]);
-        this.organizacaoAtivaSubject.next(null);
+
+        this.organizacaoAtivaSubject.next(
+            null
+        );
+
+        this.organizacaoProntaSubject.next(
+            null
+        );
+
+        this.trocandoOrganizacaoSubject.next(
+            false
+        );
 
         this.carregado = false;
     }
 
     private selecionarPadrao(
-        organizacoes: OrganizacaoDisponivel[]
+        organizacoes:
+            OrganizacaoDisponivel[]
     ): OrganizacaoDisponivel | null {
+
         if (organizacoes.length === 0) {
             this.removerIdOrganizacaoAtiva();
 
@@ -151,12 +276,15 @@ export class ContextoOrganizacaoService {
             this.lerIdOrganizacaoAtiva();
 
         const organizacaoSalva =
-            organizacoes.find((organizacao) =>
-                organizacao.id === idSalvo
+            organizacoes.find(
+                (organizacao) =>
+                    organizacao.id ===
+                    idSalvo
             );
 
         const organizacaoAtiva =
-            organizacaoSalva ?? organizacoes[0];
+            organizacaoSalva ??
+            organizacoes[0];
 
         this.salvarIdOrganizacaoAtiva(
             organizacaoAtiva.id
@@ -174,7 +302,9 @@ export class ContextoOrganizacaoService {
         );
     }
 
-    private lerIdOrganizacaoAtiva(): number | null {
+    private lerIdOrganizacaoAtiva():
+        number | null {
+
         const valor =
             localStorage.getItem(
                 this.storageKey
@@ -184,7 +314,8 @@ export class ContextoOrganizacaoService {
             return null;
         }
 
-        const id = Number(valor);
+        const id =
+            Number(valor);
 
         if (
             !Number.isInteger(id) ||

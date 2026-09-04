@@ -1,9 +1,13 @@
 import {
     Component,
     DestroyRef,
-    OnInit,
-    inject
+    inject,
+    OnInit
 } from '@angular/core';
+
+import {
+    takeUntilDestroyed
+} from '@angular/core/rxjs-interop';
 
 import {
     FormBuilder,
@@ -18,10 +22,6 @@ import {
     filter,
     skip
 } from 'rxjs';
-
-import {
-    takeUntilDestroyed
-} from '@angular/core/rxjs-interop';
 
 import {
     ToastrService
@@ -45,12 +45,12 @@ import {
 } from '@/interfaces/interfaces';
 
 import {
-    SubsidiariaService
-} from './services/subsidiaria.service';
-
-import {
     ItemBreadcrumbPagina
 } from '@components/cabecalho-pagina/cabecalho-pagina.component';
+
+import {
+    SubsidiariaService
+} from './services/subsidiaria.service';
 
 @Component({
     selector: 'app-subsidiaria',
@@ -101,7 +101,8 @@ export class SubsidiariaComponent
 
     breadcrumb: ItemBreadcrumbPagina[] = [
         {
-            titulo: 'Configuração'
+            titulo:
+                'Configuração'
         }
     ];
 
@@ -112,9 +113,11 @@ export class SubsidiariaComponent
         'Status'
     ];
 
-    lista: Subsidiaria[] = [];
+    lista:
+        Subsidiaria[] = [];
 
-    empresas: Empresa[] = [];
+    empresas:
+        Empresa[] = [];
 
     totalRegistros = 0;
 
@@ -199,29 +202,36 @@ export class SubsidiariaComponent
         size = this.tamanhoPagina,
         filtro = this.filtro
     ): void {
-        this.service.listar(
-            page,
-            size,
-            'id,desc',
-            filtro
-        ).subscribe({
-            next: (pagina) => {
-                this.lista =
-                    pagina.content;
+        this.service
+            .listar(
+                page,
+                size,
+                'id,desc',
+                filtro
+            )
+            .subscribe({
+                next: (pagina) => {
+                    this.lista =
+                        pagina.content;
 
-                this.totalRegistros =
-                    pagina.totalElements;
+                    this.totalRegistros =
+                        pagina.totalElements;
 
-                this.paginaAtual = page;
-                this.tamanhoPagina = size;
-                this.filtro = filtro;
-            },
-            error: () => {
-                this.toastr.error(
-                    'Não foi possível carregar as subsidiárias'
-                );
-            }
-        });
+                    this.paginaAtual =
+                        page;
+
+                    this.tamanhoPagina =
+                        size;
+
+                    this.filtro =
+                        filtro;
+                },
+                error: () => {
+                    this.toastr.error(
+                        'Não foi possível carregar as subsidiárias'
+                    );
+                }
+            });
     }
 
     pesquisar(
@@ -268,7 +278,9 @@ export class SubsidiariaComponent
                     '',
                     [
                         Validators.required,
-                        Validators.maxLength(100)
+                        Validators.maxLength(
+                            100
+                        )
                     ]
                 ]
             });
@@ -324,49 +336,53 @@ export class SubsidiariaComponent
                 ?.value;
 
         if (id) {
-            this.service.atualizar({
-                id,
-                nome:
-                    this.formulario
-                        .get('nome')
-                        ?.value
-            }).subscribe({
-                next: () => {
-                    this.finalizarSalvamento(
-                        'Subsidiária atualizada com sucesso'
-                    );
-                },
-                error: () => {
-                    this.toastr.error(
-                        'Não foi possível atualizar a subsidiária'
-                    );
-                }
-            });
+            this.service
+                .atualizar({
+                    id,
+                    nome:
+                        this.formulario
+                            .get('nome')
+                            ?.value
+                })
+                .subscribe({
+                    next: () => {
+                        this.finalizarSalvamento(
+                            'Subsidiária atualizada com sucesso'
+                        );
+                    },
+                    error: () => {
+                        this.toastr.error(
+                            'Não foi possível atualizar a subsidiária'
+                        );
+                    }
+                });
 
             return;
         }
 
-        this.service.cadastrar({
-            idEmpresa:
-                this.formulario
-                    .get('idEmpresa')
-                    ?.value,
-            nome:
-                this.formulario
-                    .get('nome')
-                    ?.value
-        }).subscribe({
-            next: () => {
-                this.finalizarSalvamento(
-                    'Subsidiária cadastrada com sucesso'
-                );
-            },
-            error: () => {
-                this.toastr.error(
-                    'Não foi possível cadastrar a subsidiária'
-                );
-            }
-        });
+        this.service
+            .cadastrar({
+                idEmpresa:
+                    this.formulario
+                        .get('idEmpresa')
+                        ?.value,
+                nome:
+                    this.formulario
+                        .get('nome')
+                        ?.value
+            })
+            .subscribe({
+                next: () => {
+                    this.finalizarSalvamento(
+                        'Subsidiária cadastrada com sucesso'
+                    );
+                },
+                error: () => {
+                    this.toastr.error(
+                        'Não foi possível cadastrar a subsidiária'
+                    );
+                }
+            });
     }
 
     botaoExcluir(
@@ -376,7 +392,8 @@ export class SubsidiariaComponent
             return;
         }
 
-        this.service.excluir(id)
+        this.service
+            .excluir(id)
             .subscribe({
                 next: () => {
                     this.carregarLista();
@@ -430,17 +447,18 @@ export class SubsidiariaComponent
             this.formulario.reset();
         }
 
-        this.empresaPesquisaControl.reset(
-            '',
-            {
-                emitEvent: false
-            }
-        );
+        this.empresaPesquisaControl
+            .reset(
+                '',
+                {
+                    emitEvent: false
+                }
+            );
     }
 
     private configurarAtualizacaoPorOrganizacao(): void {
         this.contextoOrganizacaoService
-            .retornarOrganizacaoAtivaObservable()
+            .retornarOrganizacaoProntaObservable()
             .pipe(
                 skip(1),
                 takeUntilDestroyed(
@@ -531,7 +549,8 @@ export class SubsidiariaComponent
         id: number,
         visualizacao: boolean
     ): void {
-        this.service.detalhar(id)
+        this.service
+            .detalhar(id)
             .subscribe({
                 next: (dados) => {
                     this.isLista = false;

@@ -1,43 +1,35 @@
-/* ANGULAR */
+import {
+    NgModule
+} from '@angular/core';
 
-/* TERCEIROS */
+import {
+    RouterModule,
+    Routes
+} from '@angular/router';
 
-/* STORE */
+import {
+    AutenticacaoGuard
+} from '@/core/autenticacao/guards/autenticacao.guard';
 
-/* ANGULAR MATERIAL */
+import {
+    NaoAutenticadoGuard
+} from '@/core/autenticacao/guards/nao-autenticado.guard';
 
-/* SECURITY */
+import {
+    PermissaoGuard
+} from '@/core/autorizacao/guards/permissao.guard';
 
-/* APP */
+import {
+    ChavePermissao
+} from '@/core/autorizacao/models/chave-permissao';
 
-/* LAYOUT ADMINLTE */
+import {
+    ConfiguracaoInicialGuard
+} from '@/domain/configuracao/configuracao-inicial/guards/configuracao-inicial.guard';
 
-/* COMPONENTE BASE */
-
-/* COMPONENTE SHARED */
-
-/* COMPONENTE SITE */
-
-/* PAGES SITE */
-
-/* PAGES ESTOQUE */
-
-/* PAGES FINANCEIRO */
-
-/* COMPONENTE OUTROS */
-
-
-
-import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
-import {MainComponent} from '@modules/main/main.component';
-
-import {NaoAutenticadoGuard} from '@/core/autenticacao/guards/nao-autenticado.guard';
-
-import { AutenticacaoGuard } from '@/core/autenticacao/guards/autenticacao.guard';
-
-import { LoginComponent } from '@modules/login/login.component';
-
+import {
+    ConfiguracaoInicialPendenteGuard
+} from '@/domain/configuracao/configuracao-inicial/guards/configuracao-inicial-pendente.guard';
 
 import {
     PerfilComponent
@@ -56,15 +48,20 @@ import {
 } from '@/domain/acesso/usuario/usuario.component';
 
 import {
+    UsuarioEmpresaComponent
+} from '@/domain/acesso/usuario-empresa/usuario-empresa.component';
+
+import {
     UsuarioPerfilComponent
 } from '@/domain/acesso/usuario-perfil/usuario-perfil.component';
 
 import {
-    PermissaoGuard
-} from '@/core/autorizacao/guards/permissao.guard';
+    UsuarioSubsidiariaComponent
+} from '@/domain/acesso/usuario-subsidiaria/usuario-subsidiaria.component';
+
 import {
-    ChavePermissao
-} from '@/core/autorizacao/models/chave-permissao';
+    ConfiguracaoInicialComponent
+} from '@/domain/configuracao/configuracao-inicial/configuracao-inicial.component';
 
 import {
     EmpresaComponent
@@ -75,50 +72,28 @@ import {
 } from '@/domain/configuracao/subsidiaria/subsidiaria.component';
 
 import {
-    UsuarioEmpresaComponent
-} from '@/domain/acesso/usuario-empresa/usuario-empresa.component';
-
-import {
-    UsuarioSubsidiariaComponent
-} from '@/domain/acesso/usuario-subsidiaria/usuario-subsidiaria.component';
-
-import {
-    OrganizacaoPlataformaComponent
-} from '@/domain/plataforma/organizacao/organizacao-plataforma.component';
+    AceiteConviteOrganizacaoComponent
+} from '@/domain/plataforma/organizacao/convite/aceite/aceite-convite-organizacao.component';
 
 import {
     ConviteOrganizacaoComponent
 } from '@/domain/plataforma/organizacao/convite/convite-organizacao.component';
 
 import {
-    AceiteConviteOrganizacaoComponent
-} from '@/domain/plataforma/organizacao/convite/aceite/aceite-convite-organizacao.component';
+    OrganizacaoPlataformaComponent
+} from '@/domain/plataforma/organizacao/organizacao-plataforma.component';
 
-//import {RegisterComponent} from '@modules/register/register.component';
-//import {DashboardComponent} from '@pages/dashboard/dashboard.component';
-//import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
-//import {RecoverPasswordComponent} from '@modules/recover-password/recover-password.component';
-//import {MainMenuComponent} from '@pages/main-menu/main-menu.component';
-//import { HomeSiteComponent } from '@pages/site/home-site/home-site.component';
-//import { PerfilComponent } from '@pages/site/perfil/perfil.component';
-//import { CadastroComponent } from '@pages/site/cadastro/cadastro.component';
-//import { FornecedorComponent } from '@pages/estoque/fornecedor/fornecedor.component';
-//import { ProdutoComponent } from '@pages/estoque/produto/produto.component';
-//import { CompraComponent } from '@pages/estoque/compra/compra.component';
-//import { CompraItemComponent } from '@pages/estoque/compra/compra-item/compra-item.component';
-//import { MovimentacaoComponent } from '@pages/estoque/movimentacao/movimentacao.component';
-//import { CategoriaContaComponent } from '@pages/financeiro/contas-pagar/categoria-conta/categoria-conta.component';
-//import { SubCategoriaContaComponent } from '@pages/financeiro/contas-pagar/categoria-conta/sub-categoria-conta/sub-categoria-conta.component';
-//import { ContasPagarComponent } from '@pages/financeiro/contas-pagar/contas-pagar.component';
-//import { FormaPagamentoComponent } from '@pages/financeiro/contas-pagar/forma-pagamento/forma-pagamento.component';
-//import { StatusPagamentoComponent } from '@pages/financeiro/contas-pagar/status-pagamento/status-pagamento.component';
+import {
+    LoginComponent
+} from '@modules/login/login.component';
+
+import {
+    MainComponent
+} from '@modules/main/main.component';
 
 const routes: Routes = [
     {
         path: '',
-        //redirectTo: "MainComponent",
-        //pathMatch: "full"
-
         component: MainComponent,
         canActivate: [
             AutenticacaoGuard
@@ -128,8 +103,26 @@ const routes: Routes = [
         ],
         children: [
             {
-                path: 'plataforma/organizacoes',
-                component: OrganizacaoPlataformaComponent,
+                path: '',
+                pathMatch: 'full',
+                canActivate: [
+                    ConfiguracaoInicialGuard
+                ],
+                children: []
+            },
+            {
+                path: 'configuracao-inicial',
+                component:
+                    ConfiguracaoInicialComponent,
+                canActivate: [
+                    ConfiguracaoInicialPendenteGuard
+                ]
+            },
+            {
+                path:
+                    'plataforma/organizacoes',
+                component:
+                    OrganizacaoPlataformaComponent,
                 canActivate: [
                     PermissaoGuard
                 ],
@@ -140,8 +133,10 @@ const routes: Routes = [
                 }
             },
             {
-                path: 'plataforma/organizacoes/convites',
-                component: ConviteOrganizacaoComponent,
+                path:
+                    'plataforma/organizacoes/convites',
+                component:
+                    ConviteOrganizacaoComponent,
                 canActivate: [
                     PermissaoGuard
                 ],
@@ -155,11 +150,13 @@ const routes: Routes = [
                 path: 'acesso/perfis',
                 component: PerfilComponent,
                 canActivate: [
+                    ConfiguracaoInicialGuard,
                     PermissaoGuard
                 ],
                 data: {
                     permissao:
-                        ChavePermissao.PerfilListar
+                        ChavePermissao
+                            .PerfilListar
                 }
             },
             {
@@ -168,6 +165,7 @@ const routes: Routes = [
                 component:
                     PerfilPermissaoComponent,
                 canActivate: [
+                    ConfiguracaoInicialGuard,
                     PermissaoGuard
                 ],
                 data: {
@@ -178,24 +176,30 @@ const routes: Routes = [
             },
             {
                 path: 'acesso/permissoes',
-                component: PermissaoComponent,
+                component:
+                    PermissaoComponent,
                 canActivate: [
+                    ConfiguracaoInicialGuard,
                     PermissaoGuard
                 ],
                 data: {
                     permissao:
-                        ChavePermissao.PermissaoListar
+                        ChavePermissao
+                            .PermissaoListar
                 }
             },
             {
                 path: 'acesso/usuarios',
-                component: UsuarioComponent,
+                component:
+                    UsuarioComponent,
                 canActivate: [
+                    ConfiguracaoInicialGuard,
                     PermissaoGuard
                 ],
                 data: {
                     permissao:
-                        ChavePermissao.UsuarioListar
+                        ChavePermissao
+                            .UsuarioListar
                 }
             },
             {
@@ -204,6 +208,7 @@ const routes: Routes = [
                 component:
                     UsuarioPerfilComponent,
                 canActivate: [
+                    ConfiguracaoInicialGuard,
                     PermissaoGuard
                 ],
                 data: {
@@ -218,6 +223,7 @@ const routes: Routes = [
                 component:
                     UsuarioEmpresaComponent,
                 canActivate: [
+                    ConfiguracaoInicialGuard,
                     PermissaoGuard
                 ],
                 data: {
@@ -232,6 +238,7 @@ const routes: Routes = [
                 component:
                     UsuarioSubsidiariaComponent,
                 canActivate: [
+                    ConfiguracaoInicialGuard,
                     PermissaoGuard
                 ],
                 data: {
@@ -242,19 +249,27 @@ const routes: Routes = [
             },
             {
                 path: 'configuracao/empresas',
-                component: EmpresaComponent,
+                component:
+                    EmpresaComponent,
                 canActivate: [
                     PermissaoGuard
                 ],
                 data: {
-                    permissao:
-                        ChavePermissao.EmpresaListar
+                    permissoes: [
+                        ChavePermissao
+                            .EmpresaCriar,
+                        ChavePermissao
+                            .EmpresaListar
+                    ]
                 }
             },
             {
-                path: 'configuracao/subsidiarias',
-                component: SubsidiariaComponent,
+                path:
+                    'configuracao/subsidiarias',
+                component:
+                    SubsidiariaComponent,
                 canActivate: [
+                    ConfiguracaoInicialGuard,
                     PermissaoGuard
                 ],
                 data: {
@@ -262,45 +277,39 @@ const routes: Routes = [
                         ChavePermissao
                             .SubsidiariaListar
                 }
-            },
-
-            //{ path: ''                  , component: DashboardComponent },
-            /* ESTOQUE */
-            //{ path: 'fornecedor'        , component: FornecedorComponent },
-            //{ path: 'produto'           , component: ProdutoComponent },
-            //{ path: 'compra'            , component: CompraComponent },
-            //{ path: 'compra-item/:id'   , component: CompraItemComponent },
-            //{ path: 'movimentacao'      , component: MovimentacaoComponent },
-            //{ path: 'categoria-conta'           , component: CategoriaContaComponent },
-            //{ path: 'sub-categoria-conta/:id'   , component: SubCategoriaContaComponent },
-            //{ path: 'contas-pagar'              , component: ContasPagarComponent },
-            //{ path: 'forma-pagamento'          , component: FormaPagamentoComponent },
-            //{ path: 'status-pagamento'          , component: StatusPagamentoComponent },            
+            }
         ]
     },
-
-    
     {
         path: 'login',
-        component: LoginComponent,
-        canActivate: [NaoAutenticadoGuard]
+        component:
+            LoginComponent,
+        canActivate: [
+            NaoAutenticadoGuard
+        ]
     },
     {
-        path: 'convites/organizacao/aceitar',
-        component: AceiteConviteOrganizacaoComponent
+        path:
+            'convites/organizacao/aceitar',
+        component:
+            AceiteConviteOrganizacaoComponent
     },
-    //{ path: "cadastro"  , component: CadastroComponent },
-    //{ path: "perfil"    , component: PerfilComponent },
-    //{ path: "site"      , component: HomeSiteComponent },
-
-    //{ path: 'register'          , component: RegisterComponent          , canActivate: [NaoAutenticadoGuard] },
-    //{ path: 'forgot-password'   , component: ForgotPasswordComponent    , canActivate: [NaoAutenticadoGuard] },
-    //{ path: 'recover-password'  , component: RecoverPasswordComponent   , canActivate: [NaoAutenticadoGuard] },
-    { path: '**', redirectTo: '' }
+    {
+        path: '**',
+        redirectTo: ''
+    }
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes, {})],
-    exports: [RouterModule]
+    imports: [
+        RouterModule.forRoot(
+            routes,
+            {}
+        )
+    ],
+    exports: [
+        RouterModule
+    ]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule {
+}

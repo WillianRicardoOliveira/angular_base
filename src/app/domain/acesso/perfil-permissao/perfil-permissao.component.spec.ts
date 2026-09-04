@@ -47,6 +47,7 @@ import {
 } from './services/perfil-permissao.service';
 
 describe('PerfilPermissaoComponent', () => {
+
     let component:
         PerfilPermissaoComponent;
 
@@ -60,13 +61,15 @@ describe('PerfilPermissaoComponent', () => {
             PerfilPermissaoService
         >;
 
-    let organizacaoAtivaSubject:
-        BehaviorSubject<OrganizacaoDisponivel | null>;
+    let organizacaoProntaSubject:
+        BehaviorSubject<
+            OrganizacaoDisponivel | null
+        >;
 
     const contextoOrganizacaoServiceMock = {
-        retornarOrganizacaoAtivaObservable:
+        retornarOrganizacaoProntaObservable:
             jasmine.createSpy(
-                'retornarOrganizacaoAtivaObservable'
+                'retornarOrganizacaoProntaObservable'
             )
     };
 
@@ -92,7 +95,8 @@ describe('PerfilPermissaoComponent', () => {
     const activatedRouteMock = {
         snapshot: {
             paramMap: {
-                get: paramMapGetMock
+                get:
+                    paramMapGetMock
             }
         }
     };
@@ -115,33 +119,37 @@ describe('PerfilPermissaoComponent', () => {
     const vinculo = {
         id: 5,
         idPerfil: 3,
-        perfil: 'Administrador',
+        perfil:
+            'Administrador',
         idPermissao: 10,
         permissao:
             'Listar usuários',
         chave:
             'ACESSO_USUARIO_LISTAR',
-        status: 'ATIVO' as const
+        status:
+            'ATIVO' as const
     };
 
     beforeEach(async () => {
-        organizacaoAtivaSubject =
+        organizacaoProntaSubject =
             new BehaviorSubject<
                 OrganizacaoDisponivel | null
             >({
                 id: 1,
-                nome: 'Organização 1'
+                nome:
+                    'Organização 1'
             });
 
         contextoOrganizacaoServiceMock
-            .retornarOrganizacaoAtivaObservable
+            .retornarOrganizacaoProntaObservable
             .calls
             .reset();
 
         contextoOrganizacaoServiceMock
-            .retornarOrganizacaoAtivaObservable
-            .and.returnValue(
-                organizacaoAtivaSubject
+            .retornarOrganizacaoProntaObservable
+            .and
+            .returnValue(
+                organizacaoProntaSubject
                     .asObservable()
             );
 
@@ -152,32 +160,36 @@ describe('PerfilPermissaoComponent', () => {
 
         autorizacaoServiceMock
             .possuiPermissao
-            .and.returnValue(false);
+            .and
+            .returnValue(false);
 
-        routerMock
-            .navigate
+        routerMock.navigate
             .calls
             .reset();
+
+        routerMock.navigate
+            .and
+            .returnValue(
+                Promise.resolve(true)
+            );
 
         paramMapGetMock
             .calls
             .reset();
 
         paramMapGetMock
-            .and.returnValue('3');
+            .and
+            .returnValue('3');
 
-        toastrMock
-            .success
+        toastrMock.success
             .calls
             .reset();
 
-        toastrMock
-            .error
+        toastrMock.error
             .calls
             .reset();
 
-        toastrMock
-            .info
+        toastrMock.info
             .calls
             .reset();
 
@@ -196,7 +208,8 @@ describe('PerfilPermissaoComponent', () => {
 
         serviceMock
             .listarPorPerfil
-            .and.returnValue(
+            .and
+            .returnValue(
                 of({
                     content: [],
                     totalElements: 0
@@ -235,7 +248,8 @@ describe('PerfilPermissaoComponent', () => {
                             activatedRouteMock
                     },
                     {
-                        provide: Router,
+                        provide:
+                            Router,
                         useValue:
                             routerMock
                     },
@@ -271,15 +285,16 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve ser criado',
         () => {
-            expect(
-                component
-            ).toBeTruthy();
+
+            expect(component)
+                .toBeTruthy();
         }
     );
 
     it(
         'deve configurar a página e as colunas',
         () => {
+
             expect(
                 component.pagina
             ).toBe(
@@ -300,6 +315,12 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve carregar as permissões do perfil ao inicializar',
         () => {
+
+            expect(
+                contextoOrganizacaoServiceMock
+                    .retornarOrganizacaoProntaObservable
+            ).toHaveBeenCalledTimes(1);
+
             expect(
                 component.idPerfil
             ).toBe(3);
@@ -316,15 +337,15 @@ describe('PerfilPermissaoComponent', () => {
     );
 
     it(
-        'deve voltar para perfis ao trocar a organização ativa',
+        'deve limpar sem navegar enquanto a organização pronta estiver indisponível',
         () => {
+
             serviceMock
                 .listarPorPerfil
                 .calls
                 .reset();
 
-            routerMock
-                .navigate
+            routerMock.navigate
                 .calls
                 .reset();
 
@@ -343,10 +364,9 @@ describe('PerfilPermissaoComponent', () => {
             component.isFormulario = true;
             component.isVisualizacao = true;
 
-            organizacaoAtivaSubject.next({
-                id: 2,
-                nome: 'Organização 2'
-            });
+            organizacaoProntaSubject.next(
+                null
+            );
 
             expect(
                 component.isLista
@@ -375,53 +395,42 @@ describe('PerfilPermissaoComponent', () => {
 
             expect(
                 routerMock.navigate
-            ).toHaveBeenCalledOnceWith([
-                '/acesso/perfis'
-            ]);
+            ).not.toHaveBeenCalled();
         }
     );
 
     it(
-        'deve limpar dados e voltar para perfis quando não houver organização ativa',
+        'deve voltar para perfis somente quando a nova organização estiver pronta',
         () => {
+
             serviceMock
                 .listarPorPerfil
                 .calls
                 .reset();
 
-            routerMock
-                .navigate
+            routerMock.navigate
                 .calls
                 .reset();
-
-            component.formulario =
-                new FormBuilder().group({
-                    idPerfil: [3],
-                    idPermissao: [10]
-                });
 
             component.lista = [
                 vinculo
             ];
 
             component.totalRegistros = 1;
-            component.isLista = false;
-            component.isFormulario = true;
-            component.isVisualizacao = true;
 
-            organizacaoAtivaSubject.next(null);
-
-            expect(
-                component.isLista
-            ).toBeTrue();
+            organizacaoProntaSubject.next(
+                null
+            );
 
             expect(
-                component.isFormulario
-            ).toBeFalse();
+                routerMock.navigate
+            ).not.toHaveBeenCalled();
 
-            expect(
-                component.isVisualizacao
-            ).toBeFalse();
+            organizacaoProntaSubject.next({
+                id: 2,
+                nome:
+                    'Organização 2'
+            });
 
             expect(
                 component.lista
@@ -447,9 +456,11 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve controlar as ações conforme as permissões',
         () => {
+
             autorizacaoServiceMock
                 .possuiPermissao
-                .and.callFake(
+                .and
+                .callFake(
                     (
                         permissao:
                             ChavePermissao
@@ -520,6 +531,7 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve abrir o formulário de vínculo quando autorizado',
         () => {
+
             autorizar(
                 ChavePermissao
                     .PerfilPermissaoCriar
@@ -558,6 +570,7 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'não deve abrir o formulário de vínculo sem permissão',
         () => {
+
             component.botaoAdicionar();
 
             expect(
@@ -573,6 +586,7 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve detalhar a permissão do perfil quando autorizado',
         () => {
+
             autorizar(
                 ChavePermissao
                     .PerfilPermissaoDetalhar
@@ -580,12 +594,12 @@ describe('PerfilPermissaoComponent', () => {
 
             serviceMock
                 .detalhar
-                .and.returnValue(
+                .and
+                .returnValue(
                     of(vinculo)
                 );
 
-            component
-                .botaoVisualizar(5);
+            component.botaoVisualizar(5);
 
             expect(
                 serviceMock.detalhar
@@ -620,8 +634,8 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'não deve detalhar sem permissão',
         () => {
-            component
-                .botaoVisualizar(5);
+
+            component.botaoVisualizar(5);
 
             expect(
                 serviceMock.detalhar
@@ -632,6 +646,7 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve vincular a permissão ao perfil',
         () => {
+
             autorizar(
                 ChavePermissao
                     .PerfilPermissaoCriar
@@ -639,7 +654,8 @@ describe('PerfilPermissaoComponent', () => {
 
             serviceMock
                 .cadastrar
-                .and.returnValue(
+                .and
+                .returnValue(
                     of(vinculo)
                 );
 
@@ -682,6 +698,7 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'não deve salvar formulário inválido',
         () => {
+
             autorizar(
                 ChavePermissao
                     .PerfilPermissaoCriar
@@ -699,6 +716,7 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'não deve salvar sem permissão',
         () => {
+
             component.formulario =
                 new FormBuilder().group({
                     idPerfil: [3],
@@ -716,6 +734,7 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve excluir a permissão do perfil quando autorizado',
         () => {
+
             autorizar(
                 ChavePermissao
                     .PerfilPermissaoExcluir
@@ -723,7 +742,8 @@ describe('PerfilPermissaoComponent', () => {
 
             serviceMock
                 .excluir
-                .and.returnValue(
+                .and
+                .returnValue(
                     of(undefined)
                 );
 
@@ -751,6 +771,7 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'não deve excluir sem permissão',
         () => {
+
             component.botaoExcluir(5);
 
             expect(
@@ -762,15 +783,12 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve carregar a página solicitada',
         () => {
-            const parametros = {
-                page: 2,
-                size: 20
-            };
 
             component
-                .quantidadePorPagina(
-                    parametros
-                );
+                .quantidadePorPagina({
+                    page: 2,
+                    size: 20
+                });
 
             expect(
                 serviceMock
@@ -786,6 +804,7 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve cancelar e retornar para a lista',
         () => {
+
             autorizar(
                 ChavePermissao
                     .PerfilPermissaoCriar
@@ -822,6 +841,7 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve voltar para a lista de perfis',
         () => {
+
             component.voltar();
 
             expect(
@@ -835,11 +855,12 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve voltar para perfis quando o identificador for inválido',
         () => {
-            paramMapGetMock
-                .and.returnValue(null);
 
-            routerMock
-                .navigate
+            paramMapGetMock
+                .and
+                .returnValue(null);
+
+            routerMock.navigate
                 .calls
                 .reset();
 
@@ -866,13 +887,16 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve informar erro ao falhar no carregamento',
         () => {
+
             serviceMock
                 .listarPorPerfil
-                .and.returnValue(
+                .and
+                .returnValue(
                     throwError(
-                        () => new Error(
-                            'Erro ao listar'
-                        )
+                        () =>
+                            new Error(
+                                'Erro ao listar'
+                            )
                     )
                 );
 
@@ -889,6 +913,7 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve informar erro ao falhar no detalhamento',
         () => {
+
             autorizar(
                 ChavePermissao
                     .PerfilPermissaoDetalhar
@@ -896,16 +921,17 @@ describe('PerfilPermissaoComponent', () => {
 
             serviceMock
                 .detalhar
-                .and.returnValue(
+                .and
+                .returnValue(
                     throwError(
-                        () => new Error(
-                            'Erro ao detalhar'
-                        )
+                        () =>
+                            new Error(
+                                'Erro ao detalhar'
+                            )
                     )
                 );
 
-            component
-                .botaoVisualizar(5);
+            component.botaoVisualizar(5);
 
             expect(
                 toastrMock.error
@@ -918,6 +944,7 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve informar erro ao falhar no vínculo',
         () => {
+
             autorizar(
                 ChavePermissao
                     .PerfilPermissaoCriar
@@ -925,11 +952,13 @@ describe('PerfilPermissaoComponent', () => {
 
             serviceMock
                 .cadastrar
-                .and.returnValue(
+                .and
+                .returnValue(
                     throwError(
-                        () => new Error(
-                            'Erro ao cadastrar'
-                        )
+                        () =>
+                            new Error(
+                                'Erro ao cadastrar'
+                            )
                     )
                 );
 
@@ -952,6 +981,7 @@ describe('PerfilPermissaoComponent', () => {
     it(
         'deve informar erro ao falhar na exclusão',
         () => {
+
             autorizar(
                 ChavePermissao
                     .PerfilPermissaoExcluir
@@ -959,11 +989,13 @@ describe('PerfilPermissaoComponent', () => {
 
             serviceMock
                 .excluir
-                .and.returnValue(
+                .and
+                .returnValue(
                     throwError(
-                        () => new Error(
-                            'Erro ao excluir'
-                        )
+                        () =>
+                            new Error(
+                                'Erro ao excluir'
+                            )
                     )
                 );
 
@@ -981,9 +1013,11 @@ describe('PerfilPermissaoComponent', () => {
         permissaoAutorizada:
             ChavePermissao
     ): void {
+
         autorizacaoServiceMock
             .possuiPermissao
-            .and.callFake(
+            .and
+            .callFake(
                 (
                     permissao:
                         ChavePermissao

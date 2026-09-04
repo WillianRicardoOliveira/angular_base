@@ -1,9 +1,13 @@
 import {
     Component,
     DestroyRef,
-    OnInit,
-    inject
+    inject,
+    OnInit
 } from '@angular/core';
+
+import {
+    takeUntilDestroyed
+} from '@angular/core/rxjs-interop';
 
 import {
     FormBuilder,
@@ -16,10 +20,6 @@ import {
     ActivatedRoute,
     Router
 } from '@angular/router';
-
-import {
-    takeUntilDestroyed
-} from '@angular/core/rxjs-interop';
 
 import {
     debounceTime,
@@ -45,12 +45,6 @@ import {
 } from '@/core/organizacao/services/contexto-organizacao.service';
 
 import {
-    Subsidiaria,
-    UsuarioEmpresa,
-    UsuarioSubsidiaria
-} from '@/interfaces/interfaces';
-
-import {
     UsuarioEmpresaService
 } from '@/domain/acesso/usuario-empresa/services/usuario-empresa.service';
 
@@ -59,12 +53,18 @@ import {
 } from '@/domain/configuracao/subsidiaria/services/subsidiaria.service';
 
 import {
-    UsuarioSubsidiariaService
-} from './services/usuario-subsidiaria.service';
+    Subsidiaria,
+    UsuarioEmpresa,
+    UsuarioSubsidiaria
+} from '@/interfaces/interfaces';
 
 import {
     ItemBreadcrumbPagina
 } from '@components/cabecalho-pagina/cabecalho-pagina.component';
+
+import {
+    UsuarioSubsidiariaService
+} from './services/usuario-subsidiaria.service';
 
 @Component({
     selector: 'app-usuario-subsidiaria',
@@ -79,45 +79,69 @@ export class UsuarioSubsidiariaComponent
     implements OnInit {
 
     private readonly service =
-        inject(UsuarioSubsidiariaService);
+        inject(
+            UsuarioSubsidiariaService
+        );
 
     private readonly usuarioEmpresaService =
-        inject(UsuarioEmpresaService);
+        inject(
+            UsuarioEmpresaService
+        );
 
     private readonly subsidiariaService =
-        inject(SubsidiariaService);
+        inject(
+            SubsidiariaService
+        );
 
     private readonly autorizacaoService =
-        inject(AutorizacaoService);
+        inject(
+            AutorizacaoService
+        );
 
     private readonly contextoOrganizacaoService =
-        inject(ContextoOrganizacaoService);
+        inject(
+            ContextoOrganizacaoService
+        );
 
     private readonly builder =
-        inject(FormBuilder);
+        inject(
+            FormBuilder
+        );
 
     private readonly route =
-        inject(ActivatedRoute);
+        inject(
+            ActivatedRoute
+        );
 
     private readonly router =
-        inject(Router);
+        inject(
+            Router
+        );
 
     private readonly toastr =
-        inject(ToastrService);
+        inject(
+            ToastrService
+        );
 
     private readonly destroyRef =
-        inject(DestroyRef);
+        inject(
+            DestroyRef
+        );
 
     idUsuario = 0;
+
     idUsuarioEmpresa = 0;
+
     idEmpresa = 0;
 
-    pagina = 'Subsidiarias do usuario';
+    pagina =
+        'Subsidiarias do usuario';
 
     descricao =
         'Gerencie as subsidiarias vinculadas ao usuario na empresa';
 
-    breadcrumb: ItemBreadcrumbPagina[] = [];
+    breadcrumb:
+        ItemBreadcrumbPagina[] = [];
 
     coluna = [
         'Codigo do vinculo empresa',
@@ -128,25 +152,36 @@ export class UsuarioSubsidiariaComponent
         'Status'
     ];
 
-    lista: UsuarioSubsidiaria[] = [];
-    subsidiarias: Subsidiaria[] = [];
+    lista:
+        UsuarioSubsidiaria[] = [];
+
+    subsidiarias:
+        Subsidiaria[] = [];
 
     totalRegistros = 0;
+
     paginaAtual = 0;
+
     tamanhoPagina = 10;
 
     isLista = true;
+
     isFormulario = false;
+
     isVisualizacao = false;
 
     formulario!: FormGroup;
 
     usuarioNome = '';
+
     empresaNome = '';
+
     subsidiariaNome = '';
 
     subsidiariaPesquisaControl =
-        new FormControl<string | Subsidiaria | null>('');
+        new FormControl<
+            string | Subsidiaria | null
+        >('');
 
     get podeCriar(): boolean {
         return this.autorizacaoService
@@ -184,16 +219,22 @@ export class UsuarioSubsidiariaComponent
             Number(
                 this.route.snapshot
                     .paramMap
-                    .get('idUsuarioEmpresa')
+                    .get(
+                        'idUsuarioEmpresa'
+                    )
             );
 
         if (
-            !Number.isInteger(this.idUsuario) ||
+            !Number.isInteger(
+                this.idUsuario
+            ) ||
             this.idUsuario <= 0 ||
-            !Number.isInteger(this.idUsuarioEmpresa) ||
+            !Number.isInteger(
+                this.idUsuarioEmpresa
+            ) ||
             this.idUsuarioEmpresa <= 0
         ) {
-            this.router.navigate([
+            void this.router.navigate([
                 '/acesso/usuarios'
             ]);
 
@@ -227,8 +268,11 @@ export class UsuarioSubsidiariaComponent
                     this.totalRegistros =
                         pagina.totalElements;
 
-                    this.paginaAtual = page;
-                    this.tamanhoPagina = size;
+                    this.paginaAtual =
+                        page;
+
+                    this.tamanhoPagina =
+                        size;
                 },
                 error: () => {
                     this.toastr.error(
@@ -356,11 +400,15 @@ export class UsuarioSubsidiariaComponent
             .cadastrar({
                 idUsuarioEmpresa:
                     this.formulario
-                        .get('idUsuarioEmpresa')
+                        .get(
+                            'idUsuarioEmpresa'
+                        )
                         ?.value,
                 idSubsidiaria:
                     this.formulario
-                        .get('idSubsidiaria')
+                        .get(
+                            'idSubsidiaria'
+                        )
                         ?.value
             })
             .subscribe({
@@ -419,7 +467,8 @@ export class UsuarioSubsidiariaComponent
     }
 
     exibirSubsidiaria(
-        valor: Subsidiaria | string | null
+        valor:
+            Subsidiaria | string | null
     ): string {
         if (!valor) {
             return '';
@@ -452,7 +501,7 @@ export class UsuarioSubsidiariaComponent
     }
 
     voltar(): void {
-        this.router.navigate([
+        void this.router.navigate([
             '/acesso/usuarios',
             this.idUsuario,
             'empresas'
@@ -482,7 +531,9 @@ export class UsuarioSubsidiariaComponent
 
     private carregarContextoELista(): void {
         this.usuarioEmpresaService
-            .detalhar(this.idUsuarioEmpresa)
+            .detalhar(
+                this.idUsuarioEmpresa
+            )
             .subscribe({
                 next: (dados) => {
                     if (
@@ -498,7 +549,9 @@ export class UsuarioSubsidiariaComponent
                         return;
                     }
 
-                    if (dados.todasSubsidiarias) {
+                    if (
+                        dados.todasSubsidiarias
+                    ) {
                         this.toastr.info(
                             'Usuario ja possui acesso a todas as subsidiarias da empresa'
                         );
@@ -557,7 +610,9 @@ export class UsuarioSubsidiariaComponent
             .subscribe((filtro) => {
                 if (this.formulario) {
                     this.formulario
-                        .get('idSubsidiaria')
+                        .get(
+                            'idSubsidiaria'
+                        )
                         ?.setValue(null);
                 }
 
@@ -571,7 +626,9 @@ export class UsuarioSubsidiariaComponent
         filtro: string
     ): void {
         if (
-            !Number.isInteger(this.idEmpresa) ||
+            !Number.isInteger(
+                this.idEmpresa
+            ) ||
             this.idEmpresa <= 0
         ) {
             this.subsidiarias = [];
@@ -604,14 +661,19 @@ export class UsuarioSubsidiariaComponent
 
     private configurarAtualizacaoPorOrganizacao(): void {
         this.contextoOrganizacaoService
-            .retornarOrganizacaoAtivaObservable()
+            .retornarOrganizacaoProntaObservable()
             .pipe(
                 skip(1),
-                takeUntilDestroyed(this.destroyRef)
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
             )
-            .subscribe(() => {
+            .subscribe((organizacao) => {
                 this.limparEstadoPorTrocaOrganizacao();
-                this.voltar();
+
+                if (organizacao) {
+                    this.voltar();
+                }
             });
     }
 
@@ -623,22 +685,32 @@ export class UsuarioSubsidiariaComponent
         this.totalRegistros = 0;
         this.paginaAtual = 0;
         this.tamanhoPagina = 10;
+        this.idEmpresa = 0;
+        this.usuarioNome = '';
+        this.empresaNome = '';
     }
 
     private mapearLista(
-        lista: UsuarioSubsidiaria[]
+        lista:
+            UsuarioSubsidiaria[]
     ): UsuarioSubsidiaria[] {
-        return lista.map((item) => ({
-            id: item.id,
-            idUsuarioEmpresa:
-                item.idUsuarioEmpresa,
-            usuario: item.usuario,
-            empresa: item.empresa,
-            idSubsidiaria:
-                item.idSubsidiaria,
-            subsidiaria:
-                item.subsidiaria,
-            status: item.status
-        }));
+        return lista.map(
+            (item) => ({
+                id:
+                    item.id,
+                idUsuarioEmpresa:
+                    item.idUsuarioEmpresa,
+                usuario:
+                    item.usuario,
+                empresa:
+                    item.empresa,
+                idSubsidiaria:
+                    item.idSubsidiaria,
+                subsidiaria:
+                    item.subsidiaria,
+                status:
+                    item.status
+            })
+        );
     }
 }

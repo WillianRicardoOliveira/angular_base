@@ -47,8 +47,11 @@ import {
 
 @Component({
     selector: 'app-perfil',
-    templateUrl: './perfil.component.html',
-    styleUrls: ['./perfil.component.scss'],
+    templateUrl:
+        './perfil.component.html',
+    styleUrls: [
+        './perfil.component.scss'
+    ],
     standalone: false
 })
 export class PerfilComponent extends Base {
@@ -152,7 +155,7 @@ export class PerfilComponent extends Base {
             return;
         }
 
-        this.routerPerfil.navigate([
+        void this.routerPerfil.navigate([
             '/acesso/perfis',
             id,
             'permissoes'
@@ -190,10 +193,12 @@ export class PerfilComponent extends Base {
 
     private configurarAtualizacaoPorOrganizacao(): void {
         this.contextoOrganizacaoService
-            .retornarOrganizacaoAtivaObservable()
+            .retornarOrganizacaoProntaObservable()
             .pipe(
                 skip(1),
-                takeUntilDestroyed(this.destroyRef)
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
             )
             .subscribe((organizacao) => {
                 this.limparEstadoPorTrocaOrganizacao();

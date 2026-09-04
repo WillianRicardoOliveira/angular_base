@@ -52,7 +52,8 @@ import {
 
 @Component({
     selector: 'app-usuario',
-    templateUrl: './usuario.component.html',
+    templateUrl:
+        './usuario.component.html',
     styleUrls: [
         './usuario.component.scss'
     ],
@@ -206,7 +207,7 @@ export class UsuarioComponent extends Base {
             return;
         }
 
-        this.routerUsuario.navigate([
+        void this.routerUsuario.navigate([
             '/acesso/usuarios',
             id,
             'perfis'
@@ -220,7 +221,7 @@ export class UsuarioComponent extends Base {
             return;
         }
 
-        this.routerUsuario.navigate([
+        void this.routerUsuario.navigate([
             '/acesso/usuarios',
             id,
             'empresas'
@@ -270,10 +271,12 @@ export class UsuarioComponent extends Base {
 
     private configurarAtualizacaoPorOrganizacao(): void {
         this.contextoOrganizacaoService
-            .retornarOrganizacaoAtivaObservable()
+            .retornarOrganizacaoProntaObservable()
             .pipe(
                 skip(1),
-                takeUntilDestroyed(this.destroyRef)
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
             )
             .subscribe((organizacao) => {
                 this.limparEstadoPorTrocaOrganizacao();

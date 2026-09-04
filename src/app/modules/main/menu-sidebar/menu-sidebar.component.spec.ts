@@ -34,60 +34,175 @@ import {
 } from '@/core/autorizacao/services/autorizacao.service';
 
 import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
+
+import {
+    ContextoConfiguracaoInicial,
+    EstadoConfiguracaoInicial,
+    ProximaEtapaConfiguracao
+} from '@/domain/configuracao/configuracao-inicial/models/estado-configuracao-inicial.model';
+
+import {
+    ConfiguracaoInicialService
+} from '@/domain/configuracao/configuracao-inicial/services/configuracao-inicial.service';
+
+import {
     MENU,
-    MENU_CONFIGURACOES,
     MenuSidebarComponent
 } from './menu-sidebar.component';
 
+interface OrganizacaoTeste {
+    id: number;
+    nome: string;
+}
+
 describe('MenuSidebarComponent', () => {
+
+    const estadoCompleto:
+        EstadoConfiguracaoInicial = {
+            empresaCadastrada:
+                true,
+            proximaEtapa:
+                null
+        };
+
+    const estadoPendente:
+        EstadoConfiguracaoInicial = {
+            empresaCadastrada:
+                false,
+            proximaEtapa:
+                ProximaEtapaConfiguracao
+                    .Empresa
+        };
+
     let component:
         MenuSidebarComponent;
 
     let fixture:
-        ComponentFixture<MenuSidebarComponent>;
+        ComponentFixture<
+            MenuSidebarComponent
+        >;
 
     let estadoAutorizacaoSubject:
         BehaviorSubject<{
             carregado: boolean;
-            permissoes: ReadonlySet<ChavePermissao>;
+            permissoes:
+                ReadonlySet<ChavePermissao>;
         }>;
 
+    let organizacaoProntaSubject:
+        BehaviorSubject<
+            OrganizacaoTeste | null
+        >;
+
+    let configuracaoSubject:
+        BehaviorSubject<
+            ContextoConfiguracaoInicial
+        >;
+
+    let estadoRetornado:
+        EstadoConfiguracaoInicial;
+
     const storeMock = {
-        select: jasmine
-            .createSpy('select')
-            .and.returnValue(
-                of({
-                    sidebarSkin:
-                        'sidebar-dark-primary',
-                    menuSidebarCollapsed:
-                        false
-                })
+        select:
+            jasmine.createSpy(
+                'select'
             )
     };
 
     const routerMock = {
-        url: '/dashboard',
-        events: of()
+        url:
+            '/dashboard',
+        events:
+            of()
     };
 
     const autorizacaoServiceMock = {
-        possuiPermissao: jasmine.createSpy(
-            'possuiPermissao'
-        ),
-        retornarEstado: jasmine.createSpy(
-            'retornarEstado'
-        )
+        possuiPermissao:
+            jasmine.createSpy(
+                'possuiPermissao'
+            ),
+        retornarEstado:
+            jasmine.createSpy(
+                'retornarEstado'
+            )
+    };
+
+    const contextoOrganizacaoServiceMock = {
+        retornarOrganizacaoProntaObservable:
+            jasmine.createSpy(
+                'retornarOrganizacaoProntaObservable'
+            )
+    };
+
+    const configuracaoInicialServiceMock = {
+        consultar:
+            jasmine.createSpy(
+                'consultar'
+            ),
+        retornarContextoObservable:
+            jasmine.createSpy(
+                'retornarContextoObservable'
+            ),
+        limparEstado:
+            jasmine.createSpy(
+                'limparEstado'
+            )
     };
 
     beforeEach(
         waitForAsync(() => {
+            estadoRetornado =
+                estadoCompleto;
+
             estadoAutorizacaoSubject =
                 new BehaviorSubject({
                     carregado: true,
                     permissoes:
-                        new Set<ChavePermissao>()
+                        new Set<
+                            ChavePermissao
+                        >()
                 });
 
+            organizacaoProntaSubject =
+                new BehaviorSubject<
+                    OrganizacaoTeste | null
+                >({
+                    id: 1,
+                    nome:
+                        'Organização Principal'
+                });
+
+            configuracaoSubject =
+                new BehaviorSubject<
+                    ContextoConfiguracaoInicial
+                >({
+                    idOrganizacao:
+                        null,
+                    carregando:
+                        false,
+                    erro:
+                        false,
+                    estado:
+                        null
+                });
+
+            storeMock.select
+                .calls
+                .reset();
+
+            storeMock.select
+                .and
+                .returnValue(
+                    of({
+                        sidebarSkin:
+                            'sidebar-dark-primary',
+                        menuSidebarCollapsed:
+                            false
+                    })
+                );
+
             autorizacaoServiceMock
                 .possuiPermissao
                 .calls
@@ -95,7 +210,8 @@ describe('MenuSidebarComponent', () => {
 
             autorizacaoServiceMock
                 .possuiPermissao
-                .and.returnValue(false);
+                .and
+                .returnValue(false);
 
             autorizacaoServiceMock
                 .retornarEstado
@@ -104,37 +220,130 @@ describe('MenuSidebarComponent', () => {
 
             autorizacaoServiceMock
                 .retornarEstado
-                .and.returnValue(
+                .and
+                .returnValue(
                     estadoAutorizacaoSubject
                         .asObservable()
                 );
 
-            TestBed.configureTestingModule({
-                declarations: [
-                    MenuSidebarComponent
-                ],
-                providers: [
-                    {
-                        provide: Store,
-                        useValue:
-                            storeMock
-                    },
-                    {
-                        provide: Router,
-                        useValue:
-                            routerMock
-                    },
-                    {
-                        provide:
-                            AutorizacaoService,
-                        useValue:
-                            autorizacaoServiceMock
-                    }
-                ],
-                schemas: [
-                    NO_ERRORS_SCHEMA
-                ]
-            }).compileComponents();
+            contextoOrganizacaoServiceMock
+                .retornarOrganizacaoProntaObservable
+                .calls
+                .reset();
+
+            contextoOrganizacaoServiceMock
+                .retornarOrganizacaoProntaObservable
+                .and
+                .returnValue(
+                    organizacaoProntaSubject
+                        .asObservable()
+                );
+
+            configuracaoInicialServiceMock
+                .retornarContextoObservable
+                .calls
+                .reset();
+
+            configuracaoInicialServiceMock
+                .retornarContextoObservable
+                .and
+                .returnValue(
+                    configuracaoSubject
+                        .asObservable()
+                );
+
+            configuracaoInicialServiceMock
+                .limparEstado
+                .calls
+                .reset();
+
+            configuracaoInicialServiceMock
+                .limparEstado
+                .and
+                .callFake(() => {
+                    configuracaoSubject.next({
+                        idOrganizacao:
+                            null,
+                        carregando:
+                            false,
+                        erro:
+                            false,
+                        estado:
+                            null
+                    });
+                });
+
+            configuracaoInicialServiceMock
+                .consultar
+                .calls
+                .reset();
+
+            configuracaoInicialServiceMock
+                .consultar
+                .and
+                .callFake(() => {
+                    const idOrganizacao =
+                        organizacaoProntaSubject
+                            .value
+                            ?.id ?? null;
+
+                    configuracaoSubject.next({
+                        idOrganizacao,
+                        carregando:
+                            false,
+                        erro:
+                            false,
+                        estado:
+                            estadoRetornado
+                    });
+
+                    return of(
+                        estadoRetornado
+                    );
+                });
+
+            TestBed
+                .configureTestingModule({
+                    declarations: [
+                        MenuSidebarComponent
+                    ],
+                    providers: [
+                        {
+                            provide:
+                                Store,
+                            useValue:
+                                storeMock
+                        },
+                        {
+                            provide:
+                                Router,
+                            useValue:
+                                routerMock
+                        },
+                        {
+                            provide:
+                                AutorizacaoService,
+                            useValue:
+                                autorizacaoServiceMock
+                        },
+                        {
+                            provide:
+                                ContextoOrganizacaoService,
+                            useValue:
+                                contextoOrganizacaoServiceMock
+                        },
+                        {
+                            provide:
+                                ConfiguracaoInicialService,
+                            useValue:
+                                configuracaoInicialServiceMock
+                        }
+                    ],
+                    schemas: [
+                        NO_ERRORS_SCHEMA
+                    ]
+                })
+                .compileComponents();
         })
     );
 
@@ -150,13 +359,19 @@ describe('MenuSidebarComponent', () => {
         fixture.detectChanges();
     });
 
-    it('deve ser criado', () => {
-        expect(component).toBeTruthy();
-    });
+    it(
+        'deve ser criado',
+        () => {
+
+            expect(component)
+                .toBeTruthy();
+        }
+    );
 
     it(
         'deve aplicar o tema do menu lateral',
         () => {
+
             expect(
                 component.classes
             ).toBe(
@@ -168,71 +383,110 @@ describe('MenuSidebarComponent', () => {
     );
 
     it(
-        'deve preservar itens publicos e remover acessos nao autorizados',
+        'deve carregar a configuracao da organizacao ativa',
         () => {
-            expect(
-                component.menu.length
-            ).toBe(
-                MENU.length
-            );
 
             expect(
-                component.menuConfiguracoes
-            ).toEqual([]);
+                contextoOrganizacaoServiceMock
+                    .retornarOrganizacaoProntaObservable
+            ).toHaveBeenCalledTimes(1);
 
             expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.PerfilListar
-            );
+                configuracaoInicialServiceMock
+                    .retornarContextoObservable
+            ).toHaveBeenCalledTimes(1);
 
             expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.PermissaoListar
-            );
+                configuracaoInicialServiceMock
+                    .limparEstado
+            ).not.toHaveBeenCalled();
 
             expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.UsuarioListar
-            );
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.EmpresaListar
-            );
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.SubsidiariaListar
-            );
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledTimes(5);
+                configuracaoInicialServiceMock
+                    .consultar
+            ).toHaveBeenCalledTimes(1);
         }
     );
 
     it(
-        'deve reconstruir menus quando o estado de autorizacao mudar',
+        'deve iniciar com menus dependentes ocultos enquanto carrega',
         () => {
-            autorizacaoServiceMock
-                .possuiPermissao
-                .calls
-                .reset();
+
+            configuracaoSubject.next({
+                idOrganizacao: 1,
+                carregando: true,
+                erro: false,
+                estado: null
+            });
+
+            expect(
+                component
+                    .configuracaoInicialCarregando
+            ).toBeTrue();
+
+            expect(
+                component
+                    .configuracaoInicialPendente
+            ).toBeTrue();
+
+            expect(component.menu)
+                .toEqual([]);
+        }
+    );
+
+    it(
+        'deve manter menus dependentes ocultos quando ocorrer erro',
+        () => {
+
+            autorizarTodasAsPermissoes();
+
+            configuracaoSubject.next({
+                idOrganizacao: 1,
+                carregando: false,
+                erro: true,
+                estado: null
+            });
+
+            expect(
+                component
+                    .erroConfiguracaoInicial
+            ).toBeTrue();
+
+            expect(
+                component
+                    .configuracaoInicialPendente
+            ).toBeTrue();
+
+            expect(component.menu)
+                .toEqual([]);
+        }
+    );
+
+    it(
+        'deve remover menus sem permissao',
+        () => {
+
+            expect(
+                component.menu
+            ).toEqual(
+                MENU
+            );
+
+            expect(
+                component
+                    .menuConfiguracoes
+            ).toEqual([]);
+        }
+    );
+
+    it(
+        'deve reconstruir menus quando a autorizacao mudar',
+        () => {
 
             autorizacaoServiceMock
                 .possuiPermissao
-                .and.callFake(
+                .and
+                .callFake(
                     (
                         permissao:
                             ChavePermissao
@@ -261,198 +515,282 @@ describe('MenuSidebarComponent', () => {
                     );
 
             expect(
-                grupoAcesso?.children
-                    ?.map((item) => item.name)
+                grupoAcesso
+                    ?.children
+                    ?.map(
+                        (item) =>
+                            item.name
+                    )
             ).toEqual([
                 'Usuários'
             ]);
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledTimes(5);
         }
     );
 
     it(
-        'deve exibir Perfis quando possuir a permissao de listar',
+        'deve manter somente Plataforma durante a configuracao inicial',
         () => {
-            autorizacaoServiceMock
-                .possuiPermissao
-                .calls
-                .reset();
 
-            autorizacaoServiceMock
-                .possuiPermissao
-                .and.callFake(
-                    (
-                        permissao:
-                            ChavePermissao
-                    ) =>
-                        permissao ===
-                        ChavePermissao
-                            .PerfilListar
-                );
+            autorizarTodasAsPermissoes();
 
-            const resultado =
-                component['filtrarMenu'](
-                    MENU_CONFIGURACOES
-                );
-
-            const grupoAcesso =
-                resultado.find(
-                    (item) =>
-                        item.name ===
-                        'Acesso e Segurança'
-                );
-
-            const perfil =
-                MENU_CONFIGURACOES[0]
-                    .children![0];
+            publicarConfiguracao(
+                estadoPendente
+            );
 
             expect(
-                grupoAcesso?.children
+                component
+                    .configuracaoInicialPendente
+            ).toBeTrue();
+
+            expect(component.menu)
+                .toEqual([]);
+
+            expect(
+                component
+                    .menuConfiguracoes
+                    .map(
+                        (item) =>
+                            item.name
+                    )
             ).toEqual([
-                perfil
+                'Plataforma'
             ]);
 
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.PerfilListar
-            );
+            const plataforma =
+                component
+                    .menuConfiguracoes
+                    .find(
+                        (item) =>
+                            item.name ===
+                            'Plataforma'
+                    );
 
             expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.PermissaoListar
-            );
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.UsuarioListar
-            );
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.EmpresaListar
-            );
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.SubsidiariaListar
-            );
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledTimes(5);
-        }
-    );
-
-    it(
-        'deve exibir Permissoes quando possuir a permissao de listar',
-        () => {
-            autorizacaoServiceMock
-                .possuiPermissao
-                .calls
-                .reset();
-
-            autorizacaoServiceMock
-                .possuiPermissao
-                .and.callFake(
-                    (
-                        permissao:
-                            ChavePermissao
-                    ) =>
-                        permissao ===
-                        ChavePermissao
-                            .PermissaoListar
-                );
-
-            const resultado =
-                component['filtrarMenu'](
-                    MENU_CONFIGURACOES
-                );
-
-            const grupoAcesso =
-                resultado.find(
-                    (item) =>
-                        item.name ===
-                        'Acesso e Segurança'
-                );
-
-            const permissao =
-                MENU_CONFIGURACOES[0]
-                    .children![1];
-
-            expect(
-                grupoAcesso?.children
+                plataforma
+                    ?.children
+                    ?.map(
+                        (item) =>
+                            item.name
+                    )
             ).toEqual([
-                permissao
+                'Organizacoes',
+                'Convites'
             ]);
 
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.PerfilListar
-            );
+            const configuracao =
+                component
+                    .menuConfiguracoes
+                    .find(
+                        (item) =>
+                            item.name ===
+                            'Configuração'
+                    );
 
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.PermissaoListar
-            );
+            expect(configuracao)
+                .toBeUndefined();
 
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.UsuarioListar
-            );
+            const empresaVisivel =
+                component
+                    .menuConfiguracoes
+                    .some(
+                        (item) =>
+                            item.children
+                                ?.some(
+                                    (child) =>
+                                        child.name ===
+                                        'Empresas'
+                                ) === true
+                    );
 
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.EmpresaListar
-            );
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledWith(
-                ChavePermissao.SubsidiariaListar
-            );
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledTimes(5);
+            expect(empresaVisivel)
+                .toBeFalse();
         }
     );
 
     it(
-        'deve remover item quando usuario nao possuir a permissao',
+        'deve liberar menus imediatamente quando a configuracao estiver completa',
         () => {
-            autorizacaoServiceMock
-                .possuiPermissao
+
+            autorizarTodasAsPermissoes();
+
+            publicarConfiguracao(
+                estadoPendente
+            );
+
+            publicarConfiguracao(
+                estadoCompleto
+            );
+
+            expect(
+                component
+                    .configuracaoInicialPendente
+            ).toBeFalse();
+
+            expect(
+                component
+                    .configuracaoInicialCarregando
+            ).toBeFalse();
+
+            expect(
+                component
+                    .menuConfiguracoes
+                    .map(
+                        (item) =>
+                            item.name
+                    )
+            ).toEqual([
+                'Plataforma',
+                'Acesso e Segurança',
+                'Configuração'
+            ]);
+
+            const configuracao =
+                component
+                    .menuConfiguracoes
+                    .find(
+                        (item) =>
+                            item.name ===
+                            'Configuração'
+                    );
+
+            expect(
+                configuracao
+                    ?.children
+                    ?.map(
+                        (item) =>
+                            item.name
+                    )
+            ).toEqual([
+                'Empresas',
+                'Subsidiárias'
+            ]);
+        }
+    );
+
+    it(
+        'deve consultar a configuracao ao trocar de organizacao',
+        () => {
+
+            configuracaoInicialServiceMock
+                .limparEstado
                 .calls
                 .reset();
 
+            configuracaoInicialServiceMock
+                .consultar
+                .calls
+                .reset();
+
+            estadoRetornado =
+                estadoPendente;
+
+            organizacaoProntaSubject.next({
+                id: 2,
+                nome:
+                    'Segunda Organização'
+            });
+
+            expect(
+                configuracaoInicialServiceMock
+                    .limparEstado
+            ).not.toHaveBeenCalled();
+
+            expect(
+                configuracaoInicialServiceMock
+                    .consultar
+            ).toHaveBeenCalledTimes(1);
+
+            expect(
+                component
+                    .configuracaoInicialPendente
+            ).toBeTrue();
+
+            expect(
+                configuracaoSubject
+                    .value
+                    .idOrganizacao
+            ).toBe(2);
+        }
+    );
+
+    it(
+        'nao deve consultar novamente quando a organizacao permanecer a mesma',
+        () => {
+
+            configuracaoInicialServiceMock
+                .limparEstado
+                .calls
+                .reset();
+
+            configuracaoInicialServiceMock
+                .consultar
+                .calls
+                .reset();
+
+            organizacaoProntaSubject.next({
+                id: 1,
+                nome:
+                    'Organização Principal Atualizada'
+            });
+
+            expect(
+                configuracaoInicialServiceMock
+                    .limparEstado
+            ).not.toHaveBeenCalled();
+
+            expect(
+                configuracaoInicialServiceMock
+                    .consultar
+            ).not.toHaveBeenCalled();
+        }
+    );
+
+    it(
+        'deve limpar o contexto quando nao houver organizacao ativa',
+        () => {
+
+            configuracaoInicialServiceMock
+                .limparEstado
+                .calls
+                .reset();
+
+            configuracaoInicialServiceMock
+                .consultar
+                .calls
+                .reset();
+
+            organizacaoProntaSubject.next(
+                null
+            );
+
+            expect(
+                configuracaoInicialServiceMock
+                    .limparEstado
+            ).toHaveBeenCalledTimes(1);
+
+            expect(
+                configuracaoInicialServiceMock
+                    .consultar
+            ).not.toHaveBeenCalled();
+
+            expect(
+                component
+                    .configuracaoInicialPendente
+            ).toBeTrue();
+
+            expect(component.menu)
+                .toEqual([]);
+        }
+    );
+
+    it(
+        'deve remover item quando nao possuir permissao',
+        () => {
+
             autorizacaoServiceMock
                 .possuiPermissao
-                .and.callFake(
+                .and
+                .callFake(
                     (
                         permissao:
                             ChavePermissao
@@ -464,7 +802,8 @@ describe('MenuSidebarComponent', () => {
 
             const itens: MenuItem[] = [
                 {
-                    name: 'Usuarios',
+                    name:
+                        'Usuários',
                     iconClasses:
                         'fas fa-users',
                     path: [
@@ -475,7 +814,8 @@ describe('MenuSidebarComponent', () => {
                             .UsuarioListar
                 },
                 {
-                    name: 'Perfis',
+                    name:
+                        'Perfis',
                     iconClasses:
                         'fas fa-user-tag',
                     path: [
@@ -488,43 +828,38 @@ describe('MenuSidebarComponent', () => {
             ];
 
             const resultado =
-                component['filtrarMenu'](
+                component[
+                    'filtrarMenu'
+                ](
                     itens
                 );
 
-            expect(
-                resultado
-            ).toEqual([
-                itens[0]
-            ]);
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledTimes(2);
+            expect(resultado)
+                .toEqual([
+                    itens[0]
+                ]);
         }
     );
 
     it(
-        'deve remover grupo quando nenhum submenu estiver autorizado',
+        'deve remover grupo sem submenu autorizado',
         () => {
-            autorizacaoServiceMock
-                .possuiPermissao
-                .calls
-                .reset();
 
             autorizacaoServiceMock
                 .possuiPermissao
-                .and.returnValue(false);
+                .and
+                .returnValue(false);
 
             const itens: MenuItem[] = [
                 {
-                    name: 'Acesso',
+                    name:
+                        'Acesso',
                     iconClasses:
                         'fas fa-shield-alt',
                     children: [
                         {
-                            name: 'Usuarios',
+                            name:
+                                'Usuários',
                             iconClasses:
                                 'fas fa-users',
                             path: [
@@ -539,26 +874,21 @@ describe('MenuSidebarComponent', () => {
             ];
 
             const resultado =
-                component['filtrarMenu'](
+                component[
+                    'filtrarMenu'
+                ](
                     itens
                 );
 
-            expect(
-                resultado
-            ).toEqual([]);
-
-            expect(
-                autorizacaoServiceMock
-                    .possuiPermissao
-            ).toHaveBeenCalledOnceWith(
-                ChavePermissao.UsuarioListar
-            );
+            expect(resultado)
+                .toEqual([]);
         }
     );
 
     it(
-        'deve selecionar o modulo pela rota atual',
+        'deve selecionar modulo pela rota atual',
         () => {
+
             const modulo: MenuItem = {
                 name:
                     'Acesso e Segurança',
@@ -566,7 +896,8 @@ describe('MenuSidebarComponent', () => {
                     'fas fa-shield-alt',
                 children: [
                     {
-                        name: 'Usuarios',
+                        name:
+                            'Usuários',
                         iconClasses:
                             'fas fa-users',
                         path: [
@@ -577,6 +908,7 @@ describe('MenuSidebarComponent', () => {
             };
 
             component.menu = [];
+
             component.menuConfiguracoes = [
                 modulo
             ];
@@ -588,14 +920,18 @@ describe('MenuSidebarComponent', () => {
             );
 
             expect(
-                component.moduloSelecionado
-            ).toBe(modulo);
+                component
+                    .moduloSelecionado
+            ).toBe(
+                modulo
+            );
         }
     );
 
     it(
-        'deve alternar o painel flutuante no menu recolhido',
+        'deve alternar painel flutuante no menu recolhido',
         () => {
+
             const modulo: MenuItem = {
                 name:
                     'Acesso e Segurança',
@@ -603,7 +939,8 @@ describe('MenuSidebarComponent', () => {
                     'fas fa-shield-alt',
                 children: [
                     {
-                        name: 'Usuarios',
+                        name:
+                            'Usuários',
                         iconClasses:
                             'fas fa-users',
                         path: [
@@ -618,51 +955,65 @@ describe('MenuSidebarComponent', () => {
                     'button'
                 );
 
-            component.menuRecolhido = true;
+            component.menuRecolhido =
+                true;
 
             component.selecionarModulo({
-                item: modulo,
+                item:
+                    modulo,
                 elemento
             });
 
             expect(
-                component.moduloSelecionado
-            ).toBe(modulo);
+                component
+                    .moduloSelecionado
+            ).toBe(
+                modulo
+            );
 
             expect(
-                component.painelFlutuanteAberto
+                component
+                    .painelFlutuanteAberto
             ).toBeTrue();
 
             component.selecionarModulo({
-                item: modulo,
+                item:
+                    modulo,
                 elemento
             });
 
             expect(
-                component.painelFlutuanteAberto
+                component
+                    .painelFlutuanteAberto
             ).toBeFalse();
         }
     );
 
     it(
-        'deve fechar o painel flutuante ao pressionar Escape',
+        'deve fechar painel ao pressionar Escape',
         () => {
-            component.painelFlutuanteAberto =
-                true;
 
-            component.fecharPainelFlutuante();
+            component
+                .painelFlutuanteAberto =
+                    true;
+
+            component
+                .fecharPainelFlutuante();
 
             expect(
-                component.painelFlutuanteAberto
+                component
+                    .painelFlutuanteAberto
             ).toBeFalse();
         }
     );
 
     it(
-        'deve fechar o painel flutuante ao clicar fora',
+        'deve fechar painel ao clicar fora',
         () => {
-            component.painelFlutuanteAberto =
-                true;
+
+            component
+                .painelFlutuanteAberto =
+                    true;
 
             const elementoExterno =
                 document.createElement(
@@ -674,32 +1025,74 @@ describe('MenuSidebarComponent', () => {
                     {
                         target:
                             elementoExterno
-                    } as unknown as MouseEvent
+                    } as unknown as
+                        MouseEvent
                 );
 
             expect(
-                component.painelFlutuanteAberto
+                component
+                    .painelFlutuanteAberto
             ).toBeFalse();
         }
     );
 
     it(
-        'nao deve fechar o painel flutuante ao clicar dentro',
+        'nao deve fechar painel ao clicar dentro',
         () => {
-            component.painelFlutuanteAberto =
-                true;
+
+            component
+                .painelFlutuanteAberto =
+                    true;
 
             component
                 .fecharPainelAoClicarFora(
                     {
                         target:
-                            fixture.nativeElement
-                    } as unknown as MouseEvent
+                            fixture
+                                .nativeElement
+                    } as unknown as
+                        MouseEvent
                 );
 
             expect(
-                component.painelFlutuanteAberto
+                component
+                    .painelFlutuanteAberto
             ).toBeTrue();
         }
     );
+
+    function publicarConfiguracao(
+        estado:
+            EstadoConfiguracaoInicial,
+        idOrganizacao = 1
+    ): void {
+
+        configuracaoSubject.next({
+            idOrganizacao,
+            carregando:
+                false,
+            erro:
+                false,
+            estado
+        });
+    }
+
+    function autorizarTodasAsPermissoes():
+        void {
+
+        autorizacaoServiceMock
+            .possuiPermissao
+            .and
+            .returnValue(true);
+
+        estadoAutorizacaoSubject.next({
+            carregado: true,
+            permissoes:
+                new Set(
+                    Object.values(
+                        ChavePermissao
+                    )
+                )
+        });
+    }
 });

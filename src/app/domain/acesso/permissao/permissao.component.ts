@@ -44,7 +44,9 @@ import {
 @Component({
     selector: 'app-permissao',
     templateUrl: './permissao.component.html',
-    styleUrls: ['./permissao.component.scss'],
+    styleUrls: [
+        './permissao.component.scss'
+    ],
     standalone: false
 })
 export class PermissaoComponent extends Base {
@@ -113,17 +115,21 @@ export class PermissaoComponent extends Base {
         super.ngOnInit();
     }
 
-    override botaoAdicionar(): void {}
+    override botaoAdicionar(): void {
+    }
 
     override botaoEditar(
-        id: number
-    ): void {}
+        _id: number
+    ): void {
+    }
 
     override botaoExcluir(
-        id: number
-    ): void {}
+        _id: number
+    ): void {
+    }
 
-    override salvar(): void {}
+    override salvar(): void {
+    }
 
     campos(
         dados?: Permissao
@@ -148,10 +154,12 @@ export class PermissaoComponent extends Base {
 
     private configurarAtualizacaoPorOrganizacao(): void {
         this.contextoOrganizacaoService
-            .retornarOrganizacaoAtivaObservable()
+            .retornarOrganizacaoProntaObservable()
             .pipe(
                 skip(1),
-                takeUntilDestroyed(this.destroyRef)
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
             )
             .subscribe((organizacao) => {
                 this.limparEstadoPorTrocaOrganizacao();

@@ -1,11 +1,50 @@
-<app-header></app-header>
+<app-header>
+</app-header>
 
-<app-menu-sidebar class="sidebar-dark-primary"></app-menu-sidebar>
+<app-menu-sidebar
+    class="sidebar-dark-primary">
+</app-menu-sidebar>
 
 <div class="content-wrapper">
-    <router-outlet></router-outlet>
+    <router-outlet>
+    </router-outlet>
+
+    @if (configuracaoCarregando) {
+        <div
+            class="organizacao-loading"
+            role="status"
+            aria-live="polite"
+            aria-label="Carregando organização">
+
+            <div class="organizacao-loading__content">
+                <span
+                    class="organizacao-loading__icon"
+                    aria-hidden="true">
+
+                    <i
+                        class="
+                            fas
+                            fa-circle-notch
+                            fa-spin
+                        ">
+                    </i>
+                </span>
+
+                <span class="organizacao-loading__text">
+                    Preparando organização...
+                </span>
+            </div>
+        </div>
+    }
 </div>
 
-<app-footer></app-footer>
-<app-control-sidebar></app-control-sidebar>
-<div id="sidebar-overlay" (click)="onToggleMenuSidebar()"></div>
+<app-footer>
+</app-footer>
+
+<app-control-sidebar>
+</app-control-sidebar>
+
+<div
+    id="sidebar-overlay"
+    (click)="onToggleMenuSidebar()">
+</div>

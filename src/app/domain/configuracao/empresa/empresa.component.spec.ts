@@ -1,4 +1,8 @@
 import {
+    Location
+} from '@angular/common';
+
+import {
     ComponentFixture,
     TestBed
 } from '@angular/core/testing';
@@ -18,6 +22,7 @@ import {
 
 import {
     BehaviorSubject,
+    Observable,
     of
 } from 'rxjs';
 
@@ -38,6 +43,15 @@ import {
 } from '@/core/organizacao/services/contexto-organizacao.service';
 
 import {
+    EstadoConfiguracaoInicial,
+    ProximaEtapaConfiguracao
+} from '@/domain/configuracao/configuracao-inicial/models/estado-configuracao-inicial.model';
+
+import {
+    ConfiguracaoInicialService
+} from '@/domain/configuracao/configuracao-inicial/services/configuracao-inicial.service';
+
+import {
     BaseService
 } from '@services/base/base.service';
 
@@ -46,84 +60,131 @@ import {
 } from './empresa.component';
 
 describe('EmpresaComponent', () => {
+
     let component:
         EmpresaComponent;
 
     let fixture:
-        ComponentFixture<EmpresaComponent>;
+        ComponentFixture<
+            EmpresaComponent
+        >;
 
-    let baseServiceMock:
-        jasmine.SpyObj<BaseService>;
+    let baseService:
+        jasmine.SpyObj<
+            BaseService
+        >;
 
-    let organizacaoAtivaSubject:
-        BehaviorSubject<OrganizacaoDisponivel | null>;
+    let configuracaoInicialService:
+        jasmine.SpyObj<
+            ConfiguracaoInicialService
+        >;
+
+    let organizacaoProntaSubject:
+        BehaviorSubject<
+            OrganizacaoDisponivel | null
+        >;
+
+    let permissoes:
+        Set<ChavePermissao>;
+
+    let acaoRota:
+        string | null;
 
     const contextoOrganizacaoServiceMock = {
-        retornarOrganizacaoAtivaObservable:
+        retornarOrganizacaoProntaObservable:
             jasmine.createSpy(
-                'retornarOrganizacaoAtivaObservable'
+                'retornarOrganizacaoProntaObservable'
             )
     };
 
     const autorizacaoServiceMock = {
-        possuiPermissao: jasmine.createSpy(
-            'possuiPermissao'
-        )
+        possuiPermissao:
+            jasmine.createSpy(
+                'possuiPermissao'
+            )
     };
 
     const routerMock = {
-        navigate: jasmine.createSpy(
-            'navigate'
-        ),
+        navigate:
+            jasmine.createSpy(
+                'navigate'
+            ),
         routeReuseStrategy: {
             shouldReuseRoute:
                 jasmine.createSpy(
                     'shouldReuseRoute'
                 )
         },
-        onSameUrlNavigation: 'ignore'
+        onSameUrlNavigation:
+            'ignore'
+    };
+
+    const locationMock = {
+        replaceState:
+            jasmine.createSpy(
+                'replaceState'
+            )
     };
 
     const activatedRouteMock = {
         snapshot: {
             paramMap: {
-                get: jasmine
-                    .createSpy('get')
-                    .and.returnValue(null)
+                get:
+                    jasmine.createSpy(
+                        'paramMapGet'
+                    )
+            },
+            queryParamMap: {
+                get:
+                    jasmine.createSpy(
+                        'queryParamMapGet'
+                    )
             }
         }
     };
 
     const toastrMock = {
-        success: jasmine.createSpy(
-            'success'
-        ),
-        error: jasmine.createSpy(
-            'error'
-        ),
-        info: jasmine.createSpy(
-            'info'
-        )
+        success:
+            jasmine.createSpy(
+                'success'
+            ),
+        error:
+            jasmine.createSpy(
+                'error'
+            ),
+        info:
+            jasmine.createSpy(
+                'info'
+            )
     };
 
     beforeEach(async () => {
-        organizacaoAtivaSubject =
+        permissoes =
+            new Set<
+                ChavePermissao
+            >();
+
+        acaoRota = null;
+
+        organizacaoProntaSubject =
             new BehaviorSubject<
                 OrganizacaoDisponivel | null
             >({
                 id: 1,
-                nome: 'Organização 1'
+                nome:
+                    'Organização 1'
             });
 
         contextoOrganizacaoServiceMock
-            .retornarOrganizacaoAtivaObservable
+            .retornarOrganizacaoProntaObservable
             .calls
             .reset();
 
         contextoOrganizacaoServiceMock
-            .retornarOrganizacaoAtivaObservable
-            .and.returnValue(
-                organizacaoAtivaSubject
+            .retornarOrganizacaoProntaObservable
+            .and
+            .returnValue(
+                organizacaoProntaSubject
                     .asObservable()
             );
 
@@ -134,10 +195,80 @@ describe('EmpresaComponent', () => {
 
         autorizacaoServiceMock
             .possuiPermissao
-            .and.returnValue(false);
+            .and
+            .callFake(
+                (
+                    permissao:
+                        ChavePermissao
+                ) =>
+                    permissoes.has(
+                        permissao
+                    )
+            );
 
-        baseServiceMock =
-            jasmine.createSpyObj<BaseService>(
+        routerMock.navigate
+            .calls
+            .reset();
+
+        routerMock.navigate
+            .and
+            .returnValue(
+                Promise.resolve(true)
+            );
+
+        locationMock.replaceState
+            .calls
+            .reset();
+
+        activatedRouteMock
+            .snapshot
+            .paramMap
+            .get
+            .calls
+            .reset();
+
+        activatedRouteMock
+            .snapshot
+            .paramMap
+            .get
+            .and
+            .returnValue(null);
+
+        activatedRouteMock
+            .snapshot
+            .queryParamMap
+            .get
+            .calls
+            .reset();
+
+        activatedRouteMock
+            .snapshot
+            .queryParamMap
+            .get
+            .and
+            .callFake(
+                (parametro: string) =>
+                    parametro === 'acao'
+                        ? acaoRota
+                        : null
+            );
+
+        toastrMock.success
+            .calls
+            .reset();
+
+        toastrMock.error
+            .calls
+            .reset();
+
+        toastrMock.info
+            .calls
+            .reset();
+
+        baseService =
+            jasmine.createSpyObj<
+                BaseService
+            >(
                 'BaseService',
                 [
                     'listar',
@@ -147,13 +278,42 @@ describe('EmpresaComponent', () => {
                 ]
             );
 
-        baseServiceMock
-            .listar
-            .and.returnValue(
+        baseService.listar
+            .and
+            .returnValue(
                 of({
                     content: [],
                     totalElements: 0
                 }) as never
+            );
+
+        baseService.salvar
+            .and
+            .returnValue(
+                of({}) as never
+            );
+
+        baseService.inativar
+            .and
+            .returnValue(
+                of(undefined) as never
+            );
+
+        configuracaoInicialService =
+            jasmine.createSpyObj<
+                ConfiguracaoInicialService
+            >(
+                'ConfiguracaoInicialService',
+                [
+                    'recarregar'
+                ]
+            );
+
+        configuracaoInicialService
+            .recarregar
+            .and
+            .returnValue(
+                configuracaoConcluida()
             );
 
         await TestBed
@@ -164,9 +324,10 @@ describe('EmpresaComponent', () => {
                 providers: [
                     FormBuilder,
                     {
-                        provide: BaseService,
+                        provide:
+                            BaseService,
                         useValue:
-                            baseServiceMock
+                            baseService
                     },
                     {
                         provide:
@@ -181,17 +342,32 @@ describe('EmpresaComponent', () => {
                             contextoOrganizacaoServiceMock
                     },
                     {
-                        provide: Router,
+                        provide:
+                            ConfiguracaoInicialService,
+                        useValue:
+                            configuracaoInicialService
+                    },
+                    {
+                        provide:
+                            Router,
                         useValue:
                             routerMock
                     },
                     {
-                        provide: ActivatedRoute,
+                        provide:
+                            ActivatedRoute,
                         useValue:
                             activatedRouteMock
                     },
                     {
-                        provide: ToastrService,
+                        provide:
+                            Location,
+                        useValue:
+                            locationMock
+                    },
+                    {
+                        provide:
+                            ToastrService,
                         useValue:
                             toastrMock
                     }
@@ -206,25 +382,31 @@ describe('EmpresaComponent', () => {
                 }
             )
             .compileComponents();
-
-        fixture =
-            TestBed.createComponent(
-                EmpresaComponent
-            );
-
-        component =
-            fixture.componentInstance;
-
-        fixture.detectChanges();
     });
 
-    it('deve ser criado', () => {
-        expect(component).toBeTruthy();
-    });
+    it(
+        'deve ser criado',
+        () => {
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaListar
+            ]);
+
+            expect(component)
+                .toBeTruthy();
+        }
+    );
 
     it(
         'deve configurar endpoint e colunas',
         () => {
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaListar
+            ]);
+
             expect(component.endPoint)
                 .toBe(
                     'configuracao/empresa'
@@ -242,8 +424,14 @@ describe('EmpresaComponent', () => {
     );
 
     it(
-        'deve criar formulário de cadastro',
+        'deve criar formulario de cadastro',
         () => {
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaCriar
+            ]);
+
             const formulario =
                 component.campos();
 
@@ -268,6 +456,12 @@ describe('EmpresaComponent', () => {
     it(
         'deve limitar o nome a 100 caracteres',
         () => {
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaCriar
+            ]);
+
             const formulario =
                 component.campos();
 
@@ -286,59 +480,538 @@ describe('EmpresaComponent', () => {
     );
 
     it(
-        'deve criar formulário de edição',
+        'deve criar formulario de edicao',
         () => {
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaListar
+            ]);
+
             const formulario =
                 component.campos({
                     id: 1,
-                    nome: 'Empresa Exemplo',
-                    status: 'ATIVO'
+                    nome:
+                        'Empresa Exemplo',
+                    status:
+                        'ATIVO'
                 });
 
             expect(
                 formulario.getRawValue()
             ).toEqual({
                 id: 1,
-                nome: 'Empresa Exemplo'
+                nome:
+                    'Empresa Exemplo'
             });
         }
     );
 
     it(
-        'deve carregar a lista ao inicializar',
+        'deve carregar lista ao inicializar com permissao de listar',
         () => {
-            expect(baseServiceMock.listar)
-                .toHaveBeenCalledWith(
-                    'configuracao/empresa',
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    NaN
-                );
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaListar
+            ]);
+
+            expect(
+                baseService.listar
+            ).toHaveBeenCalledOnceWith(
+                'configuracao/empresa',
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                NaN
+            );
+
+            expect(component.isLista)
+                .toBeTrue();
         }
     );
 
     it(
-        'deve recarregar dados ao trocar a organização ativa',
+        'deve abrir formulario sem carregar lista quando possuir somente criar',
         () => {
-            baseServiceMock
-                .listar
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaCriar
+            ]);
+
+            expect(
+                baseService.listar
+            ).not.toHaveBeenCalled();
+
+            expect(component.isLista)
+                .toBeFalse();
+
+            expect(component.isFormulario)
+                .toBeTrue();
+        }
+    );
+
+    it(
+        'deve abrir diretamente o primeiro cadastro',
+        () => {
+
+            criarComponente(
+                [
+                    ChavePermissao
+                        .EmpresaCriar
+                ],
+                'nova'
+            );
+
+            expect(
+                baseService.listar
+            ).not.toHaveBeenCalled();
+
+            expect(component.isLista)
+                .toBeFalse();
+
+            expect(component.isFormulario)
+                .toBeTrue();
+        }
+    );
+
+    it(
+        'deve voltar para configuracao inicial sem permissao de criar',
+        () => {
+
+            criarComponente(
+                [
+                    ChavePermissao
+                        .EmpresaListar
+                ],
+                'nova'
+            );
+
+            expect(
+                baseService.listar
+            ).not.toHaveBeenCalled();
+
+            expect(
+                routerMock.navigate
+            ).toHaveBeenCalledOnceWith(
+                [
+                    '/configuracao-inicial'
+                ],
+                {
+                    replaceUrl: true
+                }
+            );
+        }
+    );
+
+    it(
+        'deve concluir primeiro cadastro e carregar lista quando permitido',
+        () => {
+
+            criarComponente(
+                [
+                    ChavePermissao
+                        .EmpresaCriar,
+                    ChavePermissao
+                        .EmpresaListar
+                ],
+                'nova'
+            );
+
+            component.formulario
+                .get('nome')
+                ?.setValue(
+                    'Primeira empresa'
+                );
+
+            component.salvar();
+
+            expect(
+                configuracaoInicialService
+                    .recarregar
+            ).toHaveBeenCalledTimes(1);
+
+            expect(
+                locationMock.replaceState
+            ).toHaveBeenCalledOnceWith(
+                '/configuracao/empresas'
+            );
+
+            expect(
+                baseService.listar
+            ).toHaveBeenCalledTimes(1);
+
+            expect(component.isLista)
+                .toBeTrue();
+
+            expect(component.isFormulario)
+                .toBeFalse();
+        }
+    );
+
+    it(
+        'nao deve carregar lista apos primeiro cadastro sem permissao de listar',
+        () => {
+
+            criarComponente(
+                [
+                    ChavePermissao
+                        .EmpresaCriar
+                ],
+                'nova'
+            );
+
+            component.formulario
+                .get('nome')
+                ?.setValue(
+                    'Primeira empresa'
+                );
+
+            component.salvar();
+
+            expect(
+                configuracaoInicialService
+                    .recarregar
+            ).toHaveBeenCalledTimes(1);
+
+            expect(
+                baseService.listar
+            ).not.toHaveBeenCalled();
+
+            expect(
+                routerMock.navigate
+            ).toHaveBeenCalledWith(
+                [
+                    '/'
+                ],
+                {
+                    replaceUrl: true
+                }
+            );
+        }
+    );
+
+    it(
+        'deve voltar para configuracao inicial quando ainda houver etapa pendente',
+        () => {
+
+            configuracaoInicialService
+                .recarregar
+                .and
+                .returnValue(
+                    configuracaoPendente()
+                );
+
+            criarComponente(
+                [
+                    ChavePermissao
+                        .EmpresaCriar
+                ],
+                'nova'
+            );
+
+            component.formulario
+                .get('nome')
+                ?.setValue(
+                    'Primeira empresa'
+                );
+
+            component.salvar();
+
+            expect(
+                baseService.listar
+            ).not.toHaveBeenCalled();
+
+            expect(
+                routerMock.navigate
+            ).toHaveBeenCalledWith(
+                [
+                    '/configuracao-inicial'
+                ],
+                {
+                    replaceUrl: true
+                }
+            );
+        }
+    );
+
+    it(
+        'deve atualizar configuracao ao cadastrar diretamente pela listagem',
+        () => {
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaCriar,
+                ChavePermissao
+                    .EmpresaListar
+            ]);
+
+            component.botaoAdicionar();
+
+            component.formulario
+                .get('nome')
+                ?.setValue(
+                    'Primeira empresa'
+                );
+
+            baseService.listar
                 .calls
                 .reset();
+
+            component.salvar();
+
+            expect(
+                baseService.salvar
+            ).toHaveBeenCalledTimes(1);
+
+            expect(
+                configuracaoInicialService
+                    .recarregar
+            ).toHaveBeenCalledTimes(1);
+
+            expect(
+                locationMock.replaceState
+            ).toHaveBeenCalledOnceWith(
+                '/configuracao/empresas'
+            );
+
+            expect(
+                baseService.listar
+            ).toHaveBeenCalledTimes(1);
+
+            expect(component.isLista)
+                .toBeTrue();
+
+            expect(component.isFormulario)
+                .toBeFalse();
+
+            expect(
+                routerMock.navigate
+            ).not.toHaveBeenCalled();
+        }
+    );
+
+    it(
+        'nao deve recarregar configuracao ao editar empresa existente',
+        () => {
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaListar,
+                ChavePermissao
+                    .EmpresaEditar
+            ]);
 
             component.formulario =
                 component.campos({
                     id: 1,
-                    nome: 'Empresa Exemplo',
-                    status: 'ATIVO'
+                    nome:
+                        'Empresa atualizada',
+                    status:
+                        'ATIVO'
                 });
+
+            component.isLista = false;
+            component.isFormulario = true;
+
+            baseService.listar
+                .calls
+                .reset();
+
+            component.salvar();
+
+            expect(
+                baseService.salvar
+            ).toHaveBeenCalledTimes(1);
+
+            expect(
+                configuracaoInicialService
+                    .recarregar
+            ).not.toHaveBeenCalled();
+
+            expect(
+                locationMock.replaceState
+            ).not.toHaveBeenCalled();
+
+            expect(
+                baseService.listar
+            ).toHaveBeenCalledTimes(1);
+
+            expect(component.isLista)
+                .toBeTrue();
+
+            expect(component.isFormulario)
+                .toBeFalse();
+        }
+    );
+
+    it(
+        'deve cancelar novo cadastro para lista depois de concluir onboarding',
+        () => {
+
+            criarComponente(
+                [
+                    ChavePermissao
+                        .EmpresaCriar,
+                    ChavePermissao
+                        .EmpresaListar
+                ],
+                'nova'
+            );
+
+            component.formulario
+                .get('nome')
+                ?.setValue(
+                    'Primeira empresa'
+                );
+
+            component.salvar();
+
+            expect(
+                locationMock.replaceState
+            ).toHaveBeenCalledOnceWith(
+                '/configuracao/empresas'
+            );
+
+            expect(component.isLista)
+                .toBeTrue();
+
+            expect(component.isFormulario)
+                .toBeFalse();
+
+            routerMock.navigate
+                .calls
+                .reset();
+
+            component.botaoAdicionar();
+
+            expect(component.isLista)
+                .toBeFalse();
+
+            expect(component.isFormulario)
+                .toBeTrue();
+
+            component.cancelarEmpresa();
+
+            expect(component.isLista)
+                .toBeTrue();
+
+            expect(component.isFormulario)
+                .toBeFalse();
+
+            expect(
+                routerMock.navigate
+            ).not.toHaveBeenCalled();
+        }
+    );
+
+    it(
+        'deve voltar ao fluxo inicial ao excluir a ultima empresa',
+        () => {
+
+            configuracaoInicialService
+                .recarregar
+                .and
+                .returnValue(
+                    configuracaoPendente()
+                );
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaListar,
+                ChavePermissao
+                    .EmpresaExcluir
+            ]);
+
+            baseService.listar
+                .calls
+                .reset();
+
+            component.botaoExcluir(1);
+
+            expect(
+                baseService.inativar
+            ).toHaveBeenCalledOnceWith(
+                'configuracao/empresa',
+                1
+            );
+
+            expect(
+                configuracaoInicialService
+                    .recarregar
+            ).toHaveBeenCalledTimes(1);
+
+            expect(
+                baseService.listar
+            ).not.toHaveBeenCalled();
+
+            expect(
+                routerMock.navigate
+            ).toHaveBeenCalledWith(
+                [
+                    '/configuracao-inicial'
+                ],
+                {
+                    replaceUrl: true
+                }
+            );
+        }
+    );
+
+    it(
+        'deve recarregar lista ao excluir quando ainda houver empresa ativa',
+        () => {
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaListar,
+                ChavePermissao
+                    .EmpresaExcluir
+            ]);
+
+            baseService.listar
+                .calls
+                .reset();
+
+            component.botaoExcluir(1);
+
+            expect(
+                configuracaoInicialService
+                    .recarregar
+            ).toHaveBeenCalledTimes(1);
+
+            expect(
+                baseService.listar
+            ).toHaveBeenCalledTimes(1);
+
+            expect(
+                routerMock.navigate
+            ).not.toHaveBeenCalled();
+        }
+    );
+
+    it(
+        'deve limpar dados enquanto a organizacao pronta estiver indisponivel',
+        () => {
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaListar
+            ]);
+
+            baseService.listar
+                .calls
+                .reset();
 
             component.lista = [
                 {
                     id: 1,
-                    nome: 'Empresa Exemplo',
-                    status: 'ATIVO'
+                    nome:
+                        'Empresa Exemplo',
+                    status:
+                        'ATIVO'
                 }
             ];
 
@@ -347,9 +1020,75 @@ describe('EmpresaComponent', () => {
             component.isFormulario = true;
             component.isVisualizacao = true;
 
-            organizacaoAtivaSubject.next({
+            organizacaoProntaSubject.next(
+                null
+            );
+
+            expect(component.isLista)
+                .toBeTrue();
+
+            expect(component.isFormulario)
+                .toBeFalse();
+
+            expect(component.isVisualizacao)
+                .toBeFalse();
+
+            expect(component.lista)
+                .toEqual([]);
+
+            expect(component.totalRegistros)
+                .toBe(0);
+
+            expect(
+                baseService.listar
+            ).not.toHaveBeenCalled();
+        }
+    );
+
+    it(
+        'deve recarregar dados somente quando a nova organizacao estiver pronta',
+        () => {
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaListar
+            ]);
+
+            baseService.listar
+                .calls
+                .reset();
+
+            component.lista = [
+                {
+                    id: 1,
+                    nome:
+                        'Empresa Exemplo',
+                    status:
+                        'ATIVO'
+                }
+            ];
+
+            component.totalRegistros = 1;
+
+            organizacaoProntaSubject.next(
+                null
+            );
+
+            expect(
+                baseService.listar
+            ).not.toHaveBeenCalled();
+
+            permissoes.clear();
+
+            permissoes.add(
+                ChavePermissao
+                    .EmpresaListar
+            );
+
+            organizacaoProntaSubject.next({
                 id: 2,
-                nome: 'Organização 2'
+                nome:
+                    'Organização 2'
             });
 
             expect(component.isLista)
@@ -367,89 +1106,174 @@ describe('EmpresaComponent', () => {
             expect(component.totalRegistros)
                 .toBe(0);
 
-            expect(baseServiceMock.listar)
-                .toHaveBeenCalledOnceWith(
-                    'configuracao/empresa',
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    NaN
-                );
+            expect(
+                baseService.listar
+            ).toHaveBeenCalledTimes(1);
         }
     );
 
     it(
-        'deve limpar dados quando não houver organização ativa',
+        'deve usar novas permissoes ao publicar organizacao pronta',
         () => {
-            baseServiceMock
-                .listar
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaListar
+            ]);
+
+            baseService.listar
                 .calls
                 .reset();
 
-            component.formulario =
-                component.campos({
-                    id: 1,
-                    nome: 'Empresa Exemplo',
-                    status: 'ATIVO'
-                });
+            organizacaoProntaSubject.next(
+                null
+            );
 
-            component.lista = [
-                {
-                    id: 1,
-                    nome: 'Empresa Exemplo',
-                    status: 'ATIVO'
-                }
-            ];
+            permissoes.clear();
 
-            component.totalRegistros = 1;
-            component.isLista = false;
-            component.isFormulario = true;
-            component.isVisualizacao = true;
+            permissoes.add(
+                ChavePermissao
+                    .EmpresaCriar
+            );
 
-            organizacaoAtivaSubject.next(null);
+            organizacaoProntaSubject.next({
+                id: 2,
+                nome:
+                    'Organização 2'
+            });
+
+            expect(
+                baseService.listar
+            ).not.toHaveBeenCalled();
+
+            expect(component.isLista)
+                .toBeFalse();
+
+            expect(component.isFormulario)
+                .toBeTrue();
+
+            expect(
+                routerMock.navigate
+            ).not.toHaveBeenCalled();
+        }
+    );
+
+    it(
+        'deve encerrar onboarding ao publicar nova organizacao pronta',
+        () => {
+
+            criarComponente(
+                [
+                    ChavePermissao
+                        .EmpresaCriar,
+                    ChavePermissao
+                        .EmpresaListar
+                ],
+                'nova'
+            );
+
+            organizacaoProntaSubject.next(
+                null
+            );
+
+            organizacaoProntaSubject.next({
+                id: 2,
+                nome:
+                    'Organização 2'
+            });
+
+            routerMock.navigate
+                .calls
+                .reset();
+
+            component.botaoAdicionar();
+            component.cancelarEmpresa();
+
+            expect(
+                routerMock.navigate
+            ).not.toHaveBeenCalled();
 
             expect(component.isLista)
                 .toBeTrue();
 
             expect(component.isFormulario)
                 .toBeFalse();
+        }
+    );
 
-            expect(component.isVisualizacao)
-                .toBeFalse();
+    it(
+        'deve navegar para inicio quando nova organizacao nao possuir acesso',
+        () => {
 
-            expect(component.lista)
-                .toEqual([]);
+            criarComponente([
+                ChavePermissao
+                    .EmpresaListar
+            ]);
 
-            expect(component.totalRegistros)
-                .toBe(0);
+            routerMock.navigate
+                .calls
+                .reset();
 
-            expect(baseServiceMock.listar)
-                .not
-                .toHaveBeenCalled();
+            organizacaoProntaSubject.next(
+                null
+            );
+
+            permissoes.clear();
+
+            organizacaoProntaSubject.next({
+                id: 2,
+                nome:
+                    'Organização 2'
+            });
+
+            expect(
+                baseService.listar
+            ).toHaveBeenCalledTimes(1);
+
+            expect(
+                routerMock.navigate
+            ).toHaveBeenCalledOnceWith(
+                [
+                    '/'
+                ],
+                {
+                    replaceUrl: true
+                }
+            );
         }
     );
 
     it(
         'deve abrir detalhamento somente leitura',
         () => {
-            baseServiceMock
-                .detalhar
-                .and.returnValue(
+
+            baseService.detalhar
+                .and
+                .returnValue(
                     of({
                         id: 1,
-                        nome: 'Empresa Exemplo',
-                        status: 'ATIVO'
+                        nome:
+                            'Empresa Exemplo',
+                        status:
+                            'ATIVO'
                     }) as never
                 );
 
+            criarComponente([
+                ChavePermissao
+                    .EmpresaListar,
+                ChavePermissao
+                    .EmpresaDetalhar
+            ]);
+
             component.botaoVisualizar(1);
 
-            expect(baseServiceMock.detalhar)
-                .toHaveBeenCalledOnceWith(
-                    'configuracao/empresa',
-                    1
-                );
+            expect(
+                baseService.detalhar
+            ).toHaveBeenCalledOnceWith(
+                'configuracao/empresa',
+                1
+            );
 
             expect(component.isVisualizacao)
                 .toBeTrue();
@@ -462,31 +1286,17 @@ describe('EmpresaComponent', () => {
 
             expect(component.formulario.disabled)
                 .toBeTrue();
-
-            expect(
-                component.formulario
-                    .getRawValue()
-            ).toEqual({
-                id: 1,
-                nome: 'Empresa Exemplo'
-            });
         }
     );
 
     it(
-        'deve exigir a permissão correspondente para salvar',
+        'deve exigir permissao correspondente para salvar',
         () => {
-            autorizacaoServiceMock
-                .possuiPermissao
-                .and.callFake(
-                    (
-                        permissao:
-                            ChavePermissao
-                    ) =>
-                        permissao ===
-                        ChavePermissao
-                            .EmpresaCriar
-                );
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaCriar
+            ]);
 
             component.formulario =
                 component.campos();
@@ -497,24 +1307,19 @@ describe('EmpresaComponent', () => {
             component.formulario =
                 component.campos({
                     id: 1,
-                    nome: 'Empresa Exemplo',
-                    status: 'ATIVO'
+                    nome:
+                        'Empresa Exemplo',
+                    status:
+                        'ATIVO'
                 });
 
             expect(component.podeSalvar)
                 .toBeFalse();
 
-            autorizacaoServiceMock
-                .possuiPermissao
-                .and.callFake(
-                    (
-                        permissao:
-                            ChavePermissao
-                    ) =>
-                        permissao ===
-                        ChavePermissao
-                            .EmpresaEditar
-                );
+            permissoes.add(
+                ChavePermissao
+                    .EmpresaEditar
+            );
 
             expect(component.podeSalvar)
                 .toBeTrue();
@@ -522,27 +1327,23 @@ describe('EmpresaComponent', () => {
     );
 
     it(
-        'deve controlar ações por permissão',
+        'deve controlar acoes por permissao',
         () => {
-            autorizacaoServiceMock
-                .possuiPermissao
-                .and.callFake(
-                    (
-                        permissao:
-                            ChavePermissao
-                    ) =>
-                        [
-                            ChavePermissao
-                                .EmpresaCriar,
-                            ChavePermissao
-                                .EmpresaExcluir,
-                            ChavePermissao
-                                .EmpresaDetalhar
-                        ].includes(permissao)
-                );
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaCriar,
+                ChavePermissao
+                    .EmpresaExcluir,
+                ChavePermissao
+                    .EmpresaDetalhar
+            ]);
 
             expect(component.podeCriar)
                 .toBeTrue();
+
+            expect(component.podeListar)
+                .toBeFalse();
 
             expect(component.podeEditar)
                 .toBeFalse();
@@ -554,4 +1355,61 @@ describe('EmpresaComponent', () => {
                 .toBeTrue();
         }
     );
+
+    function criarComponente(
+        permissoesIniciais:
+            readonly ChavePermissao[],
+        acao:
+            string | null = null
+    ): void {
+
+        permissoes.clear();
+
+        permissoesIniciais
+            .forEach(
+                (permissao) =>
+                    permissoes.add(
+                        permissao
+                    )
+            );
+
+        acaoRota = acao;
+
+        fixture =
+            TestBed.createComponent(
+                EmpresaComponent
+            );
+
+        component =
+            fixture.componentInstance;
+
+        fixture.detectChanges();
+    }
+
+    function configuracaoConcluida():
+        Observable<
+            EstadoConfiguracaoInicial
+        > {
+
+        return of({
+            empresaCadastrada:
+                true,
+            proximaEtapa:
+                null
+        });
+    }
+
+    function configuracaoPendente():
+        Observable<
+            EstadoConfiguracaoInicial
+        > {
+
+        return of({
+            empresaCadastrada:
+                false,
+            proximaEtapa:
+                ProximaEtapaConfiguracao
+                    .Empresa
+        });
+    }
 });

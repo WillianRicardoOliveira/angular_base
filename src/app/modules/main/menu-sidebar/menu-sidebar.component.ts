@@ -24,7 +24,14 @@ import {
 } from '@ngrx/store';
 
 import {
-    filter
+    EMPTY
+} from 'rxjs';
+
+import {
+    catchError,
+    distinctUntilChanged,
+    filter,
+    switchMap
 } from 'rxjs/operators';
 
 import {
@@ -38,6 +45,14 @@ import {
 import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
+
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
+
+import {
+    ConfiguracaoInicialService
+} from '@/domain/configuracao/configuracao-inicial/services/configuracao-inicial.service';
 
 import {
     AppState
@@ -82,6 +97,12 @@ export class MenuSidebarComponent
 
     menuConfiguracoes: MenuItem[] = [];
 
+    configuracaoInicialPendente = true;
+
+    configuracaoInicialCarregando = true;
+
+    erroConfiguracaoInicial = false;
+
     menuRecolhido = false;
 
     possuiModulosAcima = false;
@@ -113,6 +134,10 @@ export class MenuSidebarComponent
         private store: Store<AppState>,
         private autorizacaoService:
             AutorizacaoService,
+        private contextoOrganizacaoService:
+            ContextoOrganizacaoService,
+        private configuracaoInicialService:
+            ConfiguracaoInicialService,
         private router: Router,
         private elementRef:
             ElementRef<HTMLElement>,
@@ -128,6 +153,8 @@ export class MenuSidebarComponent
     }
 
     ngOnInit(): void {
+        this.configurarEstadoConfiguracaoInicial();
+
         this.autorizacaoService
             .retornarEstado()
             .pipe(
@@ -319,7 +346,8 @@ export class MenuSidebarComponent
 
         if (this.menuRecolhido) {
             const mesmoModulo =
-                this.moduloSelecionado === item;
+                this.moduloSelecionado ===
+                item;
 
             if (
                 mesmoModulo &&
@@ -330,7 +358,8 @@ export class MenuSidebarComponent
                 return;
             }
 
-            this.moduloSelecionado = item;
+            this.moduloSelecionado =
+                item;
 
             this.elementoModuloAtivo =
                 elemento;
@@ -354,7 +383,8 @@ export class MenuSidebarComponent
             return;
         }
 
-        this.moduloSelecionado = item;
+        this.moduloSelecionado =
+            item;
 
         this.fecharPainelFlutuante();
     }
@@ -468,7 +498,8 @@ export class MenuSidebarComponent
                     const {
                         limiteSuperior,
                         limiteInferior
-                    } = this.obterLimitesAreaDisponivel();
+                    } =
+                        this.obterLimitesAreaDisponivel();
 
                     const alturaDisponivel =
                         Math.max(
@@ -479,17 +510,21 @@ export class MenuSidebarComponent
 
                     const centroBotao =
                         posicaoBotao.top +
-                        posicaoBotao.height / 2;
+                        posicaoBotao.height /
+                        2;
 
                     const primeiroTerco =
                         limiteSuperior +
-                        alturaDisponivel / 3;
+                        alturaDisponivel /
+                        3;
 
                     const ultimoTerco =
                         limiteSuperior +
                         (
-                            alturaDisponivel * 2
-                        ) / 3;
+                            alturaDisponivel *
+                            2
+                        ) /
+                        3;
 
                     const topAbaixo =
                         posicaoBotao.top;
@@ -500,7 +535,8 @@ export class MenuSidebarComponent
 
                     const topCentralizado =
                         centroBotao -
-                        alturaPainel / 2;
+                        alturaPainel /
+                        2;
 
                     const cabeAbaixo =
                         topAbaixo +
@@ -524,7 +560,9 @@ export class MenuSidebarComponent
 
                             topCalculado =
                                 topAbaixo;
-                        } else if (cabeAcima) {
+                        } else if (
+                            cabeAcima
+                        ) {
                             this.painelFlutuanteDirecao =
                                 'cima';
 
@@ -547,7 +585,9 @@ export class MenuSidebarComponent
 
                             topCalculado =
                                 topAcima;
-                        } else if (cabeAbaixo) {
+                        } else if (
+                            cabeAbaixo
+                        ) {
                             this.painelFlutuanteDirecao =
                                 'baixo';
 
@@ -635,32 +675,124 @@ export class MenuSidebarComponent
                             }
 
                             return (
-                                caminho === rota ||
+                                caminho ===
+                                    rota ||
                                 caminho.startsWith(
                                     `${rota}/`
                                 )
                             );
                         }
                     )
-            ) ?? null;
+            ) ??
+            null;
+    }
+
+    private configurarEstadoConfiguracaoInicial():
+        void {
+
+        this.configuracaoInicialService
+            .retornarContextoObservable()
+            .pipe(
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
+            )
+            .subscribe((contexto) => {
+                this.configuracaoInicialCarregando =
+                    contexto.carregando;
+
+                this.erroConfiguracaoInicial =
+                    contexto.erro;
+
+                this.configuracaoInicialPendente =
+                    contexto.estado ===
+                        null ||
+                    contexto.estado.proximaEtapa !==
+                        null;
+
+                this.atualizarMenusAutorizados();
+            });
+
+        this.contextoOrganizacaoService
+            .retornarOrganizacaoProntaObservable()
+            .pipe(
+                distinctUntilChanged(
+                    (
+                        anterior,
+                        atual
+                    ) =>
+                        anterior?.id ===
+                        atual?.id
+                ),
+                switchMap((organizacao) => {
+                    if (!organizacao) {
+                        this.configuracaoInicialService
+                            .limparEstado();
+
+                        return EMPTY;
+                    }
+
+                    return this
+                        .configuracaoInicialService
+                        .consultar()
+                        .pipe(
+                            catchError(
+                                () =>
+                                    EMPTY
+                            )
+                        );
+                }),
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
+            )
+            .subscribe();
     }
 
     private atualizarMenusAutorizados(): void {
-        this.menu =
+        const menuAutorizado =
             this.filtrarMenu(
                 MENU
             );
 
-        this.menuConfiguracoes =
+        const menuConfiguracoesAutorizado =
             this.filtrarMenu(
                 MENU_CONFIGURACOES
             );
+
+        this.menu =
+            this.configuracaoInicialPendente
+                ? []
+                : menuAutorizado;
+
+        this.menuConfiguracoes =
+            this.configuracaoInicialPendente
+                ? this.restringirMenuDuranteConfiguracao(
+                    menuConfiguracoesAutorizado
+                )
+                : menuConfiguracoesAutorizado;
 
         this.selecionarModuloPelaRota(
             this.router.url
         );
 
         this.atualizarIndicadoresRolagem();
+    }
+
+    private restringirMenuDuranteConfiguracao(
+        itens: readonly MenuItem[]
+    ): MenuItem[] {
+
+        return itens.filter(
+            (item) =>
+                item.children?.some(
+                    (child) =>
+                        child.path?.[0]
+                            ?.startsWith(
+                                '/plataforma/'
+                            )
+                ) === true
+        );
     }
 
     private filtrarMenu(
@@ -694,7 +826,8 @@ export class MenuSidebarComponent
                     );
 
                 if (
-                    children.length === 0
+                    children.length ===
+                    0
                 ) {
                     return itensVisiveis;
                 }
@@ -712,116 +845,8 @@ export class MenuSidebarComponent
     }
 }
 
-const criarModuloReferencia = (
-    nome: string,
-    rotaBase: string,
-    iconClasses: string
-): MenuItem => ({
-    name: nome,
-    iconClasses,
-    children: [
-        {
-            name: 'Visão geral',
-            iconClasses:
-                'fas fa-chart-line',
-            path: [
-                `/${rotaBase}/visao-geral`
-            ]
-        },
-        {
-            name: 'Cadastros',
-            iconClasses:
-                'fas fa-folder-open',
-            path: [
-                `/${rotaBase}/cadastros`
-            ]
-        },
-        {
-            name: 'Relatórios',
-            iconClasses:
-                'fas fa-chart-bar',
-            path: [
-                `/${rotaBase}/relatorios`
-            ]
-        }
-    ]
-});
-
-export const MENU: MenuItem[] = [
-    {
-        name: 'Dashboard',
-        iconClasses:
-            'fas fa-tachometer-alt',
-        path: [
-            '/dashboard'
-        ]
-    },
-    criarModuloReferencia(
-        'Comercial',
-        'comercial',
-        'fas fa-tags'
-    ),
-    criarModuloReferencia(
-        'Compras',
-        'compras',
-        'fas fa-shopping-cart'
-    ),
-    criarModuloReferencia(
-        'Contabilidade',
-        'contabilidade',
-        'fas fa-calculator'
-    ),
-    criarModuloReferencia(
-        'Controladoria',
-        'controladoria',
-        'fas fa-chart-line'
-    ),
-    criarModuloReferencia(
-        'Crédito',
-        'credito',
-        'fas fa-credit-card'
-    ),
-    criarModuloReferencia(
-        'Estoque',
-        'estoque',
-        'fas fa-warehouse'
-    ),
-    criarModuloReferencia(
-        'Faturamento',
-        'faturamento',
-        'fas fa-file-invoice-dollar'
-    ),
-    criarModuloReferencia(
-        'Financeiro',
-        'financeiro',
-        'fas fa-dollar-sign'
-    ),
-    criarModuloReferencia(
-        'Fiscal',
-        'fiscal',
-        'fas fa-file-invoice'
-    ),
-    criarModuloReferencia(
-        'Logística',
-        'logistica',
-        'fas fa-truck'
-    ),
-    criarModuloReferencia(
-        'Supply',
-        'supply',
-        'fas fa-boxes'
-    ),
-    criarModuloReferencia(
-        'Relatórios',
-        'relatorios',
-        'fas fa-chart-bar'
-    ),
-    criarModuloReferencia(
-        'Cadastros',
-        'cadastros',
-        'fas fa-address-book'
-    )
-];
+export const MENU:
+    MenuItem[] = [];
 
 export const MENU_CONFIGURACOES:
     MenuItem[] = [

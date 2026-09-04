@@ -63,13 +63,13 @@ describe('UsuarioEmpresaComponent', () => {
     let serviceMock:
         jasmine.SpyObj<UsuarioEmpresaService>;
 
-    let organizacaoAtivaSubject:
+    let organizacaoProntaSubject:
         BehaviorSubject<OrganizacaoDisponivel | null>;
 
     const contextoOrganizacaoServiceMock = {
-        retornarOrganizacaoAtivaObservable:
+        retornarOrganizacaoProntaObservable:
             jasmine.createSpy(
-                'retornarOrganizacaoAtivaObservable'
+                'retornarOrganizacaoProntaObservable'
             )
     };
 
@@ -130,7 +130,7 @@ describe('UsuarioEmpresaComponent', () => {
         };
 
     beforeEach(async () => {
-        organizacaoAtivaSubject =
+        organizacaoProntaSubject =
             new BehaviorSubject<
                 OrganizacaoDisponivel | null
             >({
@@ -139,14 +139,14 @@ describe('UsuarioEmpresaComponent', () => {
             });
 
         contextoOrganizacaoServiceMock
-            .retornarOrganizacaoAtivaObservable
+            .retornarOrganizacaoProntaObservable
             .calls
             .reset();
 
         contextoOrganizacaoServiceMock
-            .retornarOrganizacaoAtivaObservable
+            .retornarOrganizacaoProntaObservable
             .and.returnValue(
-                organizacaoAtivaSubject
+                organizacaoProntaSubject
                     .asObservable()
             );
 
@@ -329,7 +329,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve voltar para usuários ao trocar a organização ativa',
+        'deve limpar durante a troca e voltar somente quando a nova organização estiver pronta',
         () => {
             serviceMock.listar.calls.reset();
             serviceMock.listarEmpresas.calls.reset();
@@ -360,10 +360,7 @@ describe('UsuarioEmpresaComponent', () => {
             component.isFormulario = true;
             component.isVisualizacao = true;
 
-            organizacaoAtivaSubject.next({
-                id: 2,
-                nome: 'Organização 2'
-            });
+            organizacaoProntaSubject.next(null);
 
             expect(component.isLista)
                 .toBeTrue();
@@ -402,75 +399,12 @@ describe('UsuarioEmpresaComponent', () => {
                 .not.toHaveBeenCalled();
 
             expect(routerMock.navigate)
-                .toHaveBeenCalledOnceWith([
-                    '/acesso/usuarios'
-                ]);
-        }
-    );
+                .not.toHaveBeenCalled();
 
-    it(
-        'deve limpar dados e voltar para usuários quando não houver organização ativa',
-        () => {
-            serviceMock.listar.calls.reset();
-            serviceMock.listarEmpresas.calls.reset();
-            routerMock.navigate.calls.reset();
-
-            component.formulario =
-                new FormBuilder().group({
-                    id: [3],
-                    todasSubsidiarias: [true]
-                });
-
-            component.lista = [
-                usuarioEmpresa
-            ];
-
-            component.empresas = [
-                empresa
-            ];
-
-            component.totalRegistros = 1;
-            component.paginaAtual = 2;
-            component.tamanhoPagina = 20;
-            component.usuarioNome =
-                'usuario@empresa.com';
-            component.empresaNome =
-                'Empresa Exemplo';
-            component.isLista = false;
-            component.isFormulario = true;
-            component.isVisualizacao = true;
-
-            organizacaoAtivaSubject.next(null);
-
-            expect(component.isLista)
-                .toBeTrue();
-
-            expect(component.isFormulario)
-                .toBeFalse();
-
-            expect(component.isVisualizacao)
-                .toBeFalse();
-
-            expect(component.lista)
-                .toEqual([]);
-
-            expect(component.empresas)
-                .toEqual([]);
-
-            expect(component.totalRegistros)
-                .toBe(0);
-
-            expect(component.paginaAtual)
-                .toBe(0);
-
-            expect(component.tamanhoPagina)
-                .toBe(10);
-
-            expect(component.usuarioNome)
-                .toBe('');
-
-            expect(component.empresaNome)
-                .toBe('');
+            organizacaoProntaSubject.next({
+                id: 2,
+                nome: 'Organização 2'
+            });
 
             expect(serviceMock.listar)
                 .not.toHaveBeenCalled();

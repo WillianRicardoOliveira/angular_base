@@ -47,6 +47,7 @@ import {
 } from './services/usuario-perfil.service';
 
 describe('UsuarioPerfilComponent', () => {
+
     let component:
         UsuarioPerfilComponent;
 
@@ -60,13 +61,15 @@ describe('UsuarioPerfilComponent', () => {
             UsuarioPerfilService
         >;
 
-    let organizacaoAtivaSubject:
-        BehaviorSubject<OrganizacaoDisponivel | null>;
+    let organizacaoProntaSubject:
+        BehaviorSubject<
+            OrganizacaoDisponivel | null
+        >;
 
     const contextoOrganizacaoServiceMock = {
-        retornarOrganizacaoAtivaObservable:
+        retornarOrganizacaoProntaObservable:
             jasmine.createSpy(
-                'retornarOrganizacaoAtivaObservable'
+                'retornarOrganizacaoProntaObservable'
             )
     };
 
@@ -92,7 +95,8 @@ describe('UsuarioPerfilComponent', () => {
     const activatedRouteMock = {
         snapshot: {
             paramMap: {
-                get: paramMapGetMock
+                get:
+                    paramMapGetMock
             }
         }
     };
@@ -120,27 +124,30 @@ describe('UsuarioPerfilComponent', () => {
         idPerfil: 3,
         perfil:
             'Administrador',
-        status: 'ATIVO' as const
+        status:
+            'ATIVO' as const
     };
 
     beforeEach(async () => {
-        organizacaoAtivaSubject =
+        organizacaoProntaSubject =
             new BehaviorSubject<
                 OrganizacaoDisponivel | null
             >({
                 id: 1,
-                nome: 'Organização 1'
+                nome:
+                    'Organização 1'
             });
 
         contextoOrganizacaoServiceMock
-            .retornarOrganizacaoAtivaObservable
+            .retornarOrganizacaoProntaObservable
             .calls
             .reset();
 
         contextoOrganizacaoServiceMock
-            .retornarOrganizacaoAtivaObservable
-            .and.returnValue(
-                organizacaoAtivaSubject
+            .retornarOrganizacaoProntaObservable
+            .and
+            .returnValue(
+                organizacaoProntaSubject
                     .asObservable()
             );
 
@@ -151,32 +158,36 @@ describe('UsuarioPerfilComponent', () => {
 
         autorizacaoServiceMock
             .possuiPermissao
-            .and.returnValue(false);
+            .and
+            .returnValue(false);
 
-        routerMock
-            .navigate
+        routerMock.navigate
             .calls
             .reset();
+
+        routerMock.navigate
+            .and
+            .returnValue(
+                Promise.resolve(true)
+            );
 
         paramMapGetMock
             .calls
             .reset();
 
         paramMapGetMock
-            .and.returnValue('2');
+            .and
+            .returnValue('2');
 
-        toastrMock
-            .success
+        toastrMock.success
             .calls
             .reset();
 
-        toastrMock
-            .error
+        toastrMock.error
             .calls
             .reset();
 
-        toastrMock
-            .info
+        toastrMock.info
             .calls
             .reset();
 
@@ -195,7 +206,8 @@ describe('UsuarioPerfilComponent', () => {
 
         serviceMock
             .listarPorUsuario
-            .and.returnValue(
+            .and
+            .returnValue(
                 of([])
             );
 
@@ -231,7 +243,8 @@ describe('UsuarioPerfilComponent', () => {
                             activatedRouteMock
                     },
                     {
-                        provide: Router,
+                        provide:
+                            Router,
                         useValue:
                             routerMock
                     },
@@ -267,15 +280,16 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve ser criado',
         () => {
-            expect(
-                component
-            ).toBeTruthy();
+
+            expect(component)
+                .toBeTruthy();
         }
     );
 
     it(
         'deve configurar a página e as colunas',
         () => {
+
             expect(
                 component.pagina
             ).toBe(
@@ -295,6 +309,12 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve carregar os perfis do usuário ao inicializar',
         () => {
+
+            expect(
+                contextoOrganizacaoServiceMock
+                    .retornarOrganizacaoProntaObservable
+            ).toHaveBeenCalledTimes(1);
+
             expect(
                 component.idUsuario
             ).toBe(2);
@@ -309,15 +329,15 @@ describe('UsuarioPerfilComponent', () => {
     );
 
     it(
-        'deve voltar para usuários ao trocar a organização ativa',
+        'deve limpar sem navegar enquanto a organização pronta estiver indisponível',
         () => {
+
             serviceMock
                 .listarPorUsuario
                 .calls
                 .reset();
 
-            routerMock
-                .navigate
+            routerMock.navigate
                 .calls
                 .reset();
 
@@ -336,10 +356,9 @@ describe('UsuarioPerfilComponent', () => {
             component.isFormulario = true;
             component.isVisualizacao = true;
 
-            organizacaoAtivaSubject.next({
-                id: 2,
-                nome: 'Organização 2'
-            });
+            organizacaoProntaSubject.next(
+                null
+            );
 
             expect(
                 component.isLista
@@ -368,22 +387,20 @@ describe('UsuarioPerfilComponent', () => {
 
             expect(
                 routerMock.navigate
-            ).toHaveBeenCalledOnceWith([
-                '/acesso/usuarios'
-            ]);
+            ).not.toHaveBeenCalled();
         }
     );
 
     it(
-        'deve limpar dados e voltar para usuários quando não houver organização ativa',
+        'deve voltar para usuários somente quando a nova organização estiver pronta',
         () => {
+
             serviceMock
                 .listarPorUsuario
                 .calls
                 .reset();
 
-            routerMock
-                .navigate
+            routerMock.navigate
                 .calls
                 .reset();
 
@@ -398,23 +415,20 @@ describe('UsuarioPerfilComponent', () => {
             ];
 
             component.totalRegistros = 1;
-            component.isLista = false;
-            component.isFormulario = true;
-            component.isVisualizacao = true;
 
-            organizacaoAtivaSubject.next(null);
-
-            expect(
-                component.isLista
-            ).toBeTrue();
+            organizacaoProntaSubject.next(
+                null
+            );
 
             expect(
-                component.isFormulario
-            ).toBeFalse();
+                routerMock.navigate
+            ).not.toHaveBeenCalled();
 
-            expect(
-                component.isVisualizacao
-            ).toBeFalse();
+            organizacaoProntaSubject.next({
+                id: 2,
+                nome:
+                    'Organização 2'
+            });
 
             expect(
                 component.lista
@@ -440,9 +454,11 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve preencher a lista e o total de registros',
         () => {
+
             serviceMock
                 .listarPorUsuario
-                .and.returnValue(
+                .and
+                .returnValue(
                     of([
                         {
                             id: 5,
@@ -470,9 +486,11 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve controlar as ações conforme as permissões',
         () => {
+
             autorizacaoServiceMock
                 .possuiPermissao
-                .and.callFake(
+                .and
+                .callFake(
                     (
                         permissao:
                             ChavePermissao
@@ -528,6 +546,7 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve abrir o formulário de vínculo quando autorizado',
         () => {
+
             autorizar(
                 ChavePermissao
                     .UsuarioPerfilCriar
@@ -566,6 +585,7 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'não deve abrir o formulário sem permissão',
         () => {
+
             component.botaoAdicionar();
 
             expect(
@@ -581,6 +601,7 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve detalhar o perfil do usuário quando autorizado',
         () => {
+
             autorizar(
                 ChavePermissao
                     .UsuarioPerfilDetalhar
@@ -588,12 +609,12 @@ describe('UsuarioPerfilComponent', () => {
 
             serviceMock
                 .detalhar
-                .and.returnValue(
+                .and
+                .returnValue(
                     of(vinculo)
                 );
 
-            component
-                .botaoVisualizar(5);
+            component.botaoVisualizar(5);
 
             expect(
                 serviceMock.detalhar
@@ -628,8 +649,8 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'não deve detalhar sem permissão',
         () => {
-            component
-                .botaoVisualizar(5);
+
+            component.botaoVisualizar(5);
 
             expect(
                 serviceMock.detalhar
@@ -640,6 +661,7 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve vincular o perfil ao usuário',
         () => {
+
             autorizar(
                 ChavePermissao
                     .UsuarioPerfilCriar
@@ -647,7 +669,8 @@ describe('UsuarioPerfilComponent', () => {
 
             serviceMock
                 .cadastrar
-                .and.returnValue(
+                .and
+                .returnValue(
                     of(vinculo)
                 );
 
@@ -690,6 +713,7 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'não deve salvar formulário inválido',
         () => {
+
             autorizar(
                 ChavePermissao
                     .UsuarioPerfilCriar
@@ -707,6 +731,7 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'não deve salvar sem permissão',
         () => {
+
             component.formulario =
                 new FormBuilder().group({
                     idUsuario: [2],
@@ -724,6 +749,7 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve excluir o perfil do usuário quando autorizado',
         () => {
+
             autorizar(
                 ChavePermissao
                     .UsuarioPerfilExcluir
@@ -731,7 +757,8 @@ describe('UsuarioPerfilComponent', () => {
 
             serviceMock
                 .excluir
-                .and.returnValue(
+                .and
+                .returnValue(
                     of(undefined)
                 );
 
@@ -759,6 +786,7 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'não deve excluir sem permissão',
         () => {
+
             component.botaoExcluir(5);
 
             expect(
@@ -770,6 +798,7 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve cancelar e retornar para a lista',
         () => {
+
             autorizar(
                 ChavePermissao
                     .UsuarioPerfilCriar
@@ -806,6 +835,7 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve voltar para a lista de usuários',
         () => {
+
             component.voltar();
 
             expect(
@@ -819,11 +849,12 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve voltar quando o identificador do usuário for inválido',
         () => {
-            paramMapGetMock
-                .and.returnValue(null);
 
-            routerMock
-                .navigate
+            paramMapGetMock
+                .and
+                .returnValue(null);
+
+            routerMock.navigate
                 .calls
                 .reset();
 
@@ -850,13 +881,16 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve informar erro ao falhar no carregamento',
         () => {
+
             serviceMock
                 .listarPorUsuario
-                .and.returnValue(
+                .and
+                .returnValue(
                     throwError(
-                        () => new Error(
-                            'Erro ao listar'
-                        )
+                        () =>
+                            new Error(
+                                'Erro ao listar'
+                            )
                     )
                 );
 
@@ -873,6 +907,7 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve informar erro ao falhar no detalhamento',
         () => {
+
             autorizar(
                 ChavePermissao
                     .UsuarioPerfilDetalhar
@@ -880,16 +915,17 @@ describe('UsuarioPerfilComponent', () => {
 
             serviceMock
                 .detalhar
-                .and.returnValue(
+                .and
+                .returnValue(
                     throwError(
-                        () => new Error(
-                            'Erro ao detalhar'
-                        )
+                        () =>
+                            new Error(
+                                'Erro ao detalhar'
+                            )
                     )
                 );
 
-            component
-                .botaoVisualizar(5);
+            component.botaoVisualizar(5);
 
             expect(
                 toastrMock.error
@@ -902,6 +938,7 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve informar erro ao falhar no vínculo',
         () => {
+
             autorizar(
                 ChavePermissao
                     .UsuarioPerfilCriar
@@ -909,11 +946,13 @@ describe('UsuarioPerfilComponent', () => {
 
             serviceMock
                 .cadastrar
-                .and.returnValue(
+                .and
+                .returnValue(
                     throwError(
-                        () => new Error(
-                            'Erro ao cadastrar'
-                        )
+                        () =>
+                            new Error(
+                                'Erro ao cadastrar'
+                            )
                     )
                 );
 
@@ -936,6 +975,7 @@ describe('UsuarioPerfilComponent', () => {
     it(
         'deve informar erro ao falhar na exclusão',
         () => {
+
             autorizar(
                 ChavePermissao
                     .UsuarioPerfilExcluir
@@ -943,11 +983,13 @@ describe('UsuarioPerfilComponent', () => {
 
             serviceMock
                 .excluir
-                .and.returnValue(
+                .and
+                .returnValue(
                     throwError(
-                        () => new Error(
-                            'Erro ao excluir'
-                        )
+                        () =>
+                            new Error(
+                                'Erro ao excluir'
+                            )
                     )
                 );
 
@@ -965,9 +1007,11 @@ describe('UsuarioPerfilComponent', () => {
         permissaoAutorizada:
             ChavePermissao
     ): void {
+
         autorizacaoServiceMock
             .possuiPermissao
-            .and.callFake(
+            .and
+            .callFake(
                 (
                     permissao:
                         ChavePermissao

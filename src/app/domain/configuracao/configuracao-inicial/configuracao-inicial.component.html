@@ -1,0 +1,209 @@
+<app-cabecalho-pagina
+    [pagina]="pagina"
+    [descricao]="descricao"
+    [breadcrumb]="breadcrumb">
+</app-cabecalho-pagina>
+
+<section
+    class="content configuracao-inicial"
+    aria-live="polite">
+
+    @if (carregando) {
+        <div
+            class="
+                configuracao-inicial-card
+                configuracao-inicial-estado
+            ">
+
+            <span
+                class="configuracao-inicial-icone"
+                aria-hidden="true">
+
+                <i
+                    class="
+                        fas
+                        fa-circle-notch
+                        fa-spin
+                    ">
+                </i>
+            </span>
+
+            <h2>
+                Carregando configuração
+            </h2>
+
+            <p class="configuracao-inicial-descricao">
+                Aguarde enquanto verificamos os dados da
+                organização.
+            </p>
+        </div>
+    }
+
+    @if (erroCarregamento) {
+        <div
+            class="
+                configuracao-inicial-card
+                configuracao-inicial-estado
+            ">
+
+            <span
+                class="
+                    configuracao-inicial-icone
+                    configuracao-inicial-icone-erro
+                "
+                aria-hidden="true">
+
+                <i class="fas fa-exclamation-triangle"></i>
+            </span>
+
+            <h2>
+                Não foi possível carregar a configuração
+            </h2>
+
+            <p class="configuracao-inicial-descricao">
+                Verifique sua conexão e tente novamente.
+            </p>
+
+            <button
+                type="button"
+                class="
+                    btn
+                    btn-outline-primary
+                    configuracao-inicial-acao
+                "
+                (click)="carregarEstado(true)">
+
+                Tentar novamente
+            </button>
+        </div>
+    }
+
+    @if (deveCadastrarEmpresa) {
+        <div class="configuracao-inicial-card">
+
+            <span
+                class="configuracao-inicial-icone"
+                aria-hidden="true">
+
+                <i class="far fa-building"></i>
+            </span>
+
+            <h2 id="titulo-primeira-empresa">
+                Cadastre sua primeira empresa
+            </h2>
+
+            <p class="configuracao-inicial-descricao">
+                Para liberar os recursos do ERP, informe os
+                dados da primeira empresa da organização.
+            </p>
+
+            <ol
+                class="configuracao-inicial-etapas"
+                aria-label="Progresso da configuração inicial">
+
+                <li class="etapa etapa-concluida">
+                    <span
+                        class="etapa-marcador"
+                        aria-hidden="true">
+
+                        <i class="fas fa-check"></i>
+                    </span>
+
+                    <span>
+                        Organização cadastrada
+                    </span>
+                </li>
+
+                <li
+                    class="etapa-conector"
+                    aria-hidden="true">
+                </li>
+
+                <li class="etapa etapa-pendente">
+                    <span
+                        class="etapa-marcador"
+                        aria-hidden="true">
+                    </span>
+
+                    <span>
+                        Empresa pendente
+                    </span>
+                </li>
+            </ol>
+
+            @if (podeCriarEmpresa) {
+                <a
+                    class="
+                        btn
+                        btn-primary
+                        configuracao-inicial-acao
+                    "
+                    routerLink="/configuracao/empresas"
+                    [queryParams]="{
+                        acao: 'nova'
+                    }">
+
+                    Cadastrar empresa
+                </a>
+
+                <p class="configuracao-inicial-ajuda">
+                    Os demais módulos serão liberados após
+                    este cadastro.
+                </p>
+            } @else {
+                <p
+                    class="
+                        configuracao-inicial-descricao
+                        mb-0
+                    "
+                    role="status">
+
+                    Você não possui permissão para cadastrar
+                    a primeira empresa. Solicite essa
+                    permissão ao administrador da
+                    organização.
+                </p>
+            }
+        </div>
+    }
+
+    @if (empresaCadastrada) {
+        <div
+            class="
+                configuracao-inicial-card
+                configuracao-inicial-estado
+            ">
+
+            <span
+                class="
+                    configuracao-inicial-icone
+                    configuracao-inicial-icone-sucesso
+                "
+                aria-hidden="true">
+
+                <i class="fas fa-check"></i>
+            </span>
+
+            <h2>
+                Primeira empresa cadastrada
+            </h2>
+
+            <p class="configuracao-inicial-descricao">
+                A organização já possui uma empresa ativa.
+            </p>
+
+            @if (podeListarEmpresa) {
+                <a
+                    class="
+                        btn
+                        btn-primary
+                        configuracao-inicial-acao
+                    "
+                    routerLink="/configuracao/empresas">
+
+                    Acessar empresas
+                </a>
+            }
+        </div>
+    }
+</section>

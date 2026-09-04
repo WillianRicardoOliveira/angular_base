@@ -1,0 +1,157 @@
+:host {
+    display: block;
+}
+
+.configuracao-inicial {
+    padding-bottom: 1.5rem;
+}
+
+.configuracao-inicial-card {
+    align-items: center;
+    background: #fff;
+    border: 1px solid #dee6ee;
+    border-radius: 0.75rem;
+    box-shadow:
+        0 0.25rem 0.75rem
+        rgb(31 45 61 / 8%);
+    display: flex;
+    flex-direction: column;
+    min-height: 31rem;
+    padding: 2.25rem 2rem;
+    text-align: center;
+}
+
+.configuracao-inicial-icone {
+    align-items: center;
+    background: #edf5ff;
+    border: 1px solid #d8e7f8;
+    border-radius: 50%;
+    color: #3989dd;
+    display: inline-flex;
+    font-size: 2.5rem;
+    height: 7rem;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    width: 7rem;
+}
+
+h2 {
+    color: #18293b;
+    font-size: 1.65rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+}
+
+.configuracao-inicial-descricao,
+.configuracao-inicial-ajuda {
+    color: #64748b;
+    margin: 0;
+}
+
+.configuracao-inicial-etapas {
+    align-items: center;
+    display: flex;
+    list-style: none;
+    margin: 2.25rem 0 2rem;
+    max-width: 46rem;
+    padding: 0;
+    width: 100%;
+}
+
+.etapa {
+    align-items: center;
+    color: #52647a;
+    display: flex;
+    flex: 0 0 auto;
+    gap: 0.65rem;
+}
+
+.etapa-marcador {
+    align-items: center;
+    border-radius: 50%;
+    display: inline-flex;
+    height: 1.75rem;
+    justify-content: center;
+    width: 1.75rem;
+}
+
+.etapa-concluida .etapa-marcador {
+    background: #20aa5a;
+    color: #fff;
+    font-size: 0.8rem;
+}
+
+.etapa-pendente .etapa-marcador {
+    border: 2px solid #aebdce;
+}
+
+.etapa-conector {
+    border-top: 2px dashed #c7d3df;
+    flex: 1 1 auto;
+    margin: 0 1rem;
+}
+
+.configuracao-inicial-acao {
+    border-radius: 0.5rem;
+    font-weight: 600;
+    min-width: 15rem;
+    padding: 0.75rem 1.5rem;
+}
+
+.configuracao-inicial-ajuda {
+    margin-top: 1.25rem;
+}
+
+.configuracao-inicial-estado {
+    justify-content: center;
+}
+
+.configuracao-inicial-estado
+.configuracao-inicial-acao {
+    margin-top: 2rem;
+}
+
+.configuracao-inicial-icone-erro {
+    background: #fff4e5;
+    border-color: #f6d5a6;
+    color: #d97706;
+}
+
+.configuracao-inicial-icone-sucesso {
+    background: #eaf8ef;
+    border-color: #bce5ca;
+    color: #20aa5a;
+}
+
+@media (max-width: 767.98px) {
+
+    .configuracao-inicial-card {
+        min-height: auto;
+        padding: 2rem 1rem;
+    }
+
+    .configuracao-inicial-etapas {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin: 2rem 0;
+        width: auto;
+    }
+
+    .etapa-conector {
+        border-left: 2px dashed #c7d3df;
+        border-top: 0;
+        flex: none;
+        height: 1.5rem;
+        margin:
+            -0.35rem
+            0
+            -0.35rem
+            0.8rem;
+    }
+
+    .configuracao-inicial-acao {
+        min-width: 0;
+        width: 100%;
+    }
+}

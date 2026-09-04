@@ -1,9 +1,13 @@
 import {
     Component,
     DestroyRef,
-    OnInit,
-    inject
+    inject,
+    OnInit
 } from '@angular/core';
+
+import {
+    takeUntilDestroyed
+} from '@angular/core/rxjs-interop';
 
 import {
     FormBuilder,
@@ -16,10 +20,6 @@ import {
     ActivatedRoute,
     Router
 } from '@angular/router';
-
-import {
-    takeUntilDestroyed
-} from '@angular/core/rxjs-interop';
 
 import {
     debounceTime,
@@ -50,10 +50,6 @@ import {
 } from '@/interfaces/interfaces';
 
 import {
-    UsuarioEmpresaService
-} from './services/usuario-empresa.service';
-
-import {
     ItemBreadcrumbPagina
 } from '@components/cabecalho-pagina/cabecalho-pagina.component';
 
@@ -61,6 +57,10 @@ import {
     AcaoExtraGrid,
     EventoAcaoExtraGrid
 } from '@components/grid/grid.component';
+
+import {
+    UsuarioEmpresaService
+} from './services/usuario-empresa.service';
 
 @Component({
     selector: 'app-usuario-empresa',
@@ -75,44 +75,28 @@ export class UsuarioEmpresaComponent
     implements OnInit {
 
     private readonly service =
-        inject(
-            UsuarioEmpresaService
-        );
+        inject(UsuarioEmpresaService);
 
     private readonly autorizacaoService =
-        inject(
-            AutorizacaoService
-        );
+        inject(AutorizacaoService);
 
     private readonly contextoOrganizacaoService =
-        inject(
-            ContextoOrganizacaoService
-        );
+        inject(ContextoOrganizacaoService);
 
     private readonly builder =
-        inject(
-            FormBuilder
-        );
+        inject(FormBuilder);
 
     private readonly route =
-        inject(
-            ActivatedRoute
-        );
+        inject(ActivatedRoute);
 
     private readonly router =
-        inject(
-            Router
-        );
+        inject(Router);
 
     private readonly toastr =
-        inject(
-            ToastrService
-        );
+        inject(ToastrService);
 
     private readonly destroyRef =
-        inject(
-            DestroyRef
-        );
+        inject(DestroyRef);
 
     idUsuario = 0;
 
@@ -124,8 +108,7 @@ export class UsuarioEmpresaComponent
 
     breadcrumb: ItemBreadcrumbPagina[] = [
         {
-            titulo:
-                'Acesso e Segurança'
+            titulo: 'Acesso e Segurança'
         },
         {
             titulo: 'Usuários',
@@ -249,7 +232,7 @@ export class UsuarioEmpresaComponent
             ) ||
             this.idUsuario <= 0
         ) {
-            this.router.navigate([
+            void this.router.navigate([
                 '/acesso/usuarios'
             ]);
 
@@ -265,28 +248,33 @@ export class UsuarioEmpresaComponent
         page = this.paginaAtual,
         size = this.tamanhoPagina
     ): void {
-        this.service.listar(
-            page,
-            size,
-            'id,desc',
-            this.idUsuario
-        ).subscribe({
-            next: (pagina) => {
-                this.lista =
-                    pagina.content;
+        this.service
+            .listar(
+                page,
+                size,
+                'id,desc',
+                this.idUsuario
+            )
+            .subscribe({
+                next: (pagina) => {
+                    this.lista =
+                        pagina.content;
 
-                this.totalRegistros =
-                    pagina.totalElements;
+                    this.totalRegistros =
+                        pagina.totalElements;
 
-                this.paginaAtual = page;
-                this.tamanhoPagina = size;
-            },
-            error: () => {
-                this.toastr.error(
-                    'Não foi possível carregar as empresas do usuário'
-                );
-            }
-        });
+                    this.paginaAtual =
+                        page;
+
+                    this.tamanhoPagina =
+                        size;
+                },
+                error: () => {
+                    this.toastr.error(
+                        'Não foi possível carregar as empresas do usuário'
+                    );
+                }
+            });
     }
 
     quantidadePorPagina(
@@ -313,7 +301,8 @@ export class UsuarioEmpresaComponent
 
         const vinculo =
             this.lista.find(
-                (item) => item.id === evento.id
+                (item) =>
+                    item.id === evento.id
             );
 
         if (vinculo?.todasSubsidiarias) {
@@ -324,7 +313,7 @@ export class UsuarioEmpresaComponent
             return;
         }
 
-        this.router.navigate([
+        void this.router.navigate([
             '/acesso/usuarios',
             this.idUsuario,
             'empresas',
@@ -341,7 +330,6 @@ export class UsuarioEmpresaComponent
         this.isLista = false;
         this.isFormulario = true;
         this.isVisualizacao = false;
-
         this.usuarioNome = '';
         this.empresaNome = '';
         this.empresas = [];
@@ -372,9 +360,7 @@ export class UsuarioEmpresaComponent
         this.carregarEmpresas('');
     }
 
-    botaoEditar(
-        id: number
-    ): void {
+    botaoEditar(id: number): void {
         if (!this.podeEditar) {
             return;
         }
@@ -385,9 +371,7 @@ export class UsuarioEmpresaComponent
         );
     }
 
-    botaoVisualizar(
-        id: number
-    ): void {
+    botaoVisualizar(id: number): void {
         if (!this.podeDetalhar) {
             return;
         }
@@ -412,67 +396,70 @@ export class UsuarioEmpresaComponent
                 ?.value;
 
         if (id) {
-            this.service.atualizar({
-                id,
+            this.service
+                .atualizar({
+                    id,
+                    todasSubsidiarias:
+                        this.formulario
+                            .get(
+                                'todasSubsidiarias'
+                            )
+                            ?.value
+                })
+                .subscribe({
+                    next: () => {
+                        this.finalizarSalvamento(
+                            'Vínculo atualizado com sucesso'
+                        );
+                    },
+                    error: () => {
+                        this.toastr.error(
+                            'Não foi possível atualizar o vínculo'
+                        );
+                    }
+                });
+
+            return;
+        }
+
+        this.service
+            .cadastrar({
+                idUsuario:
+                    this.formulario
+                        .get('idUsuario')
+                        ?.value,
+                idEmpresa:
+                    this.formulario
+                        .get('idEmpresa')
+                        ?.value,
                 todasSubsidiarias:
                     this.formulario
                         .get(
                             'todasSubsidiarias'
                         )
                         ?.value
-            }).subscribe({
+            })
+            .subscribe({
                 next: () => {
                     this.finalizarSalvamento(
-                        'Vínculo atualizado com sucesso'
+                        'Empresa vinculada ao usuário com sucesso'
                     );
                 },
                 error: () => {
                     this.toastr.error(
-                        'Não foi possível atualizar o vínculo'
+                        'Não foi possível vincular a empresa ao usuário'
                     );
                 }
             });
-
-            return;
-        }
-
-        this.service.cadastrar({
-            idUsuario:
-                this.formulario
-                    .get('idUsuario')
-                    ?.value,
-            idEmpresa:
-                this.formulario
-                    .get('idEmpresa')
-                    ?.value,
-            todasSubsidiarias:
-                this.formulario
-                    .get(
-                        'todasSubsidiarias'
-                    )
-                    ?.value
-        }).subscribe({
-            next: () => {
-                this.finalizarSalvamento(
-                    'Empresa vinculada ao usuário com sucesso'
-                );
-            },
-            error: () => {
-                this.toastr.error(
-                    'Não foi possível vincular a empresa ao usuário'
-                );
-            }
-        });
     }
 
-    botaoExcluir(
-        id: number
-    ): void {
+    botaoExcluir(id: number): void {
         if (!this.podeExcluir) {
             return;
         }
 
-        this.service.excluir(id)
+        this.service
+            .excluir(id)
             .subscribe({
                 next: () => {
                     this.carregarLista();
@@ -494,9 +481,7 @@ export class UsuarioEmpresaComponent
     ): void {
         this.formulario
             .get('idEmpresa')
-            ?.setValue(
-                empresa.id
-            );
+            ?.setValue(empresa.id);
 
         this.empresaNome =
             empresa.nome;
@@ -519,7 +504,6 @@ export class UsuarioEmpresaComponent
         this.isLista = true;
         this.isFormulario = false;
         this.isVisualizacao = false;
-
         this.usuarioNome = '';
         this.empresaNome = '';
         this.empresas = [];
@@ -538,7 +522,7 @@ export class UsuarioEmpresaComponent
     }
 
     voltar(): void {
-        this.router.navigate([
+        void this.router.navigate([
             '/acesso/usuarios'
         ]);
     }
@@ -578,14 +562,19 @@ export class UsuarioEmpresaComponent
 
     private configurarAtualizacaoPorOrganizacao(): void {
         this.contextoOrganizacaoService
-            .retornarOrganizacaoAtivaObservable()
+            .retornarOrganizacaoProntaObservable()
             .pipe(
                 skip(1),
-                takeUntilDestroyed(this.destroyRef)
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
             )
-            .subscribe(() => {
+            .subscribe((organizacao) => {
                 this.limparEstadoPorTrocaOrganizacao();
-                this.voltar();
+
+                if (organizacao) {
+                    this.voltar();
+                }
             });
     }
 
@@ -597,6 +586,8 @@ export class UsuarioEmpresaComponent
         this.totalRegistros = 0;
         this.paginaAtual = 0;
         this.tamanhoPagina = 10;
+        this.usuarioNome = '';
+        this.empresaNome = '';
     }
 
     private carregarEmpresas(
@@ -627,7 +618,8 @@ export class UsuarioEmpresaComponent
         id: number,
         visualizacao: boolean
     ): void {
-        this.service.detalhar(id)
+        this.service
+            .detalhar(id)
             .subscribe({
                 next: (dados) => {
                     this.isLista = false;

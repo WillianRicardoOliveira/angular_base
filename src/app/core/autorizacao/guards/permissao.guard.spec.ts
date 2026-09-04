@@ -1,11 +1,13 @@
 import {
     TestBed
 } from '@angular/core/testing';
+
 import {
     ActivatedRouteSnapshot,
     Router,
     UrlTree
 } from '@angular/router';
+
 import {
     ToastrService
 } from 'ngx-toastr';
@@ -13,9 +15,11 @@ import {
 import {
     MensagemAutenticacaoService
 } from '@/core/autenticacao/services/mensagem-autenticacao.service';
+
 import {
     ChavePermissao
 } from '@/core/autorizacao/models/chave-permissao';
+
 import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
@@ -25,34 +29,40 @@ import {
 } from './permissao.guard';
 
 describe('PermissaoGuard', () => {
+
     const urlTreeMock =
         {} as UrlTree;
 
     const autorizacaoServiceMock = {
-        possuiPermissao: jasmine.createSpy(
-            'possuiPermissao'
-        )
+        possuiPermissao:
+            jasmine.createSpy(
+                'possuiPermissao'
+            ),
+        possuiAlgumaPermissao:
+            jasmine.createSpy(
+                'possuiAlgumaPermissao'
+            )
     };
 
     const mensagemAutenticacaoServiceMock = {
         obterMensagemAcessoNegado:
-            jasmine
-                .createSpy(
-                    'obterMensagemAcessoNegado'
-                )
-                .and.returnValue(
-                    'Você não possui permissão para executar esta ação.'
-                )
+            jasmine.createSpy(
+                'obterMensagemAcessoNegado'
+            )
     };
 
     const toastrMock = {
-        error: jasmine.createSpy('error')
+        error:
+            jasmine.createSpy(
+                'error'
+            )
     };
 
     const routerMock = {
-        createUrlTree: jasmine
-            .createSpy('createUrlTree')
-            .and.returnValue(urlTreeMock)
+        createUrlTree:
+            jasmine.createSpy(
+                'createUrlTree'
+            )
     };
 
     beforeEach(() => {
@@ -61,6 +71,21 @@ describe('PermissaoGuard', () => {
             .calls
             .reset();
 
+        autorizacaoServiceMock
+            .possuiPermissao
+            .and
+            .returnValue(false);
+
+        autorizacaoServiceMock
+            .possuiAlgumaPermissao
+            .calls
+            .reset();
+
+        autorizacaoServiceMock
+            .possuiAlgumaPermissao
+            .and
+            .returnValue(false);
+
         mensagemAutenticacaoServiceMock
             .obterMensagemAcessoNegado
             .calls
@@ -68,30 +93,30 @@ describe('PermissaoGuard', () => {
 
         mensagemAutenticacaoServiceMock
             .obterMensagemAcessoNegado
-            .and.returnValue(
+            .and
+            .returnValue(
                 'Você não possui permissão para executar esta ação.'
             );
 
-        toastrMock
-            .error
+        toastrMock.error
             .calls
             .reset();
 
-        routerMock
-            .createUrlTree
+        routerMock.createUrlTree
             .calls
             .reset();
 
-        routerMock
-            .createUrlTree
-            .and.returnValue(
+        routerMock.createUrlTree
+            .and
+            .returnValue(
                 urlTreeMock
             );
 
         TestBed.configureTestingModule({
             providers: [
                 {
-                    provide: AutorizacaoService,
+                    provide:
+                        AutorizacaoService,
                     useValue:
                         autorizacaoServiceMock
                 },
@@ -102,141 +127,312 @@ describe('PermissaoGuard', () => {
                         mensagemAutenticacaoServiceMock
                 },
                 {
-                    provide: ToastrService,
-                    useValue: toastrMock
+                    provide:
+                        ToastrService,
+                    useValue:
+                        toastrMock
                 },
                 {
-                    provide: Router,
-                    useValue: routerMock
+                    provide:
+                        Router,
+                    useValue:
+                        routerMock
                 }
             ]
         });
     });
 
-    it('deve permitir acesso quando usuário possuir a permissão', () => {
-        autorizacaoServiceMock
-            .possuiPermissao
-            .and.returnValue(true);
+    it(
+        'deve permitir acesso quando possuir a permissao unica',
+        () => {
 
-        const route =
-            criarRoute(
-                ChavePermissao.UsuarioListar
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and
+                .returnValue(true);
+
+            const route =
+                criarRouteComPermissao(
+                    ChavePermissao
+                        .UsuarioListar
+                );
+
+            const resultado =
+                executarGuard(route);
+
+            expect(resultado)
+                .toBeTrue();
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledOnceWith(
+                ChavePermissao
+                    .UsuarioListar
             );
 
-        const resultado =
-            executarGuard(route);
+            expect(
+                autorizacaoServiceMock
+                    .possuiAlgumaPermissao
+            ).not.toHaveBeenCalled();
 
-        expect(resultado).toBeTrue();
+            esperarAcessoPermitido();
+        }
+    );
 
-        expect(
-            autorizacaoServiceMock
-                .possuiPermissao
-        ).toHaveBeenCalledOnceWith(
-            ChavePermissao.UsuarioListar
-        );
+    it(
+        'deve bloquear acesso quando nao possuir a permissao unica',
+        () => {
 
-        expect(
-            toastrMock.error
-        ).not.toHaveBeenCalled();
+            const route =
+                criarRouteComPermissao(
+                    ChavePermissao
+                        .UsuarioListar
+                );
 
-        expect(
-            routerMock.createUrlTree
-        ).not.toHaveBeenCalled();
-    });
+            const resultado =
+                executarGuard(route);
 
-    it('deve bloquear acesso quando usuário não possuir a permissão', () => {
-        autorizacaoServiceMock
-            .possuiPermissao
-            .and.returnValue(false);
+            expect(resultado)
+                .toBe(
+                    urlTreeMock
+                );
 
-        const route =
-            criarRoute(
-                ChavePermissao.UsuarioListar
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).toHaveBeenCalledOnceWith(
+                ChavePermissao
+                    .UsuarioListar
             );
 
-        const resultado =
-            executarGuard(route);
+            expect(
+                autorizacaoServiceMock
+                    .possuiAlgumaPermissao
+            ).not.toHaveBeenCalled();
 
-        expect(resultado).toBe(
-            urlTreeMock
-        );
+            esperarAcessoBloqueado();
+        }
+    );
 
-        expect(
+    it(
+        'deve permitir acesso quando possuir uma das permissoes alternativas',
+        () => {
+
+            const permissoes = [
+                ChavePermissao
+                    .EmpresaCriar,
+                ChavePermissao
+                    .EmpresaListar
+            ];
+
             autorizacaoServiceMock
-                .possuiPermissao
-        ).toHaveBeenCalledOnceWith(
-            ChavePermissao.UsuarioListar
-        );
+                .possuiAlgumaPermissao
+                .and
+                .returnValue(true);
 
-        expect(
-            mensagemAutenticacaoServiceMock
-                .obterMensagemAcessoNegado
-        ).toHaveBeenCalledTimes(1);
+            const route =
+                criarRouteComPermissoes(
+                    permissoes
+                );
 
-        expect(
-            toastrMock.error
-        ).toHaveBeenCalledOnceWith(
-            'Você não possui permissão para executar esta ação.'
-        );
+            const resultado =
+                executarGuard(route);
 
-        expect(
-            routerMock.createUrlTree
-        ).toHaveBeenCalledOnceWith(
-            ['/']
-        );
-    });
+            expect(resultado)
+                .toBeTrue();
 
-    it('deve bloquear acesso quando a rota não informar a permissão', () => {
-        const route =
-            criarRoute();
+            expect(
+                autorizacaoServiceMock
+                    .possuiAlgumaPermissao
+            ).toHaveBeenCalledOnceWith(
+                permissoes
+            );
 
-        const resultado =
-            executarGuard(route);
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).not.toHaveBeenCalled();
 
-        expect(resultado).toBe(
-            urlTreeMock
-        );
+            esperarAcessoPermitido();
+        }
+    );
 
-        expect(
-            autorizacaoServiceMock
-                .possuiPermissao
-        ).not.toHaveBeenCalled();
+    it(
+        'deve bloquear quando nao possuir nenhuma permissao alternativa',
+        () => {
 
-        expect(
-            mensagemAutenticacaoServiceMock
-                .obterMensagemAcessoNegado
-        ).toHaveBeenCalledTimes(1);
+            const permissoes = [
+                ChavePermissao
+                    .EmpresaCriar,
+                ChavePermissao
+                    .EmpresaListar
+            ];
 
-        expect(
-            toastrMock.error
-        ).toHaveBeenCalledOnceWith(
-            'Você não possui permissão para executar esta ação.'
-        );
+            const route =
+                criarRouteComPermissoes(
+                    permissoes
+                );
 
-        expect(
-            routerMock.createUrlTree
-        ).toHaveBeenCalledOnceWith(
-            ['/']
-        );
-    });
+            const resultado =
+                executarGuard(route);
 
-    function criarRoute(
-        permissao?: ChavePermissao
+            expect(resultado)
+                .toBe(
+                    urlTreeMock
+                );
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiAlgumaPermissao
+            ).toHaveBeenCalledOnceWith(
+                permissoes
+            );
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).not.toHaveBeenCalled();
+
+            esperarAcessoBloqueado();
+        }
+    );
+
+    it(
+        'deve bloquear quando a lista de permissoes estiver vazia',
+        () => {
+
+            const route =
+                criarRouteComPermissoes(
+                    []
+                );
+
+            const resultado =
+                executarGuard(route);
+
+            expect(resultado)
+                .toBe(
+                    urlTreeMock
+                );
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).not.toHaveBeenCalled();
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiAlgumaPermissao
+            ).not.toHaveBeenCalled();
+
+            esperarAcessoBloqueado();
+        }
+    );
+
+    it(
+        'deve bloquear quando a rota nao informar permissao',
+        () => {
+
+            const route = {
+                data: {}
+            } as ActivatedRouteSnapshot;
+
+            const resultado =
+                executarGuard(route);
+
+            expect(resultado)
+                .toBe(
+                    urlTreeMock
+                );
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiPermissao
+            ).not.toHaveBeenCalled();
+
+            expect(
+                autorizacaoServiceMock
+                    .possuiAlgumaPermissao
+            ).not.toHaveBeenCalled();
+
+            esperarAcessoBloqueado();
+        }
+    );
+
+    function criarRouteComPermissao(
+        permissao:
+            ChavePermissao
     ): ActivatedRouteSnapshot {
+
         return {
-            data: permissao
-                ? {
-                    permissao
-                }
-                : {}
-        } as ActivatedRouteSnapshot;
+            data: {
+                permissao
+            }
+        } as unknown as ActivatedRouteSnapshot;
+    }
+
+    function criarRouteComPermissoes(
+        permissoes:
+            readonly ChavePermissao[]
+    ): ActivatedRouteSnapshot {
+
+        return {
+            data: {
+                permissoes
+            }
+        } as unknown as ActivatedRouteSnapshot;
     }
 
     function executarGuard(
-        route: ActivatedRouteSnapshot
+        route:
+            ActivatedRouteSnapshot
     ) {
-        return TestBed.runInInjectionContext(
-            () => PermissaoGuard(route)
+        return TestBed
+            .runInInjectionContext(
+                () =>
+                    PermissaoGuard(
+                        route
+                    )
+            );
+    }
+
+    function esperarAcessoPermitido():
+        void {
+
+        expect(
+            mensagemAutenticacaoServiceMock
+                .obterMensagemAcessoNegado
+        ).not.toHaveBeenCalled();
+
+        expect(
+            toastrMock.error
+        ).not.toHaveBeenCalled();
+
+        expect(
+            routerMock.createUrlTree
+        ).not.toHaveBeenCalled();
+    }
+
+    function esperarAcessoBloqueado():
+        void {
+
+        expect(
+            mensagemAutenticacaoServiceMock
+                .obterMensagemAcessoNegado
+        ).toHaveBeenCalledTimes(1);
+
+        expect(
+            toastrMock.error
+        ).toHaveBeenCalledOnceWith(
+            'Você não possui permissão para executar esta ação.'
+        );
+
+        expect(
+            routerMock.createUrlTree
+        ).toHaveBeenCalledOnceWith(
+            [
+                '/'
+            ]
         );
     }
 });

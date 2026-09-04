@@ -115,11 +115,14 @@ export class PerfilPermissaoComponent
 
     breadcrumb: ItemBreadcrumbPagina[] = [
         {
-            titulo: 'Acesso e Segurança'
+            titulo:
+                'Acesso e Segurança'
         },
         {
-            titulo: 'Perfis',
-            rota: '/acesso/perfis'
+            titulo:
+                'Perfis',
+            rota:
+                '/acesso/perfis'
         }
     ];
 
@@ -190,7 +193,7 @@ export class PerfilPermissaoComponent
             ) ||
             this.idPerfil <= 0
         ) {
-            this.router.navigate([
+            void this.router.navigate([
                 '/acesso/perfis'
             ]);
 
@@ -379,21 +382,26 @@ export class PerfilPermissaoComponent
     }
 
     voltar(): void {
-        this.router.navigate([
+        void this.router.navigate([
             '/acesso/perfis'
         ]);
     }
 
     private configurarAtualizacaoPorOrganizacao(): void {
         this.contextoOrganizacaoService
-            .retornarOrganizacaoAtivaObservable()
+            .retornarOrganizacaoProntaObservable()
             .pipe(
                 skip(1),
-                takeUntilDestroyed(this.destroyRef)
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
             )
-            .subscribe(() => {
+            .subscribe((organizacao) => {
                 this.limparEstadoPorTrocaOrganizacao();
-                this.voltar();
+
+                if (organizacao) {
+                    this.voltar();
+                }
             });
     }
 

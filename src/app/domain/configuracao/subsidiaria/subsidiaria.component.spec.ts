@@ -58,7 +58,7 @@ describe('SubsidiariaComponent', () => {
     let serviceMock:
         jasmine.SpyObj<SubsidiariaService>;
 
-    let organizacaoAtivaSubject:
+    let organizacaoProntaSubject:
         BehaviorSubject<OrganizacaoDisponivel | null>;
 
     const autorizacaoServiceMock = {
@@ -68,9 +68,9 @@ describe('SubsidiariaComponent', () => {
     };
 
     const contextoOrganizacaoServiceMock = {
-        retornarOrganizacaoAtivaObservable:
+        retornarOrganizacaoProntaObservable:
             jasmine.createSpy(
-                'retornarOrganizacaoAtivaObservable'
+                'retornarOrganizacaoProntaObservable'
             )
     };
 
@@ -101,7 +101,7 @@ describe('SubsidiariaComponent', () => {
     };
 
     beforeEach(async () => {
-        organizacaoAtivaSubject =
+        organizacaoProntaSubject =
             new BehaviorSubject<
                 OrganizacaoDisponivel | null
             >({
@@ -110,14 +110,14 @@ describe('SubsidiariaComponent', () => {
             });
 
         contextoOrganizacaoServiceMock
-            .retornarOrganizacaoAtivaObservable
+            .retornarOrganizacaoProntaObservable
             .calls
             .reset();
 
         contextoOrganizacaoServiceMock
-            .retornarOrganizacaoAtivaObservable
+            .retornarOrganizacaoProntaObservable
             .and.returnValue(
-                organizacaoAtivaSubject
+                organizacaoProntaSubject
                     .asObservable()
             );
 
@@ -856,7 +856,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'deve recarregar dados ao trocar a organização ativa',
+        'deve recarregar dados ao trocar a organização pronta',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -878,7 +878,7 @@ describe('SubsidiariaComponent', () => {
 
             serviceMock.listar.calls.reset();
 
-            organizacaoAtivaSubject.next({
+            organizacaoProntaSubject.next({
                 id: 2,
                 nome: 'Organização Filial'
             });
@@ -918,7 +918,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'deve limpar dados quando não houver organização ativa',
+        'deve limpar dados quando não houver organização pronta',
         () => {
             component.lista = [
                 subsidiaria
@@ -934,7 +934,7 @@ describe('SubsidiariaComponent', () => {
 
             serviceMock.listar.calls.reset();
 
-            organizacaoAtivaSubject.next(null);
+            organizacaoProntaSubject.next(null);
 
             expect(component.lista)
                 .toEqual([]);

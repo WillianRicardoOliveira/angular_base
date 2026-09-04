@@ -115,11 +115,14 @@ export class UsuarioPerfilComponent
 
     breadcrumb: ItemBreadcrumbPagina[] = [
         {
-            titulo: 'Acesso e Segurança'
+            titulo:
+                'Acesso e Segurança'
         },
         {
-            titulo: 'Usuários',
-            rota: '/acesso/usuarios'
+            titulo:
+                'Usuários',
+            rota:
+                '/acesso/usuarios'
         }
     ];
 
@@ -181,7 +184,7 @@ export class UsuarioPerfilComponent
             ) ||
             this.idUsuario <= 0
         ) {
-            this.router.navigate([
+            void this.router.navigate([
                 '/acesso/usuarios'
             ]);
 
@@ -349,21 +352,26 @@ export class UsuarioPerfilComponent
     }
 
     voltar(): void {
-        this.router.navigate([
+        void this.router.navigate([
             '/acesso/usuarios'
         ]);
     }
 
     private configurarAtualizacaoPorOrganizacao(): void {
         this.contextoOrganizacaoService
-            .retornarOrganizacaoAtivaObservable()
+            .retornarOrganizacaoProntaObservable()
             .pipe(
                 skip(1),
-                takeUntilDestroyed(this.destroyRef)
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
             )
-            .subscribe(() => {
+            .subscribe((organizacao) => {
                 this.limparEstadoPorTrocaOrganizacao();
-                this.voltar();
+
+                if (organizacao) {
+                    this.voltar();
+                }
             });
     }
 

@@ -3,33 +3,55 @@ import {
     OnDestroy,
     OnInit
 } from '@angular/core';
+
 import {
     Router
 } from '@angular/router';
+
 import {
     ToastrService
 } from 'ngx-toastr';
+
 import {
+    catchError,
     finalize,
+    from,
+    Observable,
+    of,
     Subject,
-    takeUntil
+    switchMap,
+    takeUntil,
+    tap,
+    throwError
 } from 'rxjs';
+
+import {
+    ChavePermissao
+} from '@/core/autorizacao/models/chave-permissao';
+
+import {
+    AutorizacaoService
+} from '@/core/autorizacao/services/autorizacao.service';
+
+import {
+    PermissoesUsuarioService
+} from '@/core/autorizacao/services/permissoes-usuario.service';
 
 import {
     OrganizacaoDisponivel
 } from '@/core/organizacao/models/organizacao-disponivel.model';
+
 import {
     ContextoOrganizacaoService
 } from '@/core/organizacao/services/contexto-organizacao.service';
+
 import {
-    ChavePermissao
-} from '@/core/autorizacao/models/chave-permissao';
+    EstadoConfiguracaoInicial
+} from '@/domain/configuracao/configuracao-inicial/models/estado-configuracao-inicial.model';
+
 import {
-    AutorizacaoService
-} from '@/core/autorizacao/services/autorizacao.service';
-import {
-    PermissoesUsuarioService
-} from '@/core/autorizacao/services/permissoes-usuario.service';
+    ConfiguracaoInicialService
+} from '@/domain/configuracao/configuracao-inicial/services/configuracao-inicial.service';
 
 @Component({
     selector: 'app-seletor-organizacao',
@@ -66,11 +88,14 @@ export class SeletorOrganizacaoComponent
             PermissoesUsuarioService,
         private autorizacaoService:
             AutorizacaoService,
+        private configuracaoInicialService:
+            ConfiguracaoInicialService,
         private toastr:
             ToastrService,
         private router:
             Router
-    ) {}
+    ) {
+    }
 
     ngOnInit(): void {
         this.contextoOrganizacaoService
@@ -118,7 +143,10 @@ export class SeletorOrganizacaoComponent
     }
 
     get exibindoCarregamento(): boolean {
-        return this.carregando || this.trocando;
+        return (
+            this.carregando ||
+            this.trocando
+        );
     }
 
     get controleDesabilitado(): boolean {
@@ -143,29 +171,94 @@ export class SeletorOrganizacaoComponent
         const organizacaoAnterior =
             this.organizacaoAtiva;
 
+        let permissoesCarregadas =
+            false;
+
+        this.trocando = true;
+
+        this.contextoOrganizacaoService
+            .iniciarTrocaOrganizacao();
+
         try {
             this.contextoOrganizacaoService
                 .definirOrganizacaoAtiva(
                     idOrganizacao
                 );
         } catch {
+            this.trocando = false;
+
+            this.contextoOrganizacaoService
+                .finalizarTrocaOrganizacao();
+
             this.toastr.error(
                 'Organização indisponível para o usuário.'
             );
 
             this.idOrganizacaoSelecionada =
-                organizacaoAnterior?.id ?? null;
+                organizacaoAnterior?.id ??
+                null;
 
             return;
         }
 
-        this.trocando = true;
-
         this.permissoesUsuarioService
             .carregarPermissoes()
             .pipe(
+                tap(() => {
+                    permissoesCarregadas =
+                        true;
+                }),
+                switchMap(
+                    () =>
+                        this.configuracaoInicialService
+                            .consultar()
+                ),
+                switchMap(
+                    (configuracao) =>
+                        this.processarOrganizacaoSelecionada(
+                            configuracao
+                        )
+                ),
+                tap(() => {
+                    this.contextoOrganizacaoService
+                        .confirmarOrganizacaoPronta();
+                }),
+                catchError((erro: unknown) => {
+                    if (!permissoesCarregadas) {
+                        return throwError(
+                            () => erro
+                        );
+                    }
+
+                    return from(
+                        this.router.navigate(
+                            [
+                                '/configuracao-inicial'
+                            ],
+                            {
+                                replaceUrl: true
+                            }
+                        )
+                    ).pipe(
+                        catchError(() =>
+                            of(false)
+                        ),
+                        switchMap(() => {
+                            this.toastr.error(
+                                'Não foi possível verificar a configuração da organização.'
+                            );
+
+                            return throwError(
+                                () => erro
+                            );
+                        })
+                    );
+                }),
                 finalize(() => {
                     this.trocando = false;
+
+                    this.contextoOrganizacaoService
+                        .finalizarTrocaOrganizacao();
                 }),
                 takeUntil(
                     this.destroy$
@@ -173,12 +266,15 @@ export class SeletorOrganizacaoComponent
             )
             .subscribe({
                 next: () => {
-                    this.validarRotaAtual();
                     this.toastr.success(
                         'Organização ativa alterada.'
                     );
                 },
                 error: () => {
+                    if (permissoesCarregadas) {
+                        return;
+                    }
+
                     this.reverterOrganizacao(
                         organizacaoAnterior
                     );
@@ -192,7 +288,8 @@ export class SeletorOrganizacaoComponent
 
     rastrearOrganizacao(
         _indice: number,
-        organizacao: OrganizacaoDisponivel
+        organizacao:
+            OrganizacaoDisponivel
     ): number {
         return organizacao.id;
     }
@@ -219,12 +316,81 @@ export class SeletorOrganizacaoComponent
             });
     }
 
+    private processarOrganizacaoSelecionada(
+        configuracao:
+            EstadoConfiguracaoInicial
+    ): Observable<boolean> {
+
+        if (!this.rotaAtualAutorizada()) {
+            this.toastr.warning(
+                'Seu acesso a esta tela não está disponível na organização selecionada.'
+            );
+
+            return from(
+                this.router.navigate(
+                    [
+                        '/'
+                    ],
+                    {
+                        replaceUrl: true
+                    }
+                )
+            );
+        }
+
+        if (
+            configuracao.proximaEtapa !==
+                null &&
+            !this.ehRotaPlataforma()
+        ) {
+            return from(
+                this.router.navigate(
+                    [
+                        '/configuracao-inicial'
+                    ],
+                    {
+                        replaceUrl: true
+                    }
+                )
+            );
+        }
+
+        if (
+            configuracao.proximaEtapa ===
+                null &&
+            this.ehRotaConfiguracaoInicial()
+        ) {
+            const destino =
+                this.possuiAcessoEmpresas()
+                    ? '/configuracao/empresas'
+                    : '/';
+
+            return from(
+                this.router.navigate(
+                    [
+                        destino
+                    ],
+                    {
+                        replaceUrl: true
+                    }
+                )
+            );
+        }
+
+        return of(true);
+    }
+
     private reverterOrganizacao(
         organizacaoAnterior:
             OrganizacaoDisponivel | null
     ): void {
         if (!organizacaoAnterior) {
-            this.idOrganizacaoSelecionada = null;
+            this.configuracaoInicialService
+                .limparEstado();
+
+            this.idOrganizacaoSelecionada =
+                null;
+
             return;
         }
 
@@ -233,32 +399,92 @@ export class SeletorOrganizacaoComponent
                 .definirOrganizacaoAtiva(
                     organizacaoAnterior.id
                 );
+
+            this.configuracaoInicialService
+                .consultar()
+                .pipe(
+                    takeUntil(
+                        this.destroy$
+                    )
+                )
+                .subscribe({
+                    next: () => {
+                        this.contextoOrganizacaoService
+                            .confirmarOrganizacaoPronta();
+                    },
+                    error: () => {
+                        this.configuracaoInicialService
+                            .limparEstado();
+                    }
+                });
         } finally {
             this.idOrganizacaoSelecionada =
                 organizacaoAnterior.id;
         }
     }
 
-    private validarRotaAtual(): void {
-        const permissao =
-            this.obterPermissaoDaRotaAtual();
+    private rotaAtualAutorizada(): boolean {
+        const requisitos =
+            this.obterPermissoesDaRotaAtual();
+
+        if (requisitos.permissao) {
+            return this.autorizacaoService
+                .possuiPermissao(
+                    requisitos.permissao
+                );
+        }
 
         if (
-            permissao &&
-            !this.autorizacaoService
-                .possuiPermissao(permissao)
+            requisitos.permissoes.length >
+            0
         ) {
-            this.toastr.warning(
-                'Seu acesso a esta tela não está disponível na organização selecionada.'
-            );
-
-            void this.router.navigate(['/']);
+            return this.autorizacaoService
+                .possuiAlgumaPermissao(
+                    requisitos.permissoes
+                );
         }
+
+        return true;
     }
 
-    private obterPermissaoDaRotaAtual():
-        ChavePermissao | undefined {
+    private possuiAcessoEmpresas(): boolean {
+        return this.autorizacaoService
+            .possuiAlgumaPermissao([
+                ChavePermissao
+                    .EmpresaCriar,
+                ChavePermissao
+                    .EmpresaListar
+            ]);
+    }
 
+    private ehRotaPlataforma(): boolean {
+        return this.obterCaminhoAtual()
+            .startsWith(
+                '/plataforma/'
+            );
+    }
+
+    private ehRotaConfiguracaoInicial():
+        boolean {
+
+        return (
+            this.obterCaminhoAtual() ===
+            '/configuracao-inicial'
+        );
+    }
+
+    private obterCaminhoAtual(): string {
+        return this.router.url
+            .split('?')[0]
+            .split('#')[0];
+    }
+
+    private obterPermissoesDaRotaAtual(): {
+        permissao:
+            ChavePermissao | undefined;
+        permissoes:
+            readonly ChavePermissao[];
+    } {
         let rota =
             this.router
                 .routerState
@@ -269,8 +495,21 @@ export class SeletorOrganizacaoComponent
             rota = rota.firstChild;
         }
 
-        return rota.data[
-            'permissao'
-        ] as ChavePermissao | undefined;
+        return {
+            permissao:
+                rota.data[
+                    'permissao'
+                ] as
+                    ChavePermissao |
+                    undefined,
+            permissoes:
+                (
+                    rota.data[
+                        'permissoes'
+                    ] as
+                        readonly ChavePermissao[] |
+                        undefined
+                ) ?? []
+        };
     }
 }

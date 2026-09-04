@@ -46,84 +46,101 @@ import {
 } from './permissao.component';
 
 describe('PermissaoComponent', () => {
+
     let component:
         PermissaoComponent;
 
     let fixture:
-        ComponentFixture<PermissaoComponent>;
+        ComponentFixture<
+            PermissaoComponent
+        >;
 
     let baseServiceMock:
-        jasmine.SpyObj<BaseService>;
+        jasmine.SpyObj<
+            BaseService
+        >;
 
-    let organizacaoAtivaSubject:
-        BehaviorSubject<OrganizacaoDisponivel | null>;
+    let organizacaoProntaSubject:
+        BehaviorSubject<
+            OrganizacaoDisponivel | null
+        >;
 
     const contextoOrganizacaoServiceMock = {
-        retornarOrganizacaoAtivaObservable:
+        retornarOrganizacaoProntaObservable:
             jasmine.createSpy(
-                'retornarOrganizacaoAtivaObservable'
+                'retornarOrganizacaoProntaObservable'
             )
     };
 
     const autorizacaoServiceMock = {
-        possuiPermissao: jasmine.createSpy(
-            'possuiPermissao'
-        )
+        possuiPermissao:
+            jasmine.createSpy(
+                'possuiPermissao'
+            )
     };
 
     const routerMock = {
-        navigate: jasmine.createSpy(
-            'navigate'
-        ),
+        navigate:
+            jasmine.createSpy(
+                'navigate'
+            ),
         routeReuseStrategy: {
             shouldReuseRoute:
                 jasmine.createSpy(
                     'shouldReuseRoute'
                 )
         },
-        onSameUrlNavigation: 'ignore'
+        onSameUrlNavigation:
+            'ignore'
     };
 
     const activatedRouteMock = {
         snapshot: {
             paramMap: {
-                get: jasmine
-                    .createSpy('get')
-                    .and.returnValue(null)
+                get:
+                    jasmine
+                        .createSpy('get')
+                        .and
+                        .returnValue(null)
             }
         }
     };
 
     const toastrMock = {
-        success: jasmine.createSpy(
-            'success'
-        ),
-        error: jasmine.createSpy(
-            'error'
-        ),
-        info: jasmine.createSpy(
-            'info'
-        )
+        success:
+            jasmine.createSpy(
+                'success'
+            ),
+        error:
+            jasmine.createSpy(
+                'error'
+            ),
+        info:
+            jasmine.createSpy(
+                'info'
+            )
     };
 
     beforeEach(async () => {
-        organizacaoAtivaSubject =
+        organizacaoProntaSubject =
             new BehaviorSubject<
                 OrganizacaoDisponivel | null
             >({
                 id: 1,
-                nome: 'Organização 1'
+                nome:
+                    'Organização 1'
             });
 
         contextoOrganizacaoServiceMock
-            .retornarOrganizacaoAtivaObservable
+            .retornarOrganizacaoProntaObservable
             .calls
             .reset();
 
         contextoOrganizacaoServiceMock
-            .retornarOrganizacaoAtivaObservable
-            .and.returnValue(
-                organizacaoAtivaSubject
+            .retornarOrganizacaoProntaObservable
+            .and
+            .returnValue(
+                organizacaoProntaSubject
                     .asObservable()
             );
 
@@ -134,10 +151,13 @@ describe('PermissaoComponent', () => {
 
         autorizacaoServiceMock
             .possuiPermissao
-            .and.returnValue(false);
+            .and
+            .returnValue(false);
 
         baseServiceMock =
-            jasmine.createSpyObj<BaseService>(
+            jasmine.createSpyObj<
+                BaseService
+            >(
                 'BaseService',
                 [
                     'listar',
@@ -149,7 +169,8 @@ describe('PermissaoComponent', () => {
 
         baseServiceMock
             .listar
-            .and.returnValue(
+            .and
+            .returnValue(
                 of({
                     content: [],
                     totalElements: 0
@@ -164,7 +185,8 @@ describe('PermissaoComponent', () => {
                 providers: [
                     FormBuilder,
                     {
-                        provide: BaseService,
+                        provide:
+                            BaseService,
                         useValue:
                             baseServiceMock
                     },
@@ -181,17 +203,20 @@ describe('PermissaoComponent', () => {
                             contextoOrganizacaoServiceMock
                     },
                     {
-                        provide: Router,
+                        provide:
+                            Router,
                         useValue:
                             routerMock
                     },
                     {
-                        provide: ActivatedRoute,
+                        provide:
+                            ActivatedRoute,
                         useValue:
                             activatedRouteMock
                     },
                     {
-                        provide: ToastrService,
+                        provide:
+                            ToastrService,
                         useValue:
                             toastrMock
                     }
@@ -218,13 +243,19 @@ describe('PermissaoComponent', () => {
         fixture.detectChanges();
     });
 
-    it('deve ser criado', () => {
-        expect(component).toBeTruthy();
-    });
+    it(
+        'deve ser criado',
+        () => {
+
+            expect(component)
+                .toBeTruthy();
+        }
+    );
 
     it(
         'deve configurar o endpoint e as colunas',
         () => {
+
             expect(
                 component.endPoint
             ).toBe('permissao');
@@ -247,6 +278,7 @@ describe('PermissaoComponent', () => {
     it(
         'deve criar formulário de consulta',
         () => {
+
             const formulario =
                 component.campos();
 
@@ -260,17 +292,20 @@ describe('PermissaoComponent', () => {
             });
 
             expect(
-                formulario.get('nome')
+                formulario
+                    .get('nome')
                     ?.hasError('required')
             ).toBeTrue();
 
             expect(
-                formulario.get('chave')
+                formulario
+                    .get('chave')
                     ?.hasError('required')
             ).toBeTrue();
 
             expect(
-                formulario.get('descricao')
+                formulario
+                    .get('descricao')
                     ?.valid
             ).toBeTrue();
         }
@@ -279,22 +314,26 @@ describe('PermissaoComponent', () => {
     it(
         'deve criar formulário de detalhe com identificador',
         () => {
+
             const formulario =
                 component.campos({
                     id: 10,
-                    nome: 'Listar usuários',
+                    nome:
+                        'Listar usuários',
                     chave:
                         'ACESSO_USUARIO_LISTAR',
                     descricao:
                         'Permite listar usuários',
-                    status: 'ATIVO'
+                    status:
+                        'ATIVO'
                 });
 
             expect(
                 formulario.getRawValue()
             ).toEqual({
                 id: 10,
-                nome: 'Listar usuários',
+                nome:
+                    'Listar usuários',
                 chave:
                     'ACESSO_USUARIO_LISTAR',
                 descricao:
@@ -306,6 +345,12 @@ describe('PermissaoComponent', () => {
     it(
         'deve carregar a lista ao inicializar',
         () => {
+
+            expect(
+                contextoOrganizacaoServiceMock
+                    .retornarOrganizacaoProntaObservable
+            ).toHaveBeenCalledTimes(1);
+
             expect(
                 baseServiceMock.listar
             ).toHaveBeenCalledWith(
@@ -320,8 +365,9 @@ describe('PermissaoComponent', () => {
     );
 
     it(
-        'deve recarregar dados ao trocar a organização ativa',
+        'deve aguardar a nova organização ficar pronta antes de recarregar',
         () => {
+
             baseServiceMock
                 .listar
                 .calls
@@ -330,23 +376,27 @@ describe('PermissaoComponent', () => {
             component.formulario =
                 component.campos({
                     id: 10,
-                    nome: 'Listar usuários',
+                    nome:
+                        'Listar usuários',
                     chave:
                         'ACESSO_USUARIO_LISTAR',
                     descricao:
                         'Permite listar usuários',
-                    status: 'ATIVO'
+                    status:
+                        'ATIVO'
                 });
 
             component.lista = [
                 {
                     id: 10,
-                    nome: 'Listar usuários',
+                    nome:
+                        'Listar usuários',
                     chave:
                         'ACESSO_USUARIO_LISTAR',
                     descricao:
                         'Permite listar usuários',
-                    status: 'ATIVO'
+                    status:
+                        'ATIVO'
                 }
             ];
 
@@ -355,9 +405,26 @@ describe('PermissaoComponent', () => {
             component.isFormulario = true;
             component.isVisualizacao = true;
 
-            organizacaoAtivaSubject.next({
+            organizacaoProntaSubject.next(
+                null
+            );
+
+            expect(
+                baseServiceMock.listar
+            ).not.toHaveBeenCalled();
+
+            expect(
+                component.lista
+            ).toEqual([]);
+
+            expect(
+                component.totalRegistros
+            ).toBe(0);
+
+            organizacaoProntaSubject.next({
                 id: 2,
-                nome: 'Organização 2'
+                nome:
+                    'Organização 2'
             });
 
             expect(
@@ -394,8 +461,9 @@ describe('PermissaoComponent', () => {
     );
 
     it(
-        'deve limpar dados quando não houver organização ativa',
+        'deve limpar dados quando não houver organização pronta',
         () => {
+
             baseServiceMock
                 .listar
                 .calls
@@ -404,23 +472,27 @@ describe('PermissaoComponent', () => {
             component.formulario =
                 component.campos({
                     id: 10,
-                    nome: 'Listar usuários',
+                    nome:
+                        'Listar usuários',
                     chave:
                         'ACESSO_USUARIO_LISTAR',
                     descricao:
                         'Permite listar usuários',
-                    status: 'ATIVO'
+                    status:
+                        'ATIVO'
                 });
 
             component.lista = [
                 {
                     id: 10,
-                    nome: 'Listar usuários',
+                    nome:
+                        'Listar usuários',
                     chave:
                         'ACESSO_USUARIO_LISTAR',
                     descricao:
                         'Permite listar usuários',
-                    status: 'ATIVO'
+                    status:
+                        'ATIVO'
                 }
             ];
 
@@ -429,7 +501,9 @@ describe('PermissaoComponent', () => {
             component.isFormulario = true;
             component.isVisualizacao = true;
 
-            organizacaoAtivaSubject.next(null);
+            organizacaoProntaSubject.next(
+                null
+            );
 
             expect(
                 component.isLista
@@ -460,17 +534,21 @@ describe('PermissaoComponent', () => {
     it(
         'deve abrir o detalhamento em modo somente leitura',
         () => {
+
             baseServiceMock
                 .detalhar
-                .and.returnValue(
+                .and
+                .returnValue(
                     of({
                         id: 10,
-                        nome: 'Listar usuários',
+                        nome:
+                            'Listar usuários',
                         chave:
                             'ACESSO_USUARIO_LISTAR',
                         descricao:
                             'Permite listar usuários',
-                        status: 'ATIVO'
+                        status:
+                            'ATIVO'
                     }) as never
                 );
 
@@ -504,7 +582,8 @@ describe('PermissaoComponent', () => {
                     .getRawValue()
             ).toEqual({
                 id: 10,
-                nome: 'Listar usuários',
+                nome:
+                    'Listar usuários',
                 chave:
                     'ACESSO_USUARIO_LISTAR',
                 descricao:
@@ -516,9 +595,11 @@ describe('PermissaoComponent', () => {
     it(
         'não deve permitir cadastro, edição, exclusão ou salvamento',
         () => {
+
             autorizacaoServiceMock
                 .possuiPermissao
-                .and.returnValue(true);
+                .and
+                .returnValue(true);
 
             expect(
                 component.podeCriar
@@ -558,9 +639,11 @@ describe('PermissaoComponent', () => {
     it(
         'deve exigir permissão somente para detalhar',
         () => {
+
             autorizacaoServiceMock
                 .possuiPermissao
-                .and.callFake(
+                .and
+                .callFake(
                     (
                         permissao:
                             ChavePermissao
@@ -578,7 +661,8 @@ describe('PermissaoComponent', () => {
                 autorizacaoServiceMock
                     .possuiPermissao
             ).toHaveBeenCalledOnceWith(
-                ChavePermissao.PermissaoDetalhar
+                ChavePermissao
+                    .PermissaoDetalhar
             );
         }
     );

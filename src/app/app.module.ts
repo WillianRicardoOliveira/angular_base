@@ -77,6 +77,10 @@ import {
     UsuarioEmpresaComponent
 } from '@/domain/acesso/usuario-empresa/usuario-empresa.component';
 
+import {
+    ConfiguracaoInicialComponent
+} from '@/domain/configuracao/configuracao-inicial/configuracao-inicial.component';
+
 /* APP */
 import { AppRoutingModule } from '@/app-routing.module';
 import { AppComponent } from './app.component';
@@ -227,6 +231,7 @@ registerLocaleData(localePt);
         GridComponent,
 
         /* DOMAIN CONFIGURACAO */
+        ConfiguracaoInicialComponent,
         EmpresaComponent,
         SubsidiariaComponent,
 

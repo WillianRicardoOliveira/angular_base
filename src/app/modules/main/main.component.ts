@@ -1,87 +1,196 @@
-import {AppState} from '@/store/state';
-import {ToggleSidebarMenu} from '@/store/ui/actions';
-import {UiState} from '@/store/ui/state';
-import {Component, HostBinding, OnInit, Renderer2} from '@angular/core';
-import {Store} from '@ngrx/store';
-import {Observable} from 'rxjs';
+import {
+    Component,
+    DestroyRef,
+    HostBinding,
+    OnInit,
+    Renderer2
+} from '@angular/core';
+
+import {
+    takeUntilDestroyed
+} from '@angular/core/rxjs-interop';
+
+import {
+    Store
+} from '@ngrx/store';
+
+import {
+    combineLatest,
+    distinctUntilChanged,
+    map,
+    Observable
+} from 'rxjs';
+
+import {
+    ContextoOrganizacaoService
+} from '@/core/organizacao/services/contexto-organizacao.service';
+
+import {
+    ConfiguracaoInicialService
+} from '@/domain/configuracao/configuracao-inicial/services/configuracao-inicial.service';
+
+import {
+    AppState
+} from '@/store/state';
+
+import {
+    ToggleSidebarMenu
+} from '@/store/ui/actions';
+
+import {
+    UiState
+} from '@/store/ui/state';
 
 @Component({
     selector: 'app-main',
     templateUrl: './main.component.html',
-    styleUrls: ['./main.component.scss'],
+    styleUrls: [
+        './main.component.scss'
+    ],
     standalone: false
 })
 export class MainComponent implements OnInit {
-    @HostBinding('class') class = 'wrapper';
-    public ui: Observable<UiState>;
 
-    constructor(private renderer: Renderer2, private store: Store<AppState>) {}
+    @HostBinding('class')
+    class = 'wrapper';
 
-    ngOnInit() {
-        this.ui = this.store.select('ui');
+    ui!: Observable<UiState>;
+
+    configuracaoCarregando = false;
+
+    constructor(
+        private readonly renderer:
+            Renderer2,
+        private readonly store:
+            Store<AppState>,
+        private readonly contextoOrganizacaoService:
+            ContextoOrganizacaoService,
+        private readonly configuracaoInicialService:
+            ConfiguracaoInicialService,
+        private readonly destroyRef:
+            DestroyRef
+    ) {
+    }
+
+    ngOnInit(): void {
+        this.ui =
+            this.store.select('ui');
+
+        this.configurarEstadoVisual();
+
+        this.configurarTema();
+    }
+
+    onToggleMenuSidebar(): void {
+        this.store.dispatch(
+            new ToggleSidebarMenu()
+        );
+    }
+
+    private configurarEstadoVisual(): void {
+        combineLatest([
+            this.configuracaoInicialService
+                .retornarContextoObservable(),
+            this.contextoOrganizacaoService
+                .retornarTrocaOrganizacaoObservable()
+        ])
+            .pipe(
+                map(
+                    ([
+                        configuracao,
+                        trocandoOrganizacao
+                    ]) =>
+                        configuracao.carregando ||
+                        trocandoOrganizacao
+                ),
+                distinctUntilChanged(),
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
+            )
+            .subscribe((carregando) => {
+                this.configuracaoCarregando =
+                    carregando;
+            });
+    }
+
+    private configurarTema(): void {
+        const appRoot =
+            document.querySelector(
+                'app-root'
+            );
+
         this.renderer.removeClass(
-            document.querySelector('app-root'),
+            appRoot,
             'login-page'
         );
+
         this.renderer.removeClass(
-            document.querySelector('app-root'),
+            appRoot,
             'register-page'
         );
+
         this.renderer.addClass(
-            document.querySelector('app-root'),
+            appRoot,
             'layout-fixed'
         );
 
-        this.ui.subscribe(
-            ({menuSidebarCollapsed, controlSidebarCollapsed, darkMode}) => {
+        this.ui
+            .pipe(
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
+            )
+            .subscribe(({
+                menuSidebarCollapsed,
+                controlSidebarCollapsed,
+                darkMode
+            }) => {
                 if (menuSidebarCollapsed) {
                     this.renderer.removeClass(
-                        document.querySelector('app-root'),
+                        appRoot,
                         'sidebar-open'
                     );
+
                     this.renderer.addClass(
-                        document.querySelector('app-root'),
+                        appRoot,
                         'sidebar-collapse'
                     );
                 } else {
                     this.renderer.removeClass(
-                        document.querySelector('app-root'),
+                        appRoot,
                         'sidebar-collapse'
                     );
+
                     this.renderer.addClass(
-                        document.querySelector('app-root'),
+                        appRoot,
                         'sidebar-open'
                     );
                 }
 
                 if (controlSidebarCollapsed) {
                     this.renderer.removeClass(
-                        document.querySelector('app-root'),
+                        appRoot,
                         'control-sidebar-slide-open'
                     );
                 } else {
                     this.renderer.addClass(
-                        document.querySelector('app-root'),
+                        appRoot,
                         'control-sidebar-slide-open'
                     );
                 }
 
                 if (darkMode) {
                     this.renderer.addClass(
-                        document.querySelector('app-root'),
+                        appRoot,
                         'dark-mode'
                     );
                 } else {
                     this.renderer.removeClass(
-                        document.querySelector('app-root'),
+                        appRoot,
                         'dark-mode'
                     );
                 }
-            }
-        );
-    }
-
-    onToggleMenuSidebar() {
-        this.store.dispatch(new ToggleSidebarMenu());
+            });
     }
 }

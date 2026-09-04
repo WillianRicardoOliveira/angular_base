@@ -1,10 +1,12 @@
 import {
     inject
 } from '@angular/core';
+
 import {
     ActivatedRouteSnapshot,
     Router
 } from '@angular/router';
+
 import {
     ToastrService
 } from 'ngx-toastr';
@@ -12,9 +14,11 @@ import {
 import {
     MensagemAutenticacaoService
 } from '@/core/autenticacao/services/mensagem-autenticacao.service';
+
 import {
     ChavePermissao
 } from '@/core/autorizacao/models/chave-permissao';
+
 import {
     AutorizacaoService
 } from '@/core/autorizacao/services/autorizacao.service';
@@ -47,10 +51,31 @@ export const PermissaoGuard = (
             'permissao'
         ] as ChavePermissao | undefined;
 
-    if (
-        permissao &&
+    const permissoes =
+        route.data[
+            'permissoes'
+        ] as
+            readonly ChavePermissao[] |
+            undefined;
+
+    const possuiPermissaoUnica =
+        permissao !==
+            undefined &&
         autorizacaoService
-            .possuiPermissao(permissao)
+            .possuiPermissao(
+                permissao
+            );
+
+    const possuiAlgumaPermissao =
+        !!permissoes?.length &&
+        autorizacaoService
+            .possuiAlgumaPermissao(
+                permissoes
+            );
+
+    if (
+        possuiPermissaoUnica ||
+        possuiAlgumaPermissao
     ) {
         return true;
     }
@@ -60,5 +85,7 @@ export const PermissaoGuard = (
             .obterMensagemAcessoNegado()
     );
 
-    return router.createUrlTree(['/']);
+    return router.createUrlTree([
+        '/'
+    ]);
 };
