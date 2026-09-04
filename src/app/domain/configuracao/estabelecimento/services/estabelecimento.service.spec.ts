@@ -16,12 +16,12 @@ import {
 } from 'environments/environment';
 
 import {
-    SubsidiariaService
-} from './subsidiaria.service';
+    EstabelecimentoService
+} from './estabelecimento.service';
 
-describe('SubsidiariaService', () => {
+describe('EstabelecimentoService', () => {
     let service:
-        SubsidiariaService;
+        EstabelecimentoService;
 
     let httpTestingController:
         HttpTestingController;
@@ -29,14 +29,14 @@ describe('SubsidiariaService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
-                SubsidiariaService,
+                EstabelecimentoService,
                 provideHttpClient(),
                 provideHttpClientTesting()
             ]
         });
 
         service = TestBed.inject(
-            SubsidiariaService
+            EstabelecimentoService
         );
 
         httpTestingController =
@@ -54,7 +54,7 @@ describe('SubsidiariaService', () => {
     });
 
     it(
-        'deve listar subsidiárias com todos os filtros',
+        'deve listar estabelecimentos com todos os filtros',
         () => {
             const resposta = {
                 content: [
@@ -88,7 +88,7 @@ describe('SubsidiariaService', () => {
                     .expectOne(
                         (requisicao) =>
                             requisicao.url ===
-                            `${environment.api}/configuracao/subsidiaria`
+                            `${environment.api}/configuracao/estabelecimento`
                     );
 
             expect(request.request.method)
@@ -124,7 +124,7 @@ describe('SubsidiariaService', () => {
     );
 
     it(
-        'deve listar subsidiárias sem parâmetros opcionais',
+        'deve listar estabelecimentos sem parametros opcionais',
         () => {
             service.listar()
                 .subscribe((resultado) => {
@@ -138,7 +138,7 @@ describe('SubsidiariaService', () => {
             const request =
                 httpTestingController
                     .expectOne(
-                        `${environment.api}/configuracao/subsidiaria`
+                        `${environment.api}/configuracao/estabelecimento`
                     );
 
             expect(request.request.method)
@@ -156,7 +156,7 @@ describe('SubsidiariaService', () => {
     );
 
     it(
-        'deve pesquisar empresas para seleção',
+        'deve pesquisar empresas para selecao',
         () => {
             const resposta = {
                 content: [
@@ -216,7 +216,7 @@ describe('SubsidiariaService', () => {
     );
 
     it(
-        'deve usar paginação padrão ao listar empresas',
+        'deve usar paginacao padrao ao listar empresas',
         () => {
             service.listarEmpresas()
                 .subscribe();
@@ -257,7 +257,7 @@ describe('SubsidiariaService', () => {
     );
 
     it(
-        'deve cadastrar subsidiária',
+        'deve cadastrar estabelecimento',
         () => {
             const dados = {
                 idEmpresa: 1,
@@ -284,7 +284,7 @@ describe('SubsidiariaService', () => {
             const request =
                 httpTestingController
                     .expectOne(
-                        `${environment.api}/configuracao/subsidiaria`
+                        `${environment.api}/configuracao/estabelecimento`
                     );
 
             expect(request.request.method)
@@ -298,7 +298,7 @@ describe('SubsidiariaService', () => {
     );
 
     it(
-        'deve atualizar somente o nome da subsidiária',
+        'deve atualizar somente o nome do estabelecimento',
         () => {
             const dados = {
                 id: 2,
@@ -325,7 +325,7 @@ describe('SubsidiariaService', () => {
             const request =
                 httpTestingController
                     .expectOne(
-                        `${environment.api}/configuracao/subsidiaria`
+                        `${environment.api}/configuracao/estabelecimento`
                     );
 
             expect(request.request.method)
@@ -346,7 +346,7 @@ describe('SubsidiariaService', () => {
     );
 
     it(
-        'deve detalhar subsidiária',
+        'deve detalhar estabelecimento',
         () => {
             const resposta = {
                 id: 2,
@@ -368,7 +368,7 @@ describe('SubsidiariaService', () => {
             const request =
                 httpTestingController
                     .expectOne(
-                        `${environment.api}/configuracao/subsidiaria/2`
+                        `${environment.api}/configuracao/estabelecimento/2`
                     );
 
             expect(request.request.method)
@@ -379,7 +379,7 @@ describe('SubsidiariaService', () => {
     );
 
     it(
-        'deve excluir subsidiária',
+        'deve excluir estabelecimento',
         () => {
             service.excluir(2)
                 .subscribe((resultado) => {
@@ -390,7 +390,7 @@ describe('SubsidiariaService', () => {
             const request =
                 httpTestingController
                     .expectOne(
-                        `${environment.api}/configuracao/subsidiaria/2`
+                        `${environment.api}/configuracao/estabelecimento/2`
                     );
 
             expect(request.request.method)

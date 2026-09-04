@@ -49,13 +49,13 @@ import {
 } from '@/domain/acesso/usuario-empresa/services/usuario-empresa.service';
 
 import {
-    SubsidiariaService
-} from '@/domain/configuracao/subsidiaria/services/subsidiaria.service';
+    EstabelecimentoService
+} from '@/domain/configuracao/estabelecimento/services/estabelecimento.service';
 
 import {
-    Subsidiaria,
+    Estabelecimento,
     UsuarioEmpresa,
-    UsuarioSubsidiaria
+    UsuarioEstabelecimento
 } from '@/interfaces/interfaces';
 
 import {
@@ -63,24 +63,24 @@ import {
 } from '@components/cabecalho-pagina/cabecalho-pagina.component';
 
 import {
-    UsuarioSubsidiariaService
-} from './services/usuario-subsidiaria.service';
+    UsuarioEstabelecimentoService
+} from './services/usuario-estabelecimento.service';
 
 @Component({
-    selector: 'app-usuario-subsidiaria',
+    selector: 'app-usuario-estabelecimento',
     templateUrl:
-        './usuario-subsidiaria.component.html',
+        './usuario-estabelecimento.component.html',
     styleUrls: [
-        './usuario-subsidiaria.component.scss'
+        './usuario-estabelecimento.component.scss'
     ],
     standalone: false
 })
-export class UsuarioSubsidiariaComponent
+export class UsuarioEstabelecimentoComponent
     implements OnInit {
 
     private readonly service =
         inject(
-            UsuarioSubsidiariaService
+            UsuarioEstabelecimentoService
         );
 
     private readonly usuarioEmpresaService =
@@ -88,9 +88,9 @@ export class UsuarioSubsidiariaComponent
             UsuarioEmpresaService
         );
 
-    private readonly subsidiariaService =
+    private readonly estabelecimentoService =
         inject(
-            SubsidiariaService
+            EstabelecimentoService
         );
 
     private readonly autorizacaoService =
@@ -135,10 +135,10 @@ export class UsuarioSubsidiariaComponent
     idEmpresa = 0;
 
     pagina =
-        'Subsidiarias do usuario';
+        'Estabelecimentos do usuario';
 
     descricao =
-        'Gerencie as subsidiarias vinculadas ao usuario na empresa';
+        'Gerencie os estabelecimentos vinculados ao usuario na empresa';
 
     breadcrumb:
         ItemBreadcrumbPagina[] = [];
@@ -147,16 +147,16 @@ export class UsuarioSubsidiariaComponent
         'Codigo do vinculo empresa',
         'Usuario',
         'Empresa',
-        'Codigo da subsidiaria',
-        'Subsidiaria',
+        'Codigo do estabelecimento',
+        'Estabelecimento',
         'Status'
     ];
 
     lista:
-        UsuarioSubsidiaria[] = [];
+        UsuarioEstabelecimento[] = [];
 
-    subsidiarias:
-        Subsidiaria[] = [];
+    estabelecimentos:
+        Estabelecimento[] = [];
 
     totalRegistros = 0;
 
@@ -176,18 +176,18 @@ export class UsuarioSubsidiariaComponent
 
     empresaNome = '';
 
-    subsidiariaNome = '';
+    estabelecimentoNome = '';
 
-    subsidiariaPesquisaControl =
+    estabelecimentoPesquisaControl =
         new FormControl<
-            string | Subsidiaria | null
+            string | Estabelecimento | null
         >('');
 
     get podeCriar(): boolean {
         return this.autorizacaoService
             .possuiPermissao(
                 ChavePermissao
-                    .UsuarioSubsidiariaCriar
+                    .UsuarioEstabelecimentoCriar
             );
     }
 
@@ -195,7 +195,7 @@ export class UsuarioSubsidiariaComponent
         return this.autorizacaoService
             .possuiPermissao(
                 ChavePermissao
-                    .UsuarioSubsidiariaExcluir
+                    .UsuarioEstabelecimentoExcluir
             );
     }
 
@@ -203,7 +203,7 @@ export class UsuarioSubsidiariaComponent
         return this.autorizacaoService
             .possuiPermissao(
                 ChavePermissao
-                    .UsuarioSubsidiariaDetalhar
+                    .UsuarioEstabelecimentoDetalhar
             );
     }
 
@@ -242,7 +242,7 @@ export class UsuarioSubsidiariaComponent
         }
 
         this.configurarCabecalho();
-        this.configurarPesquisaDeSubsidiaria();
+        this.configurarPesquisaDeEstabelecimento();
         this.configurarAtualizacaoPorOrganizacao();
         this.carregarContextoELista();
     }
@@ -276,7 +276,7 @@ export class UsuarioSubsidiariaComponent
                 },
                 error: () => {
                     this.toastr.error(
-                        'Nao foi possivel carregar as subsidiarias do usuario'
+                        'Nao foi possivel carregar os estabelecimentos do usuario'
                     );
                 }
             });
@@ -303,8 +303,8 @@ export class UsuarioSubsidiariaComponent
         this.isFormulario = true;
         this.isVisualizacao = false;
 
-        this.subsidiariaNome = '';
-        this.subsidiarias = [];
+        this.estabelecimentoNome = '';
+        this.estabelecimentos = [];
 
         this.formulario =
             this.builder.group({
@@ -312,13 +312,13 @@ export class UsuarioSubsidiariaComponent
                     this.idUsuarioEmpresa,
                     Validators.required
                 ],
-                idSubsidiaria: [
+                idEstabelecimento: [
                     null,
                     Validators.required
                 ]
             });
 
-        this.subsidiariaPesquisaControl
+        this.estabelecimentoPesquisaControl
             .setValue(
                 '',
                 {
@@ -326,7 +326,7 @@ export class UsuarioSubsidiariaComponent
                 }
             );
 
-        this.carregarSubsidiarias('');
+        this.carregarEstabelecimentos('');
     }
 
     botaoVisualizar(
@@ -350,8 +350,8 @@ export class UsuarioSubsidiariaComponent
                     this.empresaNome =
                         dados.empresa ?? '';
 
-                    this.subsidiariaNome =
-                        dados.subsidiaria ?? '';
+                    this.estabelecimentoNome =
+                        dados.estabelecimento ?? '';
 
                     this.formulario =
                         this.builder.group({
@@ -367,11 +367,11 @@ export class UsuarioSubsidiariaComponent
                             empresa: [
                                 dados.empresa
                             ],
-                            idSubsidiaria: [
-                                dados.idSubsidiaria
+                            idEstabelecimento: [
+                                dados.idEstabelecimento
                             ],
-                            subsidiaria: [
-                                dados.subsidiaria
+                            estabelecimento: [
+                                dados.estabelecimento
                             ],
                             status: [
                                 dados.status
@@ -382,7 +382,7 @@ export class UsuarioSubsidiariaComponent
                 },
                 error: () => {
                     this.toastr.error(
-                        'Nao foi possivel detalhar a subsidiaria do usuario'
+                        'Nao foi possivel detalhar o estabelecimento do usuario'
                     );
                 }
             });
@@ -404,10 +404,10 @@ export class UsuarioSubsidiariaComponent
                             'idUsuarioEmpresa'
                         )
                         ?.value,
-                idSubsidiaria:
+                idEstabelecimento:
                     this.formulario
                         .get(
-                            'idSubsidiaria'
+                            'idEstabelecimento'
                         )
                         ?.value
             })
@@ -417,12 +417,12 @@ export class UsuarioSubsidiariaComponent
                     this.carregarLista();
 
                     this.toastr.success(
-                        'Subsidiaria vinculada com sucesso'
+                        'Estabelecimento vinculado com sucesso'
                     );
                 },
                 error: () => {
                     this.toastr.error(
-                        'Nao foi possivel vincular a subsidiaria'
+                        'Nao foi possivel vincular o estabelecimento'
                     );
                 }
             });
@@ -442,33 +442,33 @@ export class UsuarioSubsidiariaComponent
                     this.carregarLista();
 
                     this.toastr.info(
-                        'Subsidiaria removida do usuario'
+                        'Estabelecimento removido do usuario'
                     );
                 },
                 error: () => {
                     this.toastr.error(
-                        'Nao foi possivel remover a subsidiaria do usuario'
+                        'Nao foi possivel remover o estabelecimento do usuario'
                     );
                 }
             });
     }
 
-    selecionarSubsidiaria(
-        subsidiaria: Subsidiaria
+    selecionarEstabelecimento(
+        estabelecimento: Estabelecimento
     ): void {
         this.formulario
-            .get('idSubsidiaria')
+            .get('idEstabelecimento')
             ?.setValue(
-                subsidiaria.id
+                estabelecimento.id
             );
 
-        this.subsidiariaNome =
-            subsidiaria.nome;
+        this.estabelecimentoNome =
+            estabelecimento.nome;
     }
 
-    exibirSubsidiaria(
+    exibirEstabelecimento(
         valor:
-            Subsidiaria | string | null
+            Estabelecimento | string | null
     ): string {
         if (!valor) {
             return '';
@@ -484,14 +484,14 @@ export class UsuarioSubsidiariaComponent
         this.isFormulario = false;
         this.isVisualizacao = false;
 
-        this.subsidiarias = [];
-        this.subsidiariaNome = '';
+        this.estabelecimentos = [];
+        this.estabelecimentoNome = '';
 
         if (this.formulario) {
             this.formulario.reset();
         }
 
-        this.subsidiariaPesquisaControl
+        this.estabelecimentoPesquisaControl
             .reset(
                 '',
                 {
@@ -550,10 +550,10 @@ export class UsuarioSubsidiariaComponent
                     }
 
                     if (
-                        dados.todasSubsidiarias
+                        dados.todosEstabelecimentos
                     ) {
                         this.toastr.info(
-                            'Usuario ja possui acesso a todas as subsidiarias da empresa'
+                            'Usuario ja possui acesso a todos os estabelecimentos da empresa'
                         );
 
                         this.voltar();
@@ -590,8 +590,8 @@ export class UsuarioSubsidiariaComponent
             dados.empresa ?? '';
     }
 
-    private configurarPesquisaDeSubsidiaria(): void {
-        this.subsidiariaPesquisaControl
+    private configurarPesquisaDeEstabelecimento(): void {
+        this.estabelecimentoPesquisaControl
             .valueChanges
             .pipe(
                 takeUntilDestroyed(
@@ -611,18 +611,18 @@ export class UsuarioSubsidiariaComponent
                 if (this.formulario) {
                     this.formulario
                         .get(
-                            'idSubsidiaria'
+                            'idEstabelecimento'
                         )
                         ?.setValue(null);
                 }
 
-                this.carregarSubsidiarias(
+                this.carregarEstabelecimentos(
                     filtro
                 );
             });
     }
 
-    private carregarSubsidiarias(
+    private carregarEstabelecimentos(
         filtro: string
     ): void {
         if (
@@ -631,12 +631,12 @@ export class UsuarioSubsidiariaComponent
             ) ||
             this.idEmpresa <= 0
         ) {
-            this.subsidiarias = [];
+            this.estabelecimentos = [];
 
             return;
         }
 
-        this.subsidiariaService
+        this.estabelecimentoService
             .listar(
                 0,
                 10,
@@ -646,14 +646,14 @@ export class UsuarioSubsidiariaComponent
             )
             .subscribe({
                 next: (pagina) => {
-                    this.subsidiarias =
+                    this.estabelecimentos =
                         pagina.content;
                 },
                 error: () => {
-                    this.subsidiarias = [];
+                    this.estabelecimentos = [];
 
                     this.toastr.error(
-                        'Nao foi possivel pesquisar as subsidiarias'
+                        'Nao foi possivel pesquisar os estabelecimentos'
                     );
                 }
             });
@@ -681,7 +681,7 @@ export class UsuarioSubsidiariaComponent
         this.cancelar();
 
         this.lista = [];
-        this.subsidiarias = [];
+        this.estabelecimentos = [];
         this.totalRegistros = 0;
         this.paginaAtual = 0;
         this.tamanhoPagina = 10;
@@ -692,8 +692,8 @@ export class UsuarioSubsidiariaComponent
 
     private mapearLista(
         lista:
-            UsuarioSubsidiaria[]
-    ): UsuarioSubsidiaria[] {
+            UsuarioEstabelecimento[]
+    ): UsuarioEstabelecimento[] {
         return lista.map(
             (item) => ({
                 id:
@@ -704,10 +704,10 @@ export class UsuarioSubsidiariaComponent
                     item.usuario,
                 empresa:
                     item.empresa,
-                idSubsidiaria:
-                    item.idSubsidiaria,
-                subsidiaria:
-                    item.subsidiaria,
+                idEstabelecimento:
+                    item.idEstabelecimento,
+                estabelecimento:
+                    item.estabelecimento,
                 status:
                     item.status
             })

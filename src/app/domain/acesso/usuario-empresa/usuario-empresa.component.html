@@ -15,7 +15,7 @@
         [b_excluir]="podeExcluir"
         [tituloExclusao]="'Remover empresa'"
         [mensagemExclusao]="
-            'Deseja realmente remover esta empresa do usuário?'
+            'Deseja realmente remover esta empresa do usuario?'
         "
         [textoConfirmarExclusao]="'Remover'"
         [b_visualizar]="podeDetalhar"
@@ -29,7 +29,7 @@
             quantidadePorPagina($event)
         "
         [acoesExtras]="
-            podeGerenciarSubsidiarias
+            podeGerenciarEstabelecimentos
                 ? acoesExtras
                 : []
         "
@@ -58,11 +58,11 @@
                     <div
                         class="col-md-12 titulo-formulario">
                         @if (isVisualizacao) {
-                            Detalhes da empresa do usuário
+                            Detalhes da empresa do usuario
                         } @else if (cadastrando) {
-                            Vincular empresa ao usuário
+                            Vincular empresa ao usuario
                         } @else {
-                            Editar empresa do usuário
+                            Editar empresa do usuario
                         }
                     </div>
                 </div>
@@ -123,7 +123,7 @@
                             ) {
                                 <div
                                     class="mensagem-validacao">
-                                    A empresa é obrigatória.
+                                    A empresa e obrigatoria.
                                 </div>
                             }
                         </div>
@@ -131,7 +131,7 @@
                 } @else {
                     <div class="row">
                         <div class="col-md-2 titulo-campo">
-                            Usuário
+                            Usuario
                         </div>
 
                         <div class="col-md-10">
@@ -170,15 +170,15 @@
 
                 <div class="row">
                     <div class="col-md-2 titulo-campo">
-                        Subsidiárias
+                        Estabelecimentos
                     </div>
 
                     <div
                         class="col-md-10 campo-checkbox">
                         <mat-checkbox
                             color="primary"
-                            formControlName="todasSubsidiarias">
-                            Permitir acesso a todas as subsidiárias
+                            formControlName="todosEstabelecimentos">
+                            Permitir acesso a todos os estabelecimentos
                         </mat-checkbox>
                     </div>
                 </div>

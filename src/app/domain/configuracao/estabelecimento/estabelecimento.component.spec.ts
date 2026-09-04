@@ -37,26 +37,26 @@ import {
 
 import {
     Empresa,
-    Subsidiaria
+    Estabelecimento
 } from '@/interfaces/interfaces';
 
 import {
-    SubsidiariaService
-} from './services/subsidiaria.service';
+    EstabelecimentoService
+} from './services/estabelecimento.service';
 
 import {
-    SubsidiariaComponent
-} from './subsidiaria.component';
+    EstabelecimentoComponent
+} from './estabelecimento.component';
 
-describe('SubsidiariaComponent', () => {
+describe('EstabelecimentoComponent', () => {
     let component:
-        SubsidiariaComponent;
+        EstabelecimentoComponent;
 
     let fixture:
-        ComponentFixture<SubsidiariaComponent>;
+        ComponentFixture<EstabelecimentoComponent>;
 
     let serviceMock:
-        jasmine.SpyObj<SubsidiariaService>;
+        jasmine.SpyObj<EstabelecimentoService>;
 
     let organizacaoProntaSubject:
         BehaviorSubject<OrganizacaoDisponivel | null>;
@@ -92,11 +92,11 @@ describe('SubsidiariaComponent', () => {
         status: 'ATIVO'
     };
 
-    const subsidiaria: Subsidiaria = {
+    const estabelecimento: Estabelecimento = {
         id: 10,
         idEmpresa: 1,
         empresa: 'Empresa Exemplo',
-        nome: 'Subsidiária Exemplo',
+        nome: 'Estabelecimento Exemplo',
         status: 'ATIVO'
     };
 
@@ -106,7 +106,7 @@ describe('SubsidiariaComponent', () => {
                 OrganizacaoDisponivel | null
             >({
                 id: 1,
-                nome: 'Organização Principal'
+                nome: 'Organizacao Principal'
             });
 
         contextoOrganizacaoServiceMock
@@ -135,8 +135,8 @@ describe('SubsidiariaComponent', () => {
         toastrMock.info.calls.reset();
 
         serviceMock =
-            jasmine.createSpyObj<SubsidiariaService>(
-                'SubsidiariaService',
+            jasmine.createSpyObj<EstabelecimentoService>(
+                'EstabelecimentoService',
                 [
                     'listar',
                     'listarEmpresas',
@@ -162,15 +162,15 @@ describe('SubsidiariaComponent', () => {
         );
 
         serviceMock.cadastrar.and.returnValue(
-            of(subsidiaria)
+            of(estabelecimento)
         );
 
         serviceMock.atualizar.and.returnValue(
-            of(subsidiaria)
+            of(estabelecimento)
         );
 
         serviceMock.detalhar.and.returnValue(
-            of(subsidiaria)
+            of(estabelecimento)
         );
 
         serviceMock.excluir.and.returnValue(
@@ -180,13 +180,13 @@ describe('SubsidiariaComponent', () => {
         await TestBed
             .configureTestingModule({
                 declarations: [
-                    SubsidiariaComponent
+                    EstabelecimentoComponent
                 ],
                 providers: [
                     FormBuilder,
                     {
                         provide:
-                            SubsidiariaService,
+                            EstabelecimentoService,
                         useValue:
                             serviceMock
                     },
@@ -211,7 +211,7 @@ describe('SubsidiariaComponent', () => {
                 ]
             })
             .overrideComponent(
-                SubsidiariaComponent,
+                EstabelecimentoComponent,
                 {
                     set: {
                         template: ''
@@ -222,7 +222,7 @@ describe('SubsidiariaComponent', () => {
 
         fixture =
             TestBed.createComponent(
-                SubsidiariaComponent
+                EstabelecimentoComponent
             );
 
         component =
@@ -236,14 +236,14 @@ describe('SubsidiariaComponent', () => {
     });
 
     it(
-        'deve configurar página e colunas',
+        'deve configurar pagina e colunas',
         () => {
             expect(component.pagina)
-                .toBe('Subsidiárias');
+                .toBe('Estabelecimentos');
 
             expect(component.coluna)
                 .toEqual([
-                    'Código da empresa',
+                    'Codigo da empresa',
                     'Empresa',
                     'Nome',
                     'Status'
@@ -270,7 +270,7 @@ describe('SubsidiariaComponent', () => {
             serviceMock.listar.and.returnValue(
                 of({
                     content: [
-                        subsidiaria
+                        estabelecimento
                     ],
                     totalElements: 1
                 })
@@ -284,7 +284,7 @@ describe('SubsidiariaComponent', () => {
 
             expect(component.lista)
                 .toEqual([
-                    subsidiaria
+                    estabelecimento
                 ]);
 
             expect(component.totalRegistros)
@@ -302,7 +302,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'deve pesquisar a partir da primeira página',
+        'deve pesquisar a partir da primeira pagina',
         () => {
             serviceMock.listar.calls.reset();
 
@@ -323,7 +323,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'deve alterar a paginação',
+        'deve alterar a paginacao',
         () => {
             serviceMock.listar.calls.reset();
 
@@ -346,7 +346,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'deve controlar as ações por permissão',
+        'deve controlar as acoes por permissao',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -357,11 +357,11 @@ describe('SubsidiariaComponent', () => {
                     ) =>
                         [
                             ChavePermissao
-                                .SubsidiariaCriar,
+                                .EstabelecimentoCriar,
                             ChavePermissao
-                                .SubsidiariaExcluir,
+                                .EstabelecimentoExcluir,
                             ChavePermissao
-                                .SubsidiariaDetalhar
+                                .EstabelecimentoDetalhar
                         ].includes(permissao)
                 );
 
@@ -380,7 +380,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'deve abrir o formulário de cadastro',
+        'deve abrir o formulario de cadastro',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -415,7 +415,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'não deve abrir cadastro sem permissão',
+        'nao deve abrir cadastro sem permissao',
         () => {
             component.botaoAdicionar();
 
@@ -527,7 +527,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'deve pesquisar empresas após a digitação',
+        'deve pesquisar empresas apos a digitacao',
         fakeAsync(() => {
             serviceMock
                 .listarEmpresas
@@ -589,14 +589,14 @@ describe('SubsidiariaComponent', () => {
                     ) =>
                         permissao ===
                         ChavePermissao
-                            .SubsidiariaCriar
+                            .EstabelecimentoCriar
                 );
 
             component.botaoAdicionar();
 
             component.formulario.patchValue({
                 idEmpresa: 1,
-                nome: 'Subsidiária Exemplo'
+                nome: 'Estabelecimento Exemplo'
             });
 
             component.salvar();
@@ -604,7 +604,7 @@ describe('SubsidiariaComponent', () => {
             expect(serviceMock.cadastrar)
                 .toHaveBeenCalledOnceWith({
                     idEmpresa: 1,
-                    nome: 'Subsidiária Exemplo'
+                    nome: 'Estabelecimento Exemplo'
                 });
 
             expect(serviceMock.atualizar)
@@ -619,7 +619,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'não deve salvar formulário inválido',
+        'nao deve salvar formulario invalido',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -638,7 +638,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'não deve salvar sem permissão',
+        'nao deve salvar sem permissao',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -648,7 +648,7 @@ describe('SubsidiariaComponent', () => {
 
             component.formulario.patchValue({
                 idEmpresa: 1,
-                nome: 'Subsidiária Exemplo'
+                nome: 'Estabelecimento Exemplo'
             });
 
             autorizacaoServiceMock
@@ -663,7 +663,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'deve abrir o formulário de edição',
+        'deve abrir o formulario de edicao',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -674,7 +674,7 @@ describe('SubsidiariaComponent', () => {
                     ) =>
                         permissao ===
                         ChavePermissao
-                            .SubsidiariaEditar
+                            .EstabelecimentoEditar
                 );
 
             component.botaoEditar(10);
@@ -699,7 +699,7 @@ describe('SubsidiariaComponent', () => {
                     .getRawValue()
             ).toEqual({
                 id: 10,
-                nome: 'Subsidiária Exemplo'
+                nome: 'Estabelecimento Exemplo'
             });
 
             expect(
@@ -721,7 +721,7 @@ describe('SubsidiariaComponent', () => {
                     ) =>
                         permissao ===
                         ChavePermissao
-                            .SubsidiariaEditar
+                            .EstabelecimentoEditar
                 );
 
             component.botaoEditar(10);
@@ -729,7 +729,7 @@ describe('SubsidiariaComponent', () => {
             component.formulario
                 .get('nome')
                 ?.setValue(
-                    'Subsidiária Atualizada'
+                    'Estabelecimento Atualizado'
                 );
 
             component.salvar();
@@ -737,7 +737,7 @@ describe('SubsidiariaComponent', () => {
             expect(serviceMock.atualizar)
                 .toHaveBeenCalledOnceWith({
                     id: 10,
-                    nome: 'Subsidiária Atualizada'
+                    nome: 'Estabelecimento Atualizado'
                 });
 
             expect(serviceMock.cadastrar)
@@ -752,7 +752,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'deve abrir a visualização somente leitura',
+        'deve abrir a visualizacao somente leitura',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -763,7 +763,7 @@ describe('SubsidiariaComponent', () => {
                     ) =>
                         permissao ===
                         ChavePermissao
-                            .SubsidiariaDetalhar
+                            .EstabelecimentoDetalhar
                 );
 
             component.botaoVisualizar(10);
@@ -794,7 +794,7 @@ describe('SubsidiariaComponent', () => {
                     ) =>
                         permissao ===
                         ChavePermissao
-                            .SubsidiariaExcluir
+                            .EstabelecimentoExcluir
                 );
 
             serviceMock.listar.calls.reset();
@@ -818,7 +818,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'não deve excluir sem permissão',
+        'nao deve excluir sem permissao',
         () => {
             component.botaoExcluir(10);
 
@@ -856,7 +856,7 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'deve recarregar dados ao trocar a organização pronta',
+        'deve recarregar dados ao trocar a organizacao pronta',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -865,7 +865,7 @@ describe('SubsidiariaComponent', () => {
             component.botaoAdicionar();
 
             component.lista = [
-                subsidiaria
+                estabelecimento
             ];
 
             component.empresas = [
@@ -880,7 +880,7 @@ describe('SubsidiariaComponent', () => {
 
             organizacaoProntaSubject.next({
                 id: 2,
-                nome: 'Organização Filial'
+                nome: 'Organizacao Filial'
             });
 
             expect(component.isLista)
@@ -918,10 +918,10 @@ describe('SubsidiariaComponent', () => {
     );
 
     it(
-        'deve limpar dados quando não houver organização pronta',
+        'deve limpar dados quando nao houver organizacao pronta',
         () => {
             component.lista = [
-                subsidiaria
+                estabelecimento
             ];
 
             component.empresas = [
@@ -1034,7 +1034,7 @@ describe('SubsidiariaComponent', () => {
 
             component.formulario.patchValue({
                 idEmpresa: 1,
-                nome: 'Subsidiária Exemplo'
+                nome: 'Estabelecimento Exemplo'
             });
 
             component.salvar();

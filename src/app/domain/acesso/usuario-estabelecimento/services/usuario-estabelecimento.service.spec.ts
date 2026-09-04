@@ -7,14 +7,14 @@ import { TestBed } from '@angular/core/testing';
 
 import { environment } from 'environments/environment';
 
-import { UsuarioSubsidiariaService } from './usuario-subsidiaria.service';
+import { UsuarioEstabelecimentoService } from './usuario-estabelecimento.service';
 
-describe('UsuarioSubsidiariaService', () => {
-    let service: UsuarioSubsidiariaService;
+describe('UsuarioEstabelecimentoService', () => {
+    let service: UsuarioEstabelecimentoService;
     let httpTestingController: HttpTestingController;
 
     const url =
-        `${environment.api}/acesso/usuario-subsidiaria`;
+        `${environment.api}/acesso/usuario-estabelecimento`;
 
     const resposta = {
         id: 7,
@@ -23,21 +23,21 @@ describe('UsuarioSubsidiariaService', () => {
         usuario: 'usuario@empresa.com',
         idEmpresa: 3,
         empresa: 'Empresa Exemplo',
-        idSubsidiaria: 11,
-        subsidiaria: 'Subsidiaria Centro',
+        idEstabelecimento: 11,
+        estabelecimento: 'Estabelecimento Centro',
         status: 'ATIVO' as const
     };
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
-                UsuarioSubsidiariaService,
+                UsuarioEstabelecimentoService,
                 provideHttpClient(),
                 provideHttpClientTesting()
             ]
         });
 
-        service = TestBed.inject(UsuarioSubsidiariaService);
+        service = TestBed.inject(UsuarioEstabelecimentoService);
         httpTestingController = TestBed.inject(HttpTestingController);
     });
 
@@ -81,7 +81,7 @@ describe('UsuarioSubsidiariaService', () => {
     it('deve cadastrar vinculo', () => {
         const dados = {
             idUsuarioEmpresa: 5,
-            idSubsidiaria: 11
+            idEstabelecimento: 11
         };
 
         service.cadastrar(dados).subscribe();

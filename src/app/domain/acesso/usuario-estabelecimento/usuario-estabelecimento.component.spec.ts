@@ -41,9 +41,9 @@ import {
 } from '@/core/organizacao/services/contexto-organizacao.service';
 
 import {
-    Subsidiaria,
+    Estabelecimento,
     UsuarioEmpresa,
-    UsuarioSubsidiaria
+    UsuarioEstabelecimento
 } from '@/interfaces/interfaces';
 
 import {
@@ -51,24 +51,24 @@ import {
 } from '@/domain/acesso/usuario-empresa/services/usuario-empresa.service';
 
 import {
-    SubsidiariaService
-} from '@/domain/configuracao/subsidiaria/services/subsidiaria.service';
+    EstabelecimentoService
+} from '@/domain/configuracao/estabelecimento/services/estabelecimento.service';
 
 import {
-    UsuarioSubsidiariaService
-} from './services/usuario-subsidiaria.service';
+    UsuarioEstabelecimentoService
+} from './services/usuario-estabelecimento.service';
 
 import {
-    UsuarioSubsidiariaComponent
-} from './usuario-subsidiaria.component';
+    UsuarioEstabelecimentoComponent
+} from './usuario-estabelecimento.component';
 
-describe('UsuarioSubsidiariaComponent', () => {
-    let component: UsuarioSubsidiariaComponent;
-    let fixture: ComponentFixture<UsuarioSubsidiariaComponent>;
+describe('UsuarioEstabelecimentoComponent', () => {
+    let component: UsuarioEstabelecimentoComponent;
+    let fixture: ComponentFixture<UsuarioEstabelecimentoComponent>;
 
-    let serviceMock: jasmine.SpyObj<UsuarioSubsidiariaService>;
+    let serviceMock: jasmine.SpyObj<UsuarioEstabelecimentoService>;
     let usuarioEmpresaServiceMock: jasmine.SpyObj<UsuarioEmpresaService>;
-    let subsidiariaServiceMock: jasmine.SpyObj<SubsidiariaService>;
+    let estabelecimentoServiceMock: jasmine.SpyObj<EstabelecimentoService>;
 
     let organizacaoProntaSubject:
         BehaviorSubject<OrganizacaoDisponivel | null>;
@@ -111,27 +111,27 @@ describe('UsuarioSubsidiariaComponent', () => {
         usuario: 'usuario@empresa.com',
         idEmpresa: 3,
         empresa: 'Empresa Exemplo',
-        todasSubsidiarias: false,
+        todosEstabelecimentos: false,
         status: 'ATIVO'
     };
 
-    const subsidiaria: Subsidiaria = {
+    const estabelecimento: Estabelecimento = {
         id: 11,
         idEmpresa: 3,
         empresa: 'Empresa Exemplo',
-        nome: 'Subsidiaria Centro',
+        nome: 'Estabelecimento Centro',
         status: 'ATIVO'
     };
 
-    const vinculo: UsuarioSubsidiaria = {
+    const vinculo: UsuarioEstabelecimento = {
         id: 7,
         idUsuarioEmpresa: 5,
         idUsuario: 2,
         usuario: 'usuario@empresa.com',
         idEmpresa: 3,
         empresa: 'Empresa Exemplo',
-        idSubsidiaria: 11,
-        subsidiaria: 'Subsidiaria Centro',
+        idEstabelecimento: 11,
+        estabelecimento: 'Estabelecimento Centro',
         status: 'ATIVO'
     };
 
@@ -183,8 +183,8 @@ describe('UsuarioSubsidiariaComponent', () => {
         );
 
         serviceMock =
-            jasmine.createSpyObj<UsuarioSubsidiariaService>(
-                'UsuarioSubsidiariaService',
+            jasmine.createSpyObj<UsuarioEstabelecimentoService>(
+                'UsuarioEstabelecimentoService',
                 [
                     'listar',
                     'cadastrar',
@@ -226,15 +226,15 @@ describe('UsuarioSubsidiariaComponent', () => {
                 of(usuarioEmpresa)
             );
 
-        subsidiariaServiceMock =
-            jasmine.createSpyObj<SubsidiariaService>(
-                'SubsidiariaService',
+        estabelecimentoServiceMock =
+            jasmine.createSpyObj<EstabelecimentoService>(
+                'EstabelecimentoService',
                 [
                     'listar'
                 ]
             );
 
-        subsidiariaServiceMock
+        estabelecimentoServiceMock
             .listar
             .and.returnValue(
                 of({
@@ -246,12 +246,12 @@ describe('UsuarioSubsidiariaComponent', () => {
         await TestBed
             .configureTestingModule({
                 declarations: [
-                    UsuarioSubsidiariaComponent
+                    UsuarioEstabelecimentoComponent
                 ],
                 providers: [
                     FormBuilder,
                     {
-                        provide: UsuarioSubsidiariaService,
+                        provide: UsuarioEstabelecimentoService,
                         useValue: serviceMock
                     },
                     {
@@ -259,8 +259,8 @@ describe('UsuarioSubsidiariaComponent', () => {
                         useValue: usuarioEmpresaServiceMock
                     },
                     {
-                        provide: SubsidiariaService,
-                        useValue: subsidiariaServiceMock
+                        provide: EstabelecimentoService,
+                        useValue: estabelecimentoServiceMock
                     },
                     {
                         provide: AutorizacaoService,
@@ -285,7 +285,7 @@ describe('UsuarioSubsidiariaComponent', () => {
                 ]
             })
             .overrideComponent(
-                UsuarioSubsidiariaComponent,
+                UsuarioEstabelecimentoComponent,
                 {
                     set: {
                         template: ''
@@ -296,7 +296,7 @@ describe('UsuarioSubsidiariaComponent', () => {
 
         fixture =
             TestBed.createComponent(
-                UsuarioSubsidiariaComponent
+                UsuarioEstabelecimentoComponent
             );
 
         component =
@@ -380,7 +380,7 @@ describe('UsuarioSubsidiariaComponent', () => {
             .not.toHaveBeenCalled();
     });
 
-    it('deve voltar quando o usuario possuir todas as subsidiarias', () => {
+    it('deve voltar quando o usuario possuir todos os estabelecimentos', () => {
         serviceMock.listar.calls.reset();
         routerMock.navigate.calls.reset();
 
@@ -389,7 +389,7 @@ describe('UsuarioSubsidiariaComponent', () => {
             .and.returnValue(
                 of({
                     ...usuarioEmpresa,
-                    todasSubsidiarias: true
+                    todosEstabelecimentos: true
                 })
             );
 
@@ -397,7 +397,7 @@ describe('UsuarioSubsidiariaComponent', () => {
 
         expect(toastrMock.info)
             .toHaveBeenCalledWith(
-                'Usuario ja possui acesso a todas as subsidiarias da empresa'
+                'Usuario ja possui acesso a todos os estabelecimentos da empresa'
             );
 
         expect(routerMock.navigate)
@@ -443,8 +443,8 @@ describe('UsuarioSubsidiariaComponent', () => {
                     idUsuarioEmpresa: 5,
                     usuario: 'usuario@empresa.com',
                     empresa: 'Empresa Exemplo',
-                    idSubsidiaria: 11,
-                    subsidiaria: 'Subsidiaria Centro',
+                    idEstabelecimento: 11,
+                    estabelecimento: 'Estabelecimento Centro',
                     status: 'ATIVO'
                 }
             ]);
@@ -456,8 +456,8 @@ describe('UsuarioSubsidiariaComponent', () => {
 
     it('deve controlar permissoes da tela', () => {
         autorizar(
-            ChavePermissao.UsuarioSubsidiariaCriar,
-            ChavePermissao.UsuarioSubsidiariaDetalhar
+            ChavePermissao.UsuarioEstabelecimentoCriar,
+            ChavePermissao.UsuarioEstabelecimentoDetalhar
         );
 
         expect(component.podeCriar).toBeTrue();
@@ -467,10 +467,10 @@ describe('UsuarioSubsidiariaComponent', () => {
 
     it('deve abrir formulario de vinculo quando autorizado', () => {
         autorizar(
-            ChavePermissao.UsuarioSubsidiariaCriar
+            ChavePermissao.UsuarioEstabelecimentoCriar
         );
 
-        subsidiariaServiceMock.listar.calls.reset();
+        estabelecimentoServiceMock.listar.calls.reset();
 
         component.botaoAdicionar();
 
@@ -481,10 +481,10 @@ describe('UsuarioSubsidiariaComponent', () => {
         expect(component.formulario.getRawValue())
             .toEqual({
                 idUsuarioEmpresa: 5,
-                idSubsidiaria: null
+                idEstabelecimento: null
             });
 
-        expect(subsidiariaServiceMock.listar)
+        expect(estabelecimentoServiceMock.listar)
             .toHaveBeenCalledOnceWith(
                 0,
                 10,
@@ -495,24 +495,24 @@ describe('UsuarioSubsidiariaComponent', () => {
     });
 
     it('nao deve abrir formulario sem permissao', () => {
-        subsidiariaServiceMock.listar.calls.reset();
+        estabelecimentoServiceMock.listar.calls.reset();
 
         component.botaoAdicionar();
 
         expect(component.isLista).toBeTrue();
         expect(component.isFormulario).toBeFalse();
 
-        expect(subsidiariaServiceMock.listar)
+        expect(estabelecimentoServiceMock.listar)
             .not.toHaveBeenCalled();
     });
 
-    it('deve selecionar e vincular subsidiaria', () => {
+    it('deve selecionar e vincular estabelecimento', () => {
         autorizar(
-            ChavePermissao.UsuarioSubsidiariaCriar
+            ChavePermissao.UsuarioEstabelecimentoCriar
         );
 
         component.botaoAdicionar();
-        component.selecionarSubsidiaria(subsidiaria);
+        component.selecionarEstabelecimento(estabelecimento);
 
         serviceMock.listar.calls.reset();
 
@@ -521,7 +521,7 @@ describe('UsuarioSubsidiariaComponent', () => {
         expect(serviceMock.cadastrar)
             .toHaveBeenCalledOnceWith({
                 idUsuarioEmpresa: 5,
-                idSubsidiaria: 11
+                idEstabelecimento: 11
             });
 
         expect(serviceMock.listar)
@@ -534,7 +534,7 @@ describe('UsuarioSubsidiariaComponent', () => {
 
         expect(toastrMock.success)
             .toHaveBeenCalledWith(
-                'Subsidiaria vinculada com sucesso'
+                'Estabelecimento vinculado com sucesso'
             );
 
         expect(component.isLista).toBeTrue();
@@ -542,7 +542,7 @@ describe('UsuarioSubsidiariaComponent', () => {
 
     it('nao deve salvar formulario invalido', () => {
         autorizar(
-            ChavePermissao.UsuarioSubsidiariaCriar
+            ChavePermissao.UsuarioEstabelecimentoCriar
         );
 
         component.botaoAdicionar();
@@ -552,21 +552,21 @@ describe('UsuarioSubsidiariaComponent', () => {
             .not.toHaveBeenCalled();
     });
 
-    it('deve pesquisar subsidiarias por empresa', fakeAsync(() => {
+    it('deve pesquisar estabelecimentos por empresa', fakeAsync(() => {
         autorizar(
-            ChavePermissao.UsuarioSubsidiariaCriar
+            ChavePermissao.UsuarioEstabelecimentoCriar
         );
 
         component.botaoAdicionar();
 
-        subsidiariaServiceMock.listar.calls.reset();
+        estabelecimentoServiceMock.listar.calls.reset();
 
-        component.subsidiariaPesquisaControl
+        component.estabelecimentoPesquisaControl
             .setValue('Centro');
 
         tick(300);
 
-        expect(subsidiariaServiceMock.listar)
+        expect(estabelecimentoServiceMock.listar)
             .toHaveBeenCalledOnceWith(
                 0,
                 10,
@@ -578,7 +578,7 @@ describe('UsuarioSubsidiariaComponent', () => {
 
     it('deve detalhar vinculo quando autorizado', () => {
         autorizar(
-            ChavePermissao.UsuarioSubsidiariaDetalhar
+            ChavePermissao.UsuarioEstabelecimentoDetalhar
         );
 
         component.botaoVisualizar(7);
@@ -596,15 +596,15 @@ describe('UsuarioSubsidiariaComponent', () => {
                 idUsuarioEmpresa: 5,
                 usuario: 'usuario@empresa.com',
                 empresa: 'Empresa Exemplo',
-                idSubsidiaria: 11,
-                subsidiaria: 'Subsidiaria Centro',
+                idEstabelecimento: 11,
+                estabelecimento: 'Estabelecimento Centro',
                 status: 'ATIVO'
             });
     });
 
     it('deve excluir vinculo quando autorizado', () => {
         autorizar(
-            ChavePermissao.UsuarioSubsidiariaExcluir
+            ChavePermissao.UsuarioEstabelecimentoExcluir
         );
 
         serviceMock.listar.calls.reset();
@@ -624,7 +624,7 @@ describe('UsuarioSubsidiariaComponent', () => {
 
         expect(toastrMock.info)
             .toHaveBeenCalledWith(
-                'Subsidiaria removida do usuario'
+                'Estabelecimento removido do usuario'
             );
     });
 
@@ -635,15 +635,15 @@ describe('UsuarioSubsidiariaComponent', () => {
         component.formulario =
             new FormBuilder().group({
                 idUsuarioEmpresa: [5],
-                idSubsidiaria: [11]
+                idEstabelecimento: [11]
             });
 
         component.lista = [
             vinculo
         ];
 
-        component.subsidiarias = [
-            subsidiaria
+        component.estabelecimentos = [
+            estabelecimento
         ];
 
         component.totalRegistros = 1;
@@ -672,7 +672,7 @@ describe('UsuarioSubsidiariaComponent', () => {
         expect(component.lista)
             .toEqual([]);
 
-        expect(component.subsidiarias)
+        expect(component.estabelecimentos)
             .toEqual([]);
 
         expect(component.totalRegistros)
@@ -724,7 +724,7 @@ describe('UsuarioSubsidiariaComponent', () => {
 
         expect(toastrMock.error)
             .toHaveBeenCalledWith(
-                'Nao foi possivel carregar as subsidiarias do usuario'
+                'Nao foi possivel carregar os estabelecimentos do usuario'
             );
     });
 

@@ -24,16 +24,16 @@ export enum ChavePermissao {
     EmpresaDetalhar =
         'CONFIGURACAO_EMPRESA_DETALHAR',
 
-    SubsidiariaCriar =
-        'CONFIGURACAO_SUBSIDIARIA_CRIAR',
-    SubsidiariaListar =
-        'CONFIGURACAO_SUBSIDIARIA_LISTAR',
-    SubsidiariaEditar =
-        'CONFIGURACAO_SUBSIDIARIA_EDITAR',
-    SubsidiariaExcluir =
-        'CONFIGURACAO_SUBSIDIARIA_EXCLUIR',
-    SubsidiariaDetalhar =
-        'CONFIGURACAO_SUBSIDIARIA_DETALHAR',
+    EstabelecimentoCriar =
+        'CONFIGURACAO_ESTABELECIMENTO_CRIAR',
+    EstabelecimentoListar =
+        'CONFIGURACAO_ESTABELECIMENTO_LISTAR',
+    EstabelecimentoEditar =
+        'CONFIGURACAO_ESTABELECIMENTO_EDITAR',
+    EstabelecimentoExcluir =
+        'CONFIGURACAO_ESTABELECIMENTO_EXCLUIR',
+    EstabelecimentoDetalhar =
+        'CONFIGURACAO_ESTABELECIMENTO_DETALHAR',
 
     UsuarioEmpresaCriar =
         'ACESSO_USUARIO_EMPRESA_CRIAR',
@@ -46,14 +46,14 @@ export enum ChavePermissao {
     UsuarioEmpresaDetalhar =
         'ACESSO_USUARIO_EMPRESA_DETALHAR',
 
-    UsuarioSubsidiariaCriar =
-        'ACESSO_USUARIO_SUBSIDIARIA_CRIAR',
-    UsuarioSubsidiariaListar =
-        'ACESSO_USUARIO_SUBSIDIARIA_LISTAR',
-    UsuarioSubsidiariaExcluir =
-        'ACESSO_USUARIO_SUBSIDIARIA_EXCLUIR',
-    UsuarioSubsidiariaDetalhar =
-        'ACESSO_USUARIO_SUBSIDIARIA_DETALHAR',
+    UsuarioEstabelecimentoCriar =
+        'ACESSO_USUARIO_ESTABELECIMENTO_CRIAR',
+    UsuarioEstabelecimentoListar =
+        'ACESSO_USUARIO_ESTABELECIMENTO_LISTAR',
+    UsuarioEstabelecimentoExcluir =
+        'ACESSO_USUARIO_ESTABELECIMENTO_EXCLUIR',
+    UsuarioEstabelecimentoDetalhar =
+        'ACESSO_USUARIO_ESTABELECIMENTO_DETALHAR',
 
     UsuarioCriar =
         'ACESSO_USUARIO_CRIAR',

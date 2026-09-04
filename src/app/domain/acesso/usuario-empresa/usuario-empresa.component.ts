@@ -101,35 +101,35 @@ export class UsuarioEmpresaComponent
     idUsuario = 0;
 
     pagina =
-        'Empresas do usuário';
+        'Empresas do usuario';
 
     descricao =
-        'Gerencie as empresas vinculadas ao usuário';
+        'Gerencie as empresas vinculadas ao usuario';
 
     breadcrumb: ItemBreadcrumbPagina[] = [
         {
-            titulo: 'Acesso e Segurança'
+            titulo: 'Acesso e Seguranca'
         },
         {
-            titulo: 'Usuários',
+            titulo: 'Usuarios',
             rota: '/acesso/usuarios'
         }
     ];
 
     coluna = [
-        'Código do usuário',
-        'Usuário',
-        'Código da empresa',
+        'Codigo do usuario',
+        'Usuario',
+        'Codigo da empresa',
         'Empresa',
-        'Todas as subsidiárias',
+        'Todos os estabelecimentos',
         'Status'
     ];
 
     readonly acoesExtras: AcaoExtraGrid[] = [
         {
-            chave: 'subsidiarias',
+            chave: 'estabelecimentos',
             icone: 'account_tree',
-            tooltip: 'Subsidiarias'
+            tooltip: 'Estabelecimentos'
         }
     ];
 
@@ -192,11 +192,11 @@ export class UsuarioEmpresaComponent
             );
     }
 
-    get podeGerenciarSubsidiarias(): boolean {
+    get podeGerenciarEstabelecimentos(): boolean {
         return this.autorizacaoService
             .possuiPermissao(
                 ChavePermissao
-                    .UsuarioSubsidiariaListar
+                    .UsuarioEstabelecimentoListar
             );
     }
 
@@ -271,7 +271,7 @@ export class UsuarioEmpresaComponent
                 },
                 error: () => {
                     this.toastr.error(
-                        'Não foi possível carregar as empresas do usuário'
+                        'Nao foi possivel carregar as empresas do usuario'
                     );
                 }
             });
@@ -293,8 +293,8 @@ export class UsuarioEmpresaComponent
         evento: EventoAcaoExtraGrid
     ): void {
         if (
-            evento.chave !== 'subsidiarias' ||
-            !this.podeGerenciarSubsidiarias
+            evento.chave !== 'estabelecimentos' ||
+            !this.podeGerenciarEstabelecimentos
         ) {
             return;
         }
@@ -305,9 +305,9 @@ export class UsuarioEmpresaComponent
                     item.id === evento.id
             );
 
-        if (vinculo?.todasSubsidiarias) {
+        if (vinculo?.todosEstabelecimentos) {
             this.toastr.info(
-                'Usuario ja possui acesso a todas as subsidiarias da empresa'
+                'Usuario ja possui acesso a todos os estabelecimentos da empresa'
             );
 
             return;
@@ -318,7 +318,7 @@ export class UsuarioEmpresaComponent
             this.idUsuario,
             'empresas',
             evento.id,
-            'subsidiarias'
+            'estabelecimentos'
         ]);
     }
 
@@ -344,7 +344,7 @@ export class UsuarioEmpresaComponent
                     null,
                     Validators.required
                 ],
-                todasSubsidiarias: [
+                todosEstabelecimentos: [
                     false
                 ]
             });
@@ -399,22 +399,22 @@ export class UsuarioEmpresaComponent
             this.service
                 .atualizar({
                     id,
-                    todasSubsidiarias:
+                    todosEstabelecimentos:
                         this.formulario
                             .get(
-                                'todasSubsidiarias'
+                                'todosEstabelecimentos'
                             )
                             ?.value
                 })
                 .subscribe({
                     next: () => {
                         this.finalizarSalvamento(
-                            'Vínculo atualizado com sucesso'
+                            'Vinculo atualizado com sucesso'
                         );
                     },
                     error: () => {
                         this.toastr.error(
-                            'Não foi possível atualizar o vínculo'
+                            'Nao foi possivel atualizar o vinculo'
                         );
                     }
                 });
@@ -432,22 +432,22 @@ export class UsuarioEmpresaComponent
                     this.formulario
                         .get('idEmpresa')
                         ?.value,
-                todasSubsidiarias:
+                todosEstabelecimentos:
                     this.formulario
                         .get(
-                            'todasSubsidiarias'
+                            'todosEstabelecimentos'
                         )
                         ?.value
             })
             .subscribe({
                 next: () => {
                     this.finalizarSalvamento(
-                        'Empresa vinculada ao usuário com sucesso'
+                        'Empresa vinculada ao usuario com sucesso'
                     );
                 },
                 error: () => {
                     this.toastr.error(
-                        'Não foi possível vincular a empresa ao usuário'
+                        'Nao foi possivel vincular a empresa ao usuario'
                     );
                 }
             });
@@ -465,12 +465,12 @@ export class UsuarioEmpresaComponent
                     this.carregarLista();
 
                     this.toastr.info(
-                        'Empresa removida do usuário'
+                        'Empresa removida do usuario'
                     );
                 },
                 error: () => {
                     this.toastr.error(
-                        'Não foi possível remover a empresa do usuário'
+                        'Nao foi possivel remover a empresa do usuario'
                     );
                 }
             });
@@ -608,7 +608,7 @@ export class UsuarioEmpresaComponent
                     this.empresas = [];
 
                     this.toastr.error(
-                        'Não foi possível pesquisar as empresas'
+                        'Nao foi possivel pesquisar as empresas'
                     );
                 }
             });
@@ -638,9 +638,9 @@ export class UsuarioEmpresaComponent
                             id: [
                                 dados.id
                             ],
-                            todasSubsidiarias: [
+                            todosEstabelecimentos: [
                                 dados
-                                    .todasSubsidiarias
+                                    .todosEstabelecimentos
                             ]
                         });
 
@@ -651,7 +651,7 @@ export class UsuarioEmpresaComponent
                 },
                 error: () => {
                     this.toastr.error(
-                        'Não foi possível detalhar o vínculo'
+                        'Nao foi possivel detalhar o vinculo'
                     );
                 }
             });

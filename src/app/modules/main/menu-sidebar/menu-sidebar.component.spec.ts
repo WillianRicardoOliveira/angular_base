@@ -662,7 +662,7 @@ describe('MenuSidebarComponent', () => {
                     )
             ).toEqual([
                 'Empresas',
-                'Subsidiárias'
+                'Estabelecimentos'
             ]);
         }
     );

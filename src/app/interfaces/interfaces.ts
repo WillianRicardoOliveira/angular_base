@@ -49,7 +49,7 @@ export interface Empresa {
     status?: Status;
 }
 
-export interface Subsidiaria {
+export interface Estabelecimento {
     id?: number;
     idEmpresa: number;
     empresa?: string;
@@ -63,19 +63,19 @@ export interface UsuarioEmpresa {
     usuario?: string;
     idEmpresa: number;
     empresa?: string;
-    todasSubsidiarias: boolean;
+    todosEstabelecimentos: boolean;
     status?: Status;
 }
 
-export interface UsuarioSubsidiaria {
+export interface UsuarioEstabelecimento {
     id?: number;
     idUsuarioEmpresa: number;
     idUsuario?: number;
     usuario?: string;
     idEmpresa?: number;
     empresa?: string;
-    idSubsidiaria: number;
-    subsidiaria?: string;
+    idEstabelecimento: number;
+    estabelecimento?: string;
     status?: Status;
 }
 
@@ -112,11 +112,6 @@ export interface UsuarioPerfil {
     perfil?: string;
     status?: Status;
 }
-
-
-
-
-
 
 export interface Fornecedor {
     id?: number,
@@ -155,7 +150,7 @@ export interface CompraItem {
     valor: String,
     total: String,
     ativo?: boolean
-}  
+}
 
 export interface Movimentacao {
     id?: number,
@@ -167,7 +162,7 @@ export interface Movimentacao {
     data?: string,
     ativo?: boolean
 }
-  
+
 export interface TipoMovimentacao {
     id?: number,
     nome: string
@@ -183,7 +178,7 @@ export interface SubCategoriaConta {
     nome: string,
     categoriaConta: number,
     ativo?: boolean
-}  
+}
 
 export interface ContasApagar {
     id?: number,
@@ -192,44 +187,29 @@ export interface ContasApagar {
     subCategoriaConta: SubCategoriaConta,
     descricao: string,
     valor: String,
-    parcelas: number, 
+    parcelas: number,
     statusPagamento: StatusPagamento,
     formaPagamento: FormaPagamento,
     ativo?: boolean
-}  
+}
 
 export interface FormaPagamento {
     id?: number,
     nome: string,
-    ativo?: boolean  
-}  
+    ativo?: boolean
+}
 
 export interface StatusPagamento {
     id?: number,
     nome: string,
-    ativo?: boolean  
-}  
-
-
-
-
-
-
-
-
-
-
-
-
-
+    ativo?: boolean
+}
 
 export interface Conteudo {
-
     id: number,
     destino: string,
     imagem: string,
     preco: number
-
 }
 
 export interface Depoimento {
@@ -239,7 +219,7 @@ export interface Depoimento {
     autor: string;
 }
 
-export interface PessoaUsuario {    
+export interface PessoaUsuario {
     nome: string;
     nascimento: string;
     genero: string;
@@ -250,7 +230,7 @@ export interface PessoaUsuario {
     aceitarTermos: boolean;
     tipoPessoa: string;
 }
-  
+
 export interface Endereco {
     cep: string;
     logradouro: string;
@@ -260,10 +240,3 @@ export interface Endereco {
     uf: string;
     numero: string;
 }
-/*
-export interface Estado {
-    id: number;
-    nome: string;
-    sigla: string;
-}
-*/

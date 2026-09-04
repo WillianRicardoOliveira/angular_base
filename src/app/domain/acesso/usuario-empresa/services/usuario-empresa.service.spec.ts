@@ -57,7 +57,7 @@ describe('UsuarioEmpresaService', () => {
     });
 
     it(
-        'deve listar vínculos com todos os parâmetros',
+        'deve listar vinculos com todos os parametros',
         () => {
             const resposta = {
                 content: [
@@ -69,7 +69,7 @@ describe('UsuarioEmpresaService', () => {
                         idEmpresa: 3,
                         empresa:
                             'Empresa Exemplo',
-                        todasSubsidiarias:
+                        todosEstabelecimentos:
                             true,
                         status:
                             'ATIVO' as const
@@ -130,7 +130,7 @@ describe('UsuarioEmpresaService', () => {
     );
 
     it(
-        'deve listar vínculos sem parâmetros opcionais',
+        'deve listar vinculos sem parametros opcionais',
         () => {
             service.listar()
                 .subscribe((resultado) => {
@@ -160,7 +160,7 @@ describe('UsuarioEmpresaService', () => {
     );
 
     it(
-        'deve ignorar ordenação vazia',
+        'deve ignorar ordenacao vazia',
         () => {
             service.listar(
                 0,
@@ -202,7 +202,7 @@ describe('UsuarioEmpresaService', () => {
     );
 
     it(
-        'deve listar empresas para seleção',
+        'deve listar empresas para selecao',
         () => {
             const resposta = {
                 content: [
@@ -262,7 +262,7 @@ describe('UsuarioEmpresaService', () => {
     );
 
     it(
-        'deve listar empresas com parâmetros padrão',
+        'deve listar empresas com parametros padrao',
         () => {
             service.listarEmpresas()
                 .subscribe((resultado) => {
@@ -339,12 +339,12 @@ describe('UsuarioEmpresaService', () => {
     );
 
     it(
-        'deve cadastrar vínculo entre usuário e empresa',
+        'deve cadastrar vinculo entre usuario e empresa',
         () => {
             const dados = {
                 idUsuario: 2,
                 idEmpresa: 3,
-                todasSubsidiarias: true
+                todosEstabelecimentos: true
             };
 
             const resposta = {
@@ -355,7 +355,7 @@ describe('UsuarioEmpresaService', () => {
                 idEmpresa: 3,
                 empresa:
                     'Empresa Exemplo',
-                todasSubsidiarias: true,
+                todosEstabelecimentos: true,
                 status:
                     'ATIVO' as const
             };
@@ -381,11 +381,11 @@ describe('UsuarioEmpresaService', () => {
     );
 
     it(
-        'deve atualizar somente o acesso a todas as subsidiárias',
+        'deve atualizar somente o acesso a todos os estabelecimentos',
         () => {
             const dados = {
                 id: 10,
-                todasSubsidiarias: false
+                todosEstabelecimentos: false
             };
 
             const resposta = {
@@ -396,7 +396,7 @@ describe('UsuarioEmpresaService', () => {
                 idEmpresa: 3,
                 empresa:
                     'Empresa Exemplo',
-                todasSubsidiarias: false,
+                todosEstabelecimentos: false,
                 status:
                     'ATIVO' as const
             };
@@ -417,7 +417,7 @@ describe('UsuarioEmpresaService', () => {
             expect(request.request.body)
                 .toEqual({
                     id: 10,
-                    todasSubsidiarias: false
+                    todosEstabelecimentos: false
                 });
 
             expect(
@@ -433,7 +433,7 @@ describe('UsuarioEmpresaService', () => {
     );
 
     it(
-        'deve detalhar vínculo por id',
+        'deve detalhar vinculo por id',
         () => {
             const resposta = {
                 id: 10,
@@ -443,7 +443,7 @@ describe('UsuarioEmpresaService', () => {
                 idEmpresa: 3,
                 empresa:
                     'Empresa Exemplo',
-                todasSubsidiarias: true,
+                todosEstabelecimentos: true,
                 status:
                     'ATIVO' as const
             };
@@ -468,7 +468,7 @@ describe('UsuarioEmpresaService', () => {
     );
 
     it(
-        'deve excluir vínculo por id',
+        'deve excluir vinculo por id',
         () => {
             service.excluir(10)
                 .subscribe((resultado) => {

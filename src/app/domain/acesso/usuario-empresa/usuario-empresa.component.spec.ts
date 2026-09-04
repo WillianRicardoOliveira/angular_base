@@ -125,7 +125,7 @@ describe('UsuarioEmpresaComponent', () => {
             idEmpresa: 2,
             empresa:
                 'Empresa Exemplo',
-            todasSubsidiarias: false,
+            todosEstabelecimentos: false,
             status: 'ATIVO'
         };
 
@@ -135,7 +135,7 @@ describe('UsuarioEmpresaComponent', () => {
                 OrganizacaoDisponivel | null
             >({
                 id: 1,
-                nome: 'Organização 1'
+                nome: 'Organizacao 1'
             });
 
         contextoOrganizacaoServiceMock
@@ -245,7 +245,8 @@ describe('UsuarioEmpresaComponent', () => {
                             activatedRouteMock
                     },
                     {
-                        provide: Router,
+                        provide:
+                            Router,
                         useValue:
                             routerMock
                     },
@@ -283,7 +284,7 @@ describe('UsuarioEmpresaComponent', () => {
     });
 
     it(
-        'deve obter o usuário pela rota',
+        'deve obter o usuario pela rota',
         () => {
             expect(paramMapMock.get)
                 .toHaveBeenCalledWith(
@@ -296,27 +297,27 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve configurar página e colunas',
+        'deve configurar pagina e colunas',
         () => {
             expect(component.pagina)
                 .toBe(
-                    'Empresas do usuário'
+                    'Empresas do usuario'
                 );
 
             expect(component.coluna)
                 .toEqual([
-                    'Código do usuário',
-                    'Usuário',
-                    'Código da empresa',
+                    'Codigo do usuario',
+                    'Usuario',
+                    'Codigo da empresa',
                     'Empresa',
-                    'Todas as subsidiárias',
+                    'Todos os estabelecimentos',
                     'Status'
                 ]);
         }
     );
 
     it(
-        'deve carregar vínculos do usuário ao inicializar',
+        'deve carregar vinculos do usuario ao inicializar',
         () => {
             expect(serviceMock.listar)
                 .toHaveBeenCalledOnceWith(
@@ -329,7 +330,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve limpar durante a troca e voltar somente quando a nova organização estiver pronta',
+        'deve limpar durante a troca e voltar somente quando a nova organizacao estiver pronta',
         () => {
             serviceMock.listar.calls.reset();
             serviceMock.listarEmpresas.calls.reset();
@@ -338,7 +339,7 @@ describe('UsuarioEmpresaComponent', () => {
             component.formulario =
                 new FormBuilder().group({
                     id: [3],
-                    todasSubsidiarias: [true]
+                    todosEstabelecimentos: [true]
                 });
 
             component.lista = [
@@ -403,7 +404,7 @@ describe('UsuarioEmpresaComponent', () => {
 
             organizacaoProntaSubject.next({
                 id: 2,
-                nome: 'Organização 2'
+                nome: 'Organizacao 2'
             });
 
             expect(serviceMock.listar)
@@ -420,7 +421,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve redirecionar quando o usuário for inválido',
+        'deve redirecionar quando o usuario for invalido',
         () => {
             serviceMock.listar.calls.reset();
 
@@ -441,7 +442,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve armazenar os vínculos carregados',
+        'deve armazenar os vinculos carregados',
         () => {
             serviceMock.listar.and.returnValue(
                 of({
@@ -474,7 +475,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve alterar a paginação',
+        'deve alterar a paginacao',
         () => {
             serviceMock.listar.calls.reset();
 
@@ -494,7 +495,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve controlar as ações por permissão',
+        'deve controlar as acoes por permissao',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -527,22 +528,22 @@ describe('UsuarioEmpresaComponent', () => {
         }
     );
 
-        it(
-        'deve configurar acao extra para subsidiarias',
+    it(
+        'deve configurar acao extra para estabelecimentos',
         () => {
             expect(component.acoesExtras)
                 .toEqual([
                     {
-                        chave: 'subsidiarias',
+                        chave: 'estabelecimentos',
                         icone: 'account_tree',
-                        tooltip: 'Subsidiarias'
+                        tooltip: 'Estabelecimentos'
                     }
                 ]);
         }
     );
 
     it(
-        'deve controlar permissao para gerenciar subsidiarias',
+        'deve controlar permissao para gerenciar estabelecimentos',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -553,10 +554,10 @@ describe('UsuarioEmpresaComponent', () => {
                     ) =>
                         permissao ===
                         ChavePermissao
-                            .UsuarioSubsidiariaListar
+                            .UsuarioEstabelecimentoListar
                 );
 
-            expect(component.podeGerenciarSubsidiarias)
+            expect(component.podeGerenciarEstabelecimentos)
                 .toBeTrue();
 
             expect(
@@ -564,13 +565,13 @@ describe('UsuarioEmpresaComponent', () => {
                     .possuiPermissao
             ).toHaveBeenCalledWith(
                 ChavePermissao
-                    .UsuarioSubsidiariaListar
+                    .UsuarioEstabelecimentoListar
             );
         }
     );
 
     it(
-        'deve navegar para subsidiarias especificas da empresa do usuario',
+        'deve navegar para estabelecimentos especificos da empresa do usuario',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -581,7 +582,7 @@ describe('UsuarioEmpresaComponent', () => {
                     ) =>
                         permissao ===
                         ChavePermissao
-                            .UsuarioSubsidiariaListar
+                            .UsuarioEstabelecimentoListar
                 );
 
             routerMock.navigate.calls.reset();
@@ -591,7 +592,7 @@ describe('UsuarioEmpresaComponent', () => {
             ];
 
             component.botaoAcaoExtra({
-                chave: 'subsidiarias',
+                chave: 'estabelecimentos',
                 id: 3
             });
 
@@ -601,7 +602,7 @@ describe('UsuarioEmpresaComponent', () => {
                     1,
                     'empresas',
                     3,
-                    'subsidiarias'
+                    'estabelecimentos'
                 ]);
 
             expect(toastrMock.info)
@@ -610,7 +611,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'nao deve navegar para subsidiarias sem permissao',
+        'nao deve navegar para estabelecimentos sem permissao',
         () => {
             routerMock.navigate.calls.reset();
 
@@ -619,7 +620,7 @@ describe('UsuarioEmpresaComponent', () => {
             ];
 
             component.botaoAcaoExtra({
-                chave: 'subsidiarias',
+                chave: 'estabelecimentos',
                 id: 3
             });
 
@@ -629,7 +630,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'nao deve navegar para subsidiarias quando usuario ja acessa todas',
+        'nao deve navegar para estabelecimentos quando usuario ja acessa todos',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -640,7 +641,7 @@ describe('UsuarioEmpresaComponent', () => {
                     ) =>
                         permissao ===
                         ChavePermissao
-                            .UsuarioSubsidiariaListar
+                            .UsuarioEstabelecimentoListar
                 );
 
             routerMock.navigate.calls.reset();
@@ -648,12 +649,12 @@ describe('UsuarioEmpresaComponent', () => {
             component.lista = [
                 {
                     ...usuarioEmpresa,
-                    todasSubsidiarias: true
+                    todosEstabelecimentos: true
                 }
             ];
 
             component.botaoAcaoExtra({
-                chave: 'subsidiarias',
+                chave: 'estabelecimentos',
                 id: 3
             });
 
@@ -662,7 +663,7 @@ describe('UsuarioEmpresaComponent', () => {
 
             expect(toastrMock.info)
                 .toHaveBeenCalledOnceWith(
-                    'Usuario ja possui acesso a todas as subsidiarias da empresa'
+                    'Usuario ja possui acesso a todos os estabelecimentos da empresa'
                 );
         }
     );
@@ -679,7 +680,7 @@ describe('UsuarioEmpresaComponent', () => {
                     ) =>
                         permissao ===
                         ChavePermissao
-                            .UsuarioSubsidiariaListar
+                            .UsuarioEstabelecimentoListar
                 );
 
             routerMock.navigate.calls.reset();
@@ -702,7 +703,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve abrir o formulário de cadastro',
+        'deve abrir o formulario de cadastro',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -725,7 +726,7 @@ describe('UsuarioEmpresaComponent', () => {
             ).toEqual({
                 idUsuario: 1,
                 idEmpresa: null,
-                todasSubsidiarias: false
+                todosEstabelecimentos: false
             });
 
             expect(serviceMock.listarEmpresas)
@@ -738,7 +739,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'não deve abrir cadastro sem permissão',
+        'nao deve abrir cadastro sem permissao',
         () => {
             component.botaoAdicionar();
 
@@ -770,13 +771,13 @@ describe('UsuarioEmpresaComponent', () => {
 
             expect(
                 component.formulario
-                    .get('todasSubsidiarias')
+                    .get('todosEstabelecimentos')
                     ?.valid
             ).toBeTrue();
 
             expect(
                 component.formulario
-                    .get('todasSubsidiarias')
+                    .get('todosEstabelecimentos')
                     ?.value
             ).toBeFalse();
         }
@@ -833,7 +834,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve pesquisar empresas após a digitação',
+        'deve pesquisar empresas apos a digitacao',
         fakeAsync(() => {
             serviceMock
                 .listarEmpresas
@@ -884,7 +885,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve cadastrar vínculo permitindo todas as subsidiárias como falso',
+        'deve cadastrar vinculo permitindo todos os estabelecimentos como falso',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -910,7 +911,7 @@ describe('UsuarioEmpresaComponent', () => {
                 .toHaveBeenCalledOnceWith({
                     idUsuario: 1,
                     idEmpresa: 2,
-                    todasSubsidiarias: false
+                    todosEstabelecimentos: false
                 });
 
             expect(serviceMock.atualizar)
@@ -925,7 +926,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'não deve salvar cadastro inválido',
+        'nao deve salvar cadastro invalido',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -943,7 +944,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'não deve salvar sem permissão',
+        'nao deve salvar sem permissao',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -967,7 +968,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve abrir o formulário de edição',
+        'deve abrir o formulario de edicao',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -1008,7 +1009,7 @@ describe('UsuarioEmpresaComponent', () => {
                     .getRawValue()
             ).toEqual({
                 id: 3,
-                todasSubsidiarias: false
+                todosEstabelecimentos: false
             });
 
             expect(
@@ -1024,7 +1025,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve atualizar somente o acesso às subsidiárias',
+        'deve atualizar somente o acesso aos estabelecimentos',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -1041,7 +1042,7 @@ describe('UsuarioEmpresaComponent', () => {
             component.botaoEditar(3);
 
             component.formulario
-                .get('todasSubsidiarias')
+                .get('todosEstabelecimentos')
                 ?.setValue(true);
 
             component.salvar();
@@ -1049,7 +1050,7 @@ describe('UsuarioEmpresaComponent', () => {
             expect(serviceMock.atualizar)
                 .toHaveBeenCalledOnceWith({
                     id: 3,
-                    todasSubsidiarias: true
+                    todosEstabelecimentos: true
                 });
 
             expect(serviceMock.cadastrar)
@@ -1064,7 +1065,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve abrir visualização somente leitura',
+        'deve abrir visualizacao somente leitura',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -1135,7 +1136,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'não deve excluir sem permissão',
+        'nao deve excluir sem permissao',
         () => {
             component.botaoExcluir(3);
 
@@ -1145,7 +1146,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve cancelar e retornar à lista',
+        'deve cancelar e retornar a lista',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -1175,7 +1176,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve voltar para a lista de usuários',
+        'deve voltar para a lista de usuarios',
         () => {
             component.voltar();
 
@@ -1187,7 +1188,7 @@ describe('UsuarioEmpresaComponent', () => {
     );
 
     it(
-        'deve informar erro ao carregar vínculos',
+        'deve informar erro ao carregar vinculos',
         () => {
             serviceMock.listar.and.returnValue(
                 throwError(

@@ -937,15 +937,15 @@ export const MENU_CONFIGURACOES:
                             .EmpresaListar
                 },
                 {
-                    name: 'Subsidiárias',
+                    name: 'Estabelecimentos',
                     iconClasses:
                         'fas fa-code-branch',
                     path: [
-                        '/configuracao/subsidiarias'
+                        '/configuracao/estabelecimentos'
                     ],
                     permissao:
                         ChavePermissao
-                            .SubsidiariaListar
+                            .EstabelecimentoListar
                 }
             ]
         }

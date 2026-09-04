@@ -56,8 +56,8 @@ import {
 } from '@/domain/acesso/usuario-perfil/usuario-perfil.component';
 
 import {
-    UsuarioSubsidiariaComponent
-} from '@/domain/acesso/usuario-subsidiaria/usuario-subsidiaria.component';
+    UsuarioEstabelecimentoComponent
+} from '@/domain/acesso/usuario-estabelecimento/usuario-estabelecimento.component';
 
 import {
     ConfiguracaoInicialComponent
@@ -68,8 +68,8 @@ import {
 } from '@/domain/configuracao/empresa/empresa.component';
 
 import {
-    SubsidiariaComponent
-} from '@/domain/configuracao/subsidiaria/subsidiaria.component';
+    EstabelecimentoComponent
+} from '@/domain/configuracao/estabelecimento/estabelecimento.component';
 
 import {
     AceiteConviteOrganizacaoComponent
@@ -234,9 +234,9 @@ const routes: Routes = [
             },
             {
                 path:
-                    'acesso/usuarios/:idUsuario/empresas/:idUsuarioEmpresa/subsidiarias',
+                    'acesso/usuarios/:idUsuario/empresas/:idUsuarioEmpresa/estabelecimentos',
                 component:
-                    UsuarioSubsidiariaComponent,
+                    UsuarioEstabelecimentoComponent,
                 canActivate: [
                     ConfiguracaoInicialGuard,
                     PermissaoGuard
@@ -244,7 +244,7 @@ const routes: Routes = [
                 data: {
                     permissao:
                         ChavePermissao
-                            .UsuarioSubsidiariaListar
+                            .UsuarioEstabelecimentoListar
                 }
             },
             {
@@ -265,9 +265,9 @@ const routes: Routes = [
             },
             {
                 path:
-                    'configuracao/subsidiarias',
+                    'configuracao/estabelecimentos',
                 component:
-                    SubsidiariaComponent,
+                    EstabelecimentoComponent,
                 canActivate: [
                     ConfiguracaoInicialGuard,
                     PermissaoGuard
@@ -275,7 +275,7 @@ const routes: Routes = [
                 data: {
                     permissao:
                         ChavePermissao
-                            .SubsidiariaListar
+                            .EstabelecimentoListar
                 }
             }
         ]

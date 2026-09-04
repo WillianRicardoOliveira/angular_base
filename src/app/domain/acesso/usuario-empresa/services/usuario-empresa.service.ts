@@ -28,12 +28,12 @@ export interface Pagina<T> {
 export interface CadastrarUsuarioEmpresa {
     idUsuario: number;
     idEmpresa: number;
-    todasSubsidiarias: boolean;
+    todosEstabelecimentos: boolean;
 }
 
 export interface AtualizarUsuarioEmpresa {
     id: number;
-    todasSubsidiarias: boolean;
+    todosEstabelecimentos: boolean;
 }
 
 @Injectable({

@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { UsuarioSubsidiaria } from '@/interfaces/interfaces';
+import { UsuarioEstabelecimento } from '@/interfaces/interfaces';
 import { environment } from 'environments/environment';
 
 export interface Pagina<T> {
@@ -10,15 +10,15 @@ export interface Pagina<T> {
     totalElements: number;
 }
 
-export interface CadastrarUsuarioSubsidiaria {
+export interface CadastrarUsuarioEstabelecimento {
     idUsuarioEmpresa: number;
-    idSubsidiaria: number;
+    idEstabelecimento: number;
 }
 
 @Injectable({
     providedIn: 'root'
 })
-export class UsuarioSubsidiariaService {
+export class UsuarioEstabelecimentoService {
 
     private readonly api =
         environment.api;
@@ -32,7 +32,7 @@ export class UsuarioSubsidiariaService {
         size?: number,
         sort?: string,
         idUsuarioEmpresa?: number
-    ): Observable<Pagina<UsuarioSubsidiaria>> {
+    ): Observable<Pagina<UsuarioEstabelecimento>> {
         let params = new HttpParams();
 
         if (page !== undefined && page !== null) {
@@ -51,30 +51,30 @@ export class UsuarioSubsidiariaService {
             params = params.set('idUsuarioEmpresa', idUsuarioEmpresa);
         }
 
-        return this.http.get<Pagina<UsuarioSubsidiaria>>(
-            `${this.api}/acesso/usuario-subsidiaria`,
+        return this.http.get<Pagina<UsuarioEstabelecimento>>(
+            `${this.api}/acesso/usuario-estabelecimento`,
             { params }
         );
     }
 
     cadastrar(
-        dados: CadastrarUsuarioSubsidiaria
-    ): Observable<UsuarioSubsidiaria> {
-        return this.http.post<UsuarioSubsidiaria>(
-            `${this.api}/acesso/usuario-subsidiaria`,
+        dados: CadastrarUsuarioEstabelecimento
+    ): Observable<UsuarioEstabelecimento> {
+        return this.http.post<UsuarioEstabelecimento>(
+            `${this.api}/acesso/usuario-estabelecimento`,
             dados
         );
     }
 
-    detalhar(id: number): Observable<UsuarioSubsidiaria> {
-        return this.http.get<UsuarioSubsidiaria>(
-            `${this.api}/acesso/usuario-subsidiaria/${id}`
+    detalhar(id: number): Observable<UsuarioEstabelecimento> {
+        return this.http.get<UsuarioEstabelecimento>(
+            `${this.api}/acesso/usuario-estabelecimento/${id}`
         );
     }
 
     excluir(id: number): Observable<void> {
         return this.http.delete<void>(
-            `${this.api}/acesso/usuario-subsidiaria/${id}`
+            `${this.api}/acesso/usuario-estabelecimento/${id}`
         );
     }
 }

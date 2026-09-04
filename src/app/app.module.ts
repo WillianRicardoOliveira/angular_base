@@ -78,6 +78,10 @@ import {
 } from '@/domain/acesso/usuario-empresa/usuario-empresa.component';
 
 import {
+    UsuarioEstabelecimentoComponent
+} from '@/domain/acesso/usuario-estabelecimento/usuario-estabelecimento.component';
+
+import {
     ConfiguracaoInicialComponent
 } from '@/domain/configuracao/configuracao-inicial/configuracao-inicial.component';
 
@@ -115,24 +119,12 @@ import {
 } from '@/domain/configuracao/empresa/empresa.component';
 
 import {
-    SubsidiariaComponent
-} from '@/domain/configuracao/subsidiaria/subsidiaria.component';
-
-//import {MainMenuComponent} from './pages/main-menu/main-menu.component';
-//import { interval, take } from 'rxjs';
-//import {RegisterComponent} from '@modules/register/register.component';
-//import {DashboardComponent} from '@pages/dashboard/dashboard.component';
+    EstabelecimentoComponent
+} from '@/domain/configuracao/estabelecimento/estabelecimento.component';
 
 import {
     SeletorOrganizacaoComponent
 } from '@modules/main/header/seletor-organizacao/seletor-organizacao.component';
-
-//import {ForgotPasswordComponent} from '@modules/forgot-password/forgot-password.component';
-//import {RecoverPasswordComponent} from '@modules/recover-password/recover-password.component';
-
-import {
-    UsuarioSubsidiariaComponent
-} from '@/domain/acesso/usuario-subsidiaria/usuario-subsidiaria.component';
 
 import {
     OrganizacaoPlataformaComponent
@@ -148,52 +140,16 @@ import {
 
 import { CabecalhoPaginaComponent } from './components/cabecalho-pagina/cabecalho-pagina.component';
 
-//import { InformacaoComponent } from './components/dashboard/informacao/informacao.component';
-//import { SucessoComponent } from './components/dashboard/sucesso/sucesso.component';
-//import { AvisoComponent } from './components/dashboard/aviso/aviso.component';
-//import { PerigoComponent } from './components/dashboard/perigo/perigo.component';
-//import { ContainerComponent } from './components/site/container/container.component';
-//import { HeaderSiteComponent } from './components/site/header-site/header-site.component';
-//import { FooterSiteComponent } from './components/site/footer-site/footer-site.component';
-//import { HomeSiteComponent } from './pages/site/home-site/home-site.component';
-//import { CardComponent } from './components/site/card/card.component';
-//import { CardBuscaComponent } from './components/site/card-busca/card-busca.component';
-//import { CardDepoimentoComponent } from './components/site/card-depoimento/card-depoimento.component';
-//import { FormBuscaComponent } from './components/site/form-busca/form-busca.component';
-//import { ModalComponent } from './components/site/modal/modal.component';
-//import { BotaoControleComponent } from './components/site/botao-controle/botao-controle.component';
-//import { DepoimentoSiteComponent } from './pages/site/depoimento-site/depoimento-site.component';
-//import { ConteudoSiteComponent } from './pages/site/conteudo-site/conteudo-site.component';
-//import { SeletorPassageiroComponent } from './components/site/seletor-passageiro/seletor-passageiro/seletor-passageiro.component';
-
-//import { CadastroComponent } from './pages/site/cadastro/cadastro.component';
-//import { FormBasePerfilComponent } from './components/site/form-base-perfil/form-base-perfil.component';
-//import { FornecedorComponent } from './pages/estoque/fornecedor/fornecedor.component';
-//import { ProdutoComponent } from './pages/estoque/produto/produto.component';
-//import { CompraComponent } from './pages/estoque/compra/compra.component';
-//import { CompraItemComponent } from './pages/estoque/compra/compra-item/compra-item.component';
-//import { MovimentacaoComponent } from './pages/estoque/movimentacao/movimentacao.component';
 import {
     GridComponent
 } from './components/grid/grid.component';
-//import { DropdownComponent } from './components/dropdown/dropdown.component';
-//import { BarchartComponent } from './components/barchart/barchart.component';
-//import { PiechartComponent } from './components/piechart/piechart.component';
-//import { ContasPagarComponent } from './pages/financeiro/contas-pagar/contas-pagar.component';
-//import { CategoriaContaComponent } from './pages/financeiro/contas-pagar/categoria-conta/categoria-conta.component';
-//import { SubCategoriaContaComponent } from './pages/financeiro/contas-pagar/categoria-conta/sub-categoria-conta/sub-categoria-conta.component';
-//import { StatusPagamentoComponent } from './pages/financeiro/contas-pagar/status-pagamento/status-pagamento.component';
-//import { FormaPagamentoComponent } from './pages/financeiro/contas-pagar/forma-pagamento/forma-pagamento.component';
 
 registerLocaleData(localePt);
 
 @NgModule({
     declarations: [
-
-        /* APP */
         AppComponent,
 
-        /* LAYOUT ADMINLTE */
         MainComponent,
         HeaderComponent,
         SeletorOrganizacaoComponent,
@@ -204,84 +160,30 @@ registerLocaleData(localePt);
         ControlSidebarComponent,
         SidebarSearchComponent,
 
-        /* SECURITY */
         LoginComponent,
 
-        /* DOMAIN ACESSO */
         PerfilComponent,
         PerfilPermissaoComponent,
         PermissaoComponent,
         UsuarioComponent,
         UsuarioPerfilComponent,
         UsuarioEmpresaComponent,
-        UsuarioSubsidiariaComponent,
+        UsuarioEstabelecimentoComponent,
         OrganizacaoPlataformaComponent,
         ConviteOrganizacaoComponent,
         AceiteConviteOrganizacaoComponent,
 
-        /* COMPONENTE SITE */
         BannerComponent,
 
-        /* PAGES ESTOQUE */
-
-        /* PAGES FINANCEIRO */
-
-        /* COMPONENTE OUTROS */
         CabecalhoPaginaComponent,
         GridComponent,
 
-        /* DOMAIN CONFIGURACAO */
         ConfiguracaoInicialComponent,
         EmpresaComponent,
-        SubsidiariaComponent,
-
-        //MainMenuComponent,
-        //RegisterComponent,
-        //DashboardComponent,
-        
-        
-        
-        //ForgotPasswordComponent,
-        //RecoverPasswordComponent,
-        
-        //GridComponent,
-        //CabecalhoPaginaComponent,
-        //InformacaoComponent,
-        //SucessoComponent,
-        //AvisoComponent,
-        //PerigoComponent,
-        //FornecedorComponent,
-        //ProdutoComponent,
-        //CompraComponent,
-        //CompraItemComponent,
-        //MovimentacaoComponent,
-        //DropdownComponent,
-        //ContainerComponent,
-        //CadastroComponent,
-        //FormBasePerfilComponent,
-        //HeaderSiteComponent,
-        //FooterSiteComponent,
-        //HomeSiteComponent,
-        //CardComponent,
-        //CardBuscaComponent,
-        //CardDepoimentoComponent,
-        //FormBuscaComponent,
-        //ModalComponent,
-        //BotaoControleComponent,
-        //DepoimentoSiteComponent,
-        //ConteudoSiteComponent,
-        //SeletorPassageiroComponent,
-        //BarchartComponent,
-        //PiechartComponent,
-        //ContasPagarComponent,
-        //CategoriaContaComponent,
-        //SubCategoriaContaComponent,
-        //StatusPagamentoComponent,
-        //FormaPagamentoComponent,
+        EstabelecimentoComponent
     ],
     bootstrap: [AppComponent],
     imports: [
-        /* ANGULAR */
         CommonModule,
         BrowserModule,
         AppRoutingModule,
@@ -290,7 +192,6 @@ registerLocaleData(localePt);
         BrowserAnimationsModule,
         CurrencyPipe,
 
-        /* TERCEIROS */
         ToastrModule.forRoot({
             timeOut: 3000,
             positionClass: 'toast-top-right',
@@ -300,12 +201,10 @@ registerLocaleData(localePt);
         NgxMaskPipe,
         NgChartsModule,
 
-        /* STORE */
         StoreModule.forRoot({
             ui: uiReducer
         }),
 
-        /* ANGULAR MATERIAL */
         MatToolbarModule,
         MatButtonModule,
         MatCardModule,
@@ -325,27 +224,8 @@ registerLocaleData(localePt);
         MatPaginatorModule,
         MatSelectModule,
 
-        /* SECURITY */
-
-        /* APP */
-
-        /* LAYOUT ADMINLTE */
-
-        /* COMPONENTE BASE */
         BaseModule,
-
-        /* COMPONENTE SHARED */
-        SharedModule,
-
-        /* COMPONENTE SITE */
-
-        /* PAGES SITE */
-
-        /* PAGES ESTOQUE */
-
-        /* PAGES FINANCEIRO */
-
-        /* COMPONENTE OUTROS */
+        SharedModule
     ],
     providers: [
         {

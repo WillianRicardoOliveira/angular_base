@@ -41,7 +41,7 @@ import {
 
 import {
     Empresa,
-    Subsidiaria
+    Estabelecimento
 } from '@/interfaces/interfaces';
 
 import {
@@ -49,24 +49,24 @@ import {
 } from '@components/cabecalho-pagina/cabecalho-pagina.component';
 
 import {
-    SubsidiariaService
-} from './services/subsidiaria.service';
+    EstabelecimentoService
+} from './services/estabelecimento.service';
 
 @Component({
-    selector: 'app-subsidiaria',
+    selector: 'app-estabelecimento',
     templateUrl:
-        './subsidiaria.component.html',
+        './estabelecimento.component.html',
     styleUrls: [
-        './subsidiaria.component.scss'
+        './estabelecimento.component.scss'
     ],
     standalone: false
 })
-export class SubsidiariaComponent
+export class EstabelecimentoComponent
     implements OnInit {
 
     private readonly service =
         inject(
-            SubsidiariaService
+            EstabelecimentoService
         );
 
     private readonly autorizacaoService =
@@ -94,27 +94,27 @@ export class SubsidiariaComponent
             DestroyRef
         );
 
-    pagina = 'Subsidiárias';
+    pagina = 'Estabelecimentos';
 
     descricao =
-        'Gerencie as subsidiárias das empresas';
+        'Gerencie os estabelecimentos das empresas';
 
     breadcrumb: ItemBreadcrumbPagina[] = [
         {
             titulo:
-                'Configuração'
+                'Configuracao'
         }
     ];
 
     coluna = [
-        'Código da empresa',
+        'Codigo da empresa',
         'Empresa',
         'Nome',
         'Status'
     ];
 
     lista:
-        Subsidiaria[] = [];
+        Estabelecimento[] = [];
 
     empresas:
         Empresa[] = [];
@@ -146,7 +146,7 @@ export class SubsidiariaComponent
         return this.autorizacaoService
             .possuiPermissao(
                 ChavePermissao
-                    .SubsidiariaCriar
+                    .EstabelecimentoCriar
             );
     }
 
@@ -154,7 +154,7 @@ export class SubsidiariaComponent
         return this.autorizacaoService
             .possuiPermissao(
                 ChavePermissao
-                    .SubsidiariaEditar
+                    .EstabelecimentoEditar
             );
     }
 
@@ -162,7 +162,7 @@ export class SubsidiariaComponent
         return this.autorizacaoService
             .possuiPermissao(
                 ChavePermissao
-                    .SubsidiariaExcluir
+                    .EstabelecimentoExcluir
             );
     }
 
@@ -170,7 +170,7 @@ export class SubsidiariaComponent
         return this.autorizacaoService
             .possuiPermissao(
                 ChavePermissao
-                    .SubsidiariaDetalhar
+                    .EstabelecimentoDetalhar
             );
     }
 
@@ -228,7 +228,7 @@ export class SubsidiariaComponent
                 },
                 error: () => {
                     this.toastr.error(
-                        'Não foi possível carregar as subsidiárias'
+                        'Nao foi possivel carregar os estabelecimentos'
                     );
                 }
             });
@@ -347,12 +347,12 @@ export class SubsidiariaComponent
                 .subscribe({
                     next: () => {
                         this.finalizarSalvamento(
-                            'Subsidiária atualizada com sucesso'
+                            'Estabelecimento atualizado com sucesso'
                         );
                     },
                     error: () => {
                         this.toastr.error(
-                            'Não foi possível atualizar a subsidiária'
+                            'Nao foi possivel atualizar o estabelecimento'
                         );
                     }
                 });
@@ -374,12 +374,12 @@ export class SubsidiariaComponent
             .subscribe({
                 next: () => {
                     this.finalizarSalvamento(
-                        'Subsidiária cadastrada com sucesso'
+                        'Estabelecimento cadastrado com sucesso'
                     );
                 },
                 error: () => {
                     this.toastr.error(
-                        'Não foi possível cadastrar a subsidiária'
+                        'Nao foi possivel cadastrar o estabelecimento'
                     );
                 }
             });
@@ -399,12 +399,12 @@ export class SubsidiariaComponent
                     this.carregarLista();
 
                     this.toastr.info(
-                        'Subsidiária removida com sucesso'
+                        'Estabelecimento removido com sucesso'
                     );
                 },
                 error: () => {
                     this.toastr.error(
-                        'Não foi possível remover a subsidiária'
+                        'Nao foi possivel remover o estabelecimento'
                     );
                 }
             });
@@ -539,7 +539,7 @@ export class SubsidiariaComponent
                     this.empresas = [];
 
                     this.toastr.error(
-                        'Não foi possível pesquisar as empresas'
+                        'Nao foi possivel pesquisar as empresas'
                     );
                 }
             });
@@ -584,7 +584,7 @@ export class SubsidiariaComponent
                 },
                 error: () => {
                     this.toastr.error(
-                        'Não foi possível detalhar a subsidiária'
+                        'Nao foi possivel detalhar o estabelecimento'
                     );
                 }
             });
