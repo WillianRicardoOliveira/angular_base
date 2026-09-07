@@ -25,17 +25,16 @@
     </app-grid>
 }
 
-<div class="formulario">
+<div class="formulario formulario-empresa">
     <section class="content">
         @if (isFormulario && formulario) {
             <form
+                class="empresa-formulario"
                 [formGroup]="formulario"
                 (ngSubmit)="salvar()">
 
-                <div class="row">
-                    <div
-                        class="col-md-12 titulo-formulario">
-
+                <div class="empresa-formulario__cabecalho">
+                    <h2 class="titulo-formulario">
                         @if (isVisualizacao) {
                             Detalhes da empresa
                         } @else if (
@@ -45,21 +44,24 @@
                         } @else {
                             Nova empresa
                         }
-                    </div>
+                    </h2>
                 </div>
 
-                @if (formulario.get('nome')) {
-                    <div class="row">
-                        <div class="col-md-2 titulo-campo">
-                            Nome
-                        </div>
+                <div class="empresa-formulario__grid">
+                    @if (formulario.get('nome')) {
+                        <div class="campo-formulario">
+                            <label
+                                class="titulo-campo"
+                                for="empresa-nome">
+                                Nome
+                            </label>
 
-                        <div class="col-md-10">
                             <mat-form-field
                                 appearance="outline"
                                 class="full-width">
 
                                 <input
+                                    id="empresa-nome"
                                     matInput
                                     type="text"
                                     formControlName="nome"
@@ -72,7 +74,7 @@
                                         ?.hasError('required')
                                 ) {
                                     <mat-error>
-                                        O nome é obrigatório.
+                                        O nome e obrigatorio.
                                     </mat-error>
                                 }
 
@@ -83,45 +85,325 @@
                                 ) {
                                     <mat-error>
                                         O nome deve possuir no
-                                        máximo 100 caracteres.
+                                        maximo 100 caracteres.
                                     </mat-error>
                                 }
                             </mat-form-field>
                         </div>
-                    </div>
-                }
+                    }
 
-                <div class="row">
-                    <div class="col-md-12 botao">
-                        @if (
-                            !isVisualizacao &&
-                            podeSalvar
-                        ) {
-                            <button
-                                type="submit"
-                                mat-stroked-button
-                                color="primary"
-                                [disabled]="
-                                    formulario.invalid
-                                ">
+                    @if (formulario.get('razaoSocial')) {
+                        <div class="campo-formulario">
+                            <label
+                                class="titulo-campo"
+                                for="empresa-razao-social">
+                                Razao social
+                            </label>
 
-                                Salvar
-                            </button>
-                        }
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
 
+                                <input
+                                    id="empresa-razao-social"
+                                    matInput
+                                    type="text"
+                                    formControlName="razaoSocial"
+                                    maxlength="150"
+                                    autocomplete="off">
+
+                                @if (
+                                    formulario
+                                        .get('razaoSocial')
+                                        ?.hasError('required')
+                                ) {
+                                    <mat-error>
+                                        A razao social e obrigatoria.
+                                    </mat-error>
+                                }
+
+                                @if (
+                                    formulario
+                                        .get('razaoSocial')
+                                        ?.hasError('maxlength')
+                                ) {
+                                    <mat-error>
+                                        A razao social deve possuir no
+                                        maximo 150 caracteres.
+                                    </mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+                    }
+
+                    @if (
+                        formulario.get('idEmpresaControladora') &&
+                        (
+                            podeListar ||
+                            formulario
+                                .get('idEmpresaControladora')
+                                ?.value
+                        )
+                    ) {
+                        <div class="campo-formulario">
+                            <label
+                                class="titulo-campo"
+                                for="empresa-controladora">
+                                Empresa controladora
+                            </label>
+
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    id="empresa-controladora"
+                                    type="text"
+                                    matInput
+                                    autocomplete="off"
+                                    [formControl]="empresaControladoraPesquisaControl"
+                                    [matAutocomplete]="empresasControladorasAutocomplete">
+
+                                <mat-autocomplete
+                                    #empresasControladorasAutocomplete="matAutocomplete"
+                                    [displayWith]="exibirEmpresaControladora"
+                                    (optionSelected)="selecionarEmpresaControladora($event.option.value)">
+
+                                    @for (
+                                        empresa of empresasControladoras;
+                                        track empresa.id
+                                    ) {
+                                        <mat-option [value]="empresa">
+                                            {{ empresa.nome }}
+                                        </mat-option>
+                                    }
+                                </mat-autocomplete>
+                            </mat-form-field>
+                        </div>
+                    }
+
+                    @if (formulario.get('pais')) {
+                        <div class="campo-formulario">
+                            <label
+                                class="titulo-campo"
+                                for="empresa-pais">
+                                Pais
+                            </label>
+
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <mat-select
+                                    id="empresa-pais"
+                                    formControlName="pais">
+
+                                    @for (
+                                        pais of paises;
+                                        track pais.codigo
+                                    ) {
+                                        <mat-option
+                                            [value]="pais.codigo">
+
+                                            {{ pais.nome }}
+                                        </mat-option>
+                                    }
+                                </mat-select>
+
+                                @if (
+                                    formulario
+                                        .get('pais')
+                                        ?.hasError('required')
+                                ) {
+                                    <mat-error>
+                                        O pais e obrigatorio.
+                                    </mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+                    }
+
+                    @if (formulario.get('tipoDocumentoFiscal')) {
+                        <div class="campo-formulario">
+                            <label
+                                class="titulo-campo"
+                                for="empresa-tipo-documento-fiscal">
+                                Tipo documento
+                            </label>
+
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <mat-select
+                                    id="empresa-tipo-documento-fiscal"
+                                    formControlName="tipoDocumentoFiscal">
+
+                                    @for (
+                                        tipo of tiposDocumentoFiscal;
+                                        track tipo.codigo
+                                    ) {
+                                        <mat-option
+                                            [value]="tipo.codigo">
+
+                                            {{ tipo.nome }}
+                                        </mat-option>
+                                    }
+                                </mat-select>
+
+                                @if (
+                                    formulario
+                                        .get('tipoDocumentoFiscal')
+                                        ?.hasError('required')
+                                ) {
+                                    <mat-error>
+                                        O tipo de documento e obrigatorio.
+                                    </mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+                    }
+
+                    @if (formulario.get('documentoFiscal')) {
+                        <div class="campo-formulario">
+                            <label
+                                class="titulo-campo"
+                                for="empresa-documento-fiscal">
+                                Documento fiscal
+                            </label>
+
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    id="empresa-documento-fiscal"
+                                    matInput
+                                    type="text"
+                                    formControlName="documentoFiscal"
+                                    maxlength="30"
+                                    autocomplete="off">
+
+                                @if (
+                                    formulario
+                                        .get('documentoFiscal')
+                                        ?.hasError('required')
+                                ) {
+                                    <mat-error>
+                                        O documento fiscal e obrigatorio.
+                                    </mat-error>
+                                }
+
+                                @if (
+                                    formulario
+                                        .get('documentoFiscal')
+                                        ?.hasError('maxlength')
+                                ) {
+                                    <mat-error>
+                                        O documento fiscal deve possuir no
+                                        maximo 30 caracteres.
+                                    </mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+                    }
+
+                    @if (formulario.get('inscricaoEstadual')) {
+                        <div class="campo-formulario">
+                            <label
+                                class="titulo-campo"
+                                for="empresa-inscricao-estadual">
+                                Inscricao estadual
+                            </label>
+
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    id="empresa-inscricao-estadual"
+                                    matInput
+                                    type="text"
+                                    formControlName="inscricaoEstadual"
+                                    maxlength="30"
+                                    autocomplete="off">
+
+                                @if (
+                                    formulario
+                                        .get('inscricaoEstadual')
+                                        ?.hasError('maxlength')
+                                ) {
+                                    <mat-error>
+                                        A inscricao estadual deve possuir
+                                        no maximo 30 caracteres.
+                                    </mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+                    }
+
+                    @if (formulario.get('inscricaoMunicipal')) {
+                        <div class="campo-formulario">
+                            <label
+                                class="titulo-campo"
+                                for="empresa-inscricao-municipal">
+                                Inscricao municipal
+                            </label>
+
+                            <mat-form-field
+                                appearance="outline"
+                                class="full-width">
+
+                                <input
+                                    id="empresa-inscricao-municipal"
+                                    matInput
+                                    type="text"
+                                    formControlName="inscricaoMunicipal"
+                                    maxlength="30"
+                                    autocomplete="off">
+
+                                @if (
+                                    formulario
+                                        .get('inscricaoMunicipal')
+                                        ?.hasError('maxlength')
+                                ) {
+                                    <mat-error>
+                                        A inscricao municipal deve possuir
+                                        no maximo 30 caracteres.
+                                    </mat-error>
+                                }
+                            </mat-form-field>
+                        </div>
+                    }
+                </div>
+
+                <div class="empresa-formulario__acoes">
+                    @if (
+                        !isVisualizacao &&
+                        podeSalvar
+                    ) {
                         <button
-                            type="button"
+                            type="submit"
                             mat-stroked-button
                             color="primary"
-                            (click)="cancelarEmpresa()">
+                            [disabled]="formulario.invalid">
 
-                            @if (isVisualizacao) {
-                                Fechar
-                            } @else {
-                                Cancelar
-                            }
+                            Salvar
                         </button>
-                    </div>
+                    }
+
+                    <button
+                        type="button"
+                        mat-stroked-button
+                        color="primary"
+                        (click)="cancelarEmpresa()">
+
+                        @if (isVisualizacao) {
+                            Fechar
+                        } @else {
+                            Cancelar
+                        }
+                    </button>
                 </div>
             </form>
         }

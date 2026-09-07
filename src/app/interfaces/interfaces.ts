@@ -3,6 +3,13 @@ export type Status =
     | 'INATIVO'
     | 'REMOVIDO';
 
+export type TipoDocumentoFiscal = string;
+
+export interface TipoDocumentoFiscalOpcao {
+    codigo: TipoDocumentoFiscal;
+    nome: string;
+}
+
 export interface OrganizacaoPlataforma {
     id?: number;
     nome: string;
@@ -43,9 +50,22 @@ export interface Usuario {
     status?: Status;
 }
 
+export interface Pais {
+    codigo: string;
+    nome: string;
+}
+
 export interface Empresa {
     id?: number;
+    idEmpresaControladora?: number | null;
+    empresaControladora?: string | null;
     nome: string;
+    razaoSocial?: string;
+    pais?: string;
+    tipoDocumentoFiscal?: TipoDocumentoFiscal;
+    documentoFiscal?: string;
+    inscricaoEstadual?: string | null;
+    inscricaoMunicipal?: string | null;
     status?: Status;
 }
 

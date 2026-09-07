@@ -56,6 +56,14 @@ import {
 } from '@services/base/base.service';
 
 import {
+    PaisService
+} from '../pais/services/pais.service';
+
+import {
+    EmpresaService as EmpresaConfiguracaoService
+} from './services/empresa.service';
+
+import {
     EmpresaComponent
 } from './empresa.component';
 
@@ -77,6 +85,16 @@ describe('EmpresaComponent', () => {
     let configuracaoInicialService:
         jasmine.SpyObj<
             ConfiguracaoInicialService
+        >;
+
+    let paisService:
+        jasmine.SpyObj<
+            PaisService
+        >;
+
+    let empresaService:
+        jasmine.SpyObj<
+            EmpresaConfiguracaoService
         >;
 
     let organizacaoProntaSubject:
@@ -172,7 +190,7 @@ describe('EmpresaComponent', () => {
             >({
                 id: 1,
                 nome:
-                    'Organização 1'
+                    'Organizacao 1'
             });
 
         contextoOrganizacaoServiceMock
@@ -316,6 +334,62 @@ describe('EmpresaComponent', () => {
                 configuracaoConcluida()
             );
 
+        paisService =
+            jasmine.createSpyObj<
+                PaisService
+            >(
+                'PaisService',
+                [
+                    'listar',
+                    'listarTiposDocumentoFiscal'
+                ]
+            );
+
+        paisService.listar
+            .and
+            .returnValue(
+                of([
+                    {
+                        codigo: 'BR',
+                        nome: 'Brasil'
+                    },
+                    {
+                        codigo: 'PY',
+                        nome: 'Paraguai'
+                    }
+                ])
+            );
+
+        paisService.listarTiposDocumentoFiscal
+            .and
+            .returnValue(
+                of([
+                    {
+                        codigo: 'CNPJ',
+                        nome: 'CNPJ'
+                    }
+                ])
+            );
+
+        empresaService =
+            jasmine.createSpyObj<
+                EmpresaConfiguracaoService
+            >(
+                'EmpresaService',
+                [
+                    'listar'
+                ]
+            );
+
+        empresaService.listar
+            .and
+            .returnValue(
+                of({
+                    content: [],
+                    totalElements: 0
+                })
+            );
+
         await TestBed
             .configureTestingModule({
                 declarations: [
@@ -346,6 +420,18 @@ describe('EmpresaComponent', () => {
                             ConfiguracaoInicialService,
                         useValue:
                             configuracaoInicialService
+                    },
+                    {
+                        provide:
+                            PaisService,
+                        useValue:
+                            paisService
+                    },
+                    {
+                        provide:
+                            EmpresaConfiguracaoService,
+                        useValue:
+                            empresaService
                     },
                     {
                         provide:
@@ -417,7 +503,13 @@ describe('EmpresaComponent', () => {
 
             expect(component.coluna)
                 .toEqual([
+                    'ID empresa controladora',
+                    'Empresa controladora',
                     'Nome',
+                    'Razao social',
+                    'Pais',
+                    'Tipo documento',
+                    'Documento fiscal',
                     'Status'
                 ]);
         }
@@ -442,7 +534,22 @@ describe('EmpresaComponent', () => {
             expect(
                 formulario.getRawValue()
             ).toEqual({
-                nome: ''
+                idEmpresaControladora:
+                    null,
+                nome:
+                    '',
+                razaoSocial:
+                    '',
+                pais:
+                    '',
+                tipoDocumentoFiscal:
+                    '',
+                documentoFiscal:
+                    '',
+                inscricaoEstadual:
+                    '',
+                inscricaoMunicipal:
+                    ''
             });
 
             expect(
@@ -450,11 +557,23 @@ describe('EmpresaComponent', () => {
                     .get('nome')
                     ?.hasError('required')
             ).toBeTrue();
+
+            expect(
+                formulario
+                    .get('razaoSocial')
+                    ?.hasError('required')
+            ).toBeTrue();
+
+            expect(
+                formulario
+                    .get('documentoFiscal')
+                    ?.hasError('required')
+            ).toBeTrue();
         }
     );
 
     it(
-        'deve limitar o nome a 100 caracteres',
+        'deve limitar os campos principais',
         () => {
 
             criarComponente([
@@ -471,9 +590,57 @@ describe('EmpresaComponent', () => {
                     'A'.repeat(101)
                 );
 
+            formulario
+                .get('razaoSocial')
+                ?.setValue(
+                    'A'.repeat(151)
+                );
+
+            formulario
+                .get('documentoFiscal')
+                ?.setValue(
+                    'A'.repeat(31)
+                );
+
+            formulario
+                .get('inscricaoEstadual')
+                ?.setValue(
+                    'A'.repeat(31)
+                );
+
+            formulario
+                .get('inscricaoMunicipal')
+                ?.setValue(
+                    'A'.repeat(31)
+                );
+
             expect(
                 formulario
                     .get('nome')
+                    ?.hasError('maxlength')
+            ).toBeTrue();
+
+            expect(
+                formulario
+                    .get('razaoSocial')
+                    ?.hasError('maxlength')
+            ).toBeTrue();
+
+            expect(
+                formulario
+                    .get('documentoFiscal')
+                    ?.hasError('maxlength')
+            ).toBeTrue();
+
+            expect(
+                formulario
+                    .get('inscricaoEstadual')
+                    ?.hasError('maxlength')
+            ).toBeTrue();
+
+            expect(
+                formulario
+                    .get('inscricaoMunicipal')
                     ?.hasError('maxlength')
             ).toBeTrue();
         }
@@ -491,8 +658,24 @@ describe('EmpresaComponent', () => {
             const formulario =
                 component.campos({
                     id: 1,
+                    idEmpresaControladora:
+                        null,
+                    empresaControladora:
+                        null,
                     nome:
                         'Empresa Exemplo',
+                    razaoSocial:
+                        'Empresa Exemplo Ltda',
+                    pais:
+                        'BR',
+                    tipoDocumentoFiscal:
+                        'CNPJ',
+                    documentoFiscal:
+                        '10409614000185',
+                    inscricaoEstadual:
+                        null,
+                    inscricaoMunicipal:
+                        null,
                     status:
                         'ATIVO'
                 });
@@ -501,9 +684,212 @@ describe('EmpresaComponent', () => {
                 formulario.getRawValue()
             ).toEqual({
                 id: 1,
+                idEmpresaControladora:
+                    null,
                 nome:
-                    'Empresa Exemplo'
+                    'Empresa Exemplo',
+                razaoSocial:
+                    'Empresa Exemplo Ltda',
+                pais:
+                    'BR',
+                tipoDocumentoFiscal:
+                    'CNPJ',
+                documentoFiscal:
+                    '10409614000185',
+                inscricaoEstadual:
+                    '',
+                inscricaoMunicipal:
+                    ''
             });
+        }
+    );
+
+    it(
+        'deve selecionar empresa controladora',
+        () => {
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaCriar
+            ]);
+
+            component.formulario =
+                component.campos();
+
+            component.selecionarEmpresaControladora({
+                id: 2,
+                idEmpresaControladora:
+                    null,
+                empresaControladora:
+                    null,
+                nome:
+                    'Empresa Controladora',
+                razaoSocial:
+                    'Empresa Controladora Ltda',
+                pais:
+                    'BR',
+                tipoDocumentoFiscal:
+                    'CNPJ',
+                documentoFiscal:
+                    '10409614000185',
+                inscricaoEstadual:
+                    null,
+                inscricaoMunicipal:
+                    null,
+                status:
+                    'ATIVO'
+            });
+
+            expect(
+                component.formulario
+                    .get('idEmpresaControladora')
+                    ?.value
+            ).toBe(2);
+        }
+    );
+
+    it(
+        'deve exibir nome da empresa controladora',
+        () => {
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaCriar
+            ]);
+
+            expect(
+                component.exibirEmpresaControladora({
+                    id: 2,
+                    idEmpresaControladora:
+                        null,
+                    empresaControladora:
+                        null,
+                    nome:
+                        'Empresa Controladora',
+                    razaoSocial:
+                        'Empresa Controladora Ltda',
+                    pais:
+                        'BR',
+                    tipoDocumentoFiscal:
+                        'CNPJ',
+                    documentoFiscal:
+                        '10409614000185',
+                    inscricaoEstadual:
+                        null,
+                    inscricaoMunicipal:
+                        null,
+                    status:
+                        'ATIVO'
+                })
+            ).toBe('Empresa Controladora');
+
+            expect(
+                component.exibirEmpresaControladora(
+                    'Empresa digitada'
+                )
+            ).toBe('Empresa digitada');
+
+            expect(
+                component.exibirEmpresaControladora(null)
+            ).toBe('');
+        }
+    );
+
+    it(
+        'nao deve listar a propria empresa como controladora',
+        () => {
+
+            empresaService.listar
+                .and
+                .returnValue(
+                    of({
+                        content: [
+                            {
+                                id: 1,
+                                idEmpresaControladora:
+                                    null,
+                                empresaControladora:
+                                    null,
+                                nome:
+                                    'Empresa Atual',
+                                razaoSocial:
+                                    'Empresa Atual Ltda',
+                                pais:
+                                    'BR',
+                                tipoDocumentoFiscal:
+                                    'CNPJ',
+                                documentoFiscal:
+                                    '10409614000185',
+                                inscricaoEstadual:
+                                    null,
+                                inscricaoMunicipal:
+                                    null,
+                                status:
+                                    'ATIVO'
+                            },
+                            {
+                                id: 2,
+                                idEmpresaControladora:
+                                    null,
+                                empresaControladora:
+                                    null,
+                                nome:
+                                    'Empresa Controladora',
+                                razaoSocial:
+                                    'Empresa Controladora Ltda',
+                                pais:
+                                    'BR',
+                                tipoDocumentoFiscal:
+                                    'CNPJ',
+                                documentoFiscal:
+                                    '10409614000266',
+                                inscricaoEstadual:
+                                    null,
+                                inscricaoMunicipal:
+                                    null,
+                                status:
+                                    'ATIVO'
+                            }
+                        ],
+                        totalElements: 2
+                    })
+                );
+
+            criarComponente([
+                ChavePermissao
+                    .EmpresaListar
+            ]);
+
+            component.campos({
+                id: 1,
+                idEmpresaControladora:
+                    null,
+                empresaControladora:
+                    null,
+                nome:
+                    'Empresa Atual',
+                razaoSocial:
+                    'Empresa Atual Ltda',
+                pais:
+                    'BR',
+                tipoDocumentoFiscal:
+                    'CNPJ',
+                documentoFiscal:
+                    '10409614000185',
+                inscricaoEstadual:
+                    null,
+                inscricaoMunicipal:
+                    null,
+                status:
+                    'ATIVO'
+            });
+
+            expect(
+                component.empresasControladoras
+                    .map((empresa) => empresa.id)
+            ).toEqual([
+                2
+            ]);
         }
     );
 
@@ -620,11 +1006,7 @@ describe('EmpresaComponent', () => {
                 'nova'
             );
 
-            component.formulario
-                .get('nome')
-                ?.setValue(
-                    'Primeira empresa'
-                );
+            preencherFormularioValido();
 
             component.salvar();
 
@@ -663,11 +1045,7 @@ describe('EmpresaComponent', () => {
                 'nova'
             );
 
-            component.formulario
-                .get('nome')
-                ?.setValue(
-                    'Primeira empresa'
-                );
+            preencherFormularioValido();
 
             component.salvar();
 
@@ -712,11 +1090,7 @@ describe('EmpresaComponent', () => {
                 'nova'
             );
 
-            component.formulario
-                .get('nome')
-                ?.setValue(
-                    'Primeira empresa'
-                );
+            preencherFormularioValido();
 
             component.salvar();
 
@@ -750,11 +1124,7 @@ describe('EmpresaComponent', () => {
 
             component.botaoAdicionar();
 
-            component.formulario
-                .get('nome')
-                ?.setValue(
-                    'Primeira empresa'
-                );
+            preencherFormularioValido();
 
             baseService.listar
                 .calls
@@ -807,8 +1177,24 @@ describe('EmpresaComponent', () => {
             component.formulario =
                 component.campos({
                     id: 1,
+                    idEmpresaControladora:
+                        null,
+                    empresaControladora:
+                        null,
                     nome:
                         'Empresa atualizada',
+                    razaoSocial:
+                        'Empresa Atualizada Ltda',
+                    pais:
+                        'BR',
+                    tipoDocumentoFiscal:
+                        'CNPJ',
+                    documentoFiscal:
+                        '10409614000185',
+                    inscricaoEstadual:
+                        null,
+                    inscricaoMunicipal:
+                        null,
                     status:
                         'ATIVO'
                 });
@@ -861,11 +1247,7 @@ describe('EmpresaComponent', () => {
                 'nova'
             );
 
-            component.formulario
-                .get('nome')
-                ?.setValue(
-                    'Primeira empresa'
-                );
+            preencherFormularioValido();
 
             component.salvar();
 
@@ -1010,6 +1392,14 @@ describe('EmpresaComponent', () => {
                     id: 1,
                     nome:
                         'Empresa Exemplo',
+                    razaoSocial:
+                        'Empresa Exemplo Ltda',
+                    pais:
+                        'BR',
+                    tipoDocumentoFiscal:
+                        'CNPJ',
+                    documentoFiscal:
+                        '10409614000185',
                     status:
                         'ATIVO'
                 }
@@ -1063,6 +1453,14 @@ describe('EmpresaComponent', () => {
                     id: 1,
                     nome:
                         'Empresa Exemplo',
+                    razaoSocial:
+                        'Empresa Exemplo Ltda',
+                    pais:
+                        'BR',
+                    tipoDocumentoFiscal:
+                        'CNPJ',
+                    documentoFiscal:
+                        '10409614000185',
                     status:
                         'ATIVO'
                 }
@@ -1088,7 +1486,7 @@ describe('EmpresaComponent', () => {
             organizacaoProntaSubject.next({
                 id: 2,
                 nome:
-                    'Organização 2'
+                    'Organizacao 2'
             });
 
             expect(component.isLista)
@@ -1139,7 +1537,7 @@ describe('EmpresaComponent', () => {
             organizacaoProntaSubject.next({
                 id: 2,
                 nome:
-                    'Organização 2'
+                    'Organizacao 2'
             });
 
             expect(
@@ -1179,7 +1577,7 @@ describe('EmpresaComponent', () => {
             organizacaoProntaSubject.next({
                 id: 2,
                 nome:
-                    'Organização 2'
+                    'Organizacao 2'
             });
 
             routerMock.navigate
@@ -1223,7 +1621,7 @@ describe('EmpresaComponent', () => {
             organizacaoProntaSubject.next({
                 id: 2,
                 nome:
-                    'Organização 2'
+                    'Organizacao 2'
             });
 
             expect(
@@ -1252,8 +1650,24 @@ describe('EmpresaComponent', () => {
                 .returnValue(
                     of({
                         id: 1,
+                        idEmpresaControladora:
+                            null,
+                        empresaControladora:
+                            null,
                         nome:
                             'Empresa Exemplo',
+                        razaoSocial:
+                            'Empresa Exemplo Ltda',
+                        pais:
+                            'BR',
+                        tipoDocumentoFiscal:
+                            'CNPJ',
+                        documentoFiscal:
+                            '10409614000185',
+                        inscricaoEstadual:
+                            null,
+                        inscricaoMunicipal:
+                            null,
                         status:
                             'ATIVO'
                     }) as never
@@ -1307,8 +1721,24 @@ describe('EmpresaComponent', () => {
             component.formulario =
                 component.campos({
                     id: 1,
+                    idEmpresaControladora:
+                        null,
+                    empresaControladora:
+                        null,
                     nome:
                         'Empresa Exemplo',
+                    razaoSocial:
+                        'Empresa Exemplo Ltda',
+                    pais:
+                        'BR',
+                    tipoDocumentoFiscal:
+                        'CNPJ',
+                    documentoFiscal:
+                        '10409614000185',
+                    inscricaoEstadual:
+                        null,
+                    inscricaoMunicipal:
+                        null,
                     status:
                         'ATIVO'
                 });
@@ -1384,6 +1814,28 @@ describe('EmpresaComponent', () => {
             fixture.componentInstance;
 
         fixture.detectChanges();
+    }
+
+    function preencherFormularioValido():
+        void {
+
+        component.formulario
+            .patchValue({
+                nome:
+                    'Primeira empresa',
+                razaoSocial:
+                    'Primeira Empresa Ltda',
+                pais:
+                    'BR',
+                tipoDocumentoFiscal:
+                    'CNPJ',
+                documentoFiscal:
+                    '10409614000185',
+                inscricaoEstadual:
+                    '',
+                inscricaoMunicipal:
+                    ''
+            });
     }
 
     function configuracaoConcluida():
