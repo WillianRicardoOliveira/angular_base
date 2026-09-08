@@ -1,9 +1,146 @@
 @use '../../../components/shared/styles/formulario';
 
+.formulario-estabelecimento {
+    max-width: 1280px;
+    padding: 0 24px 32px;
+}
+
+.formulario-estabelecimento .estabelecimento-formulario {
+    padding: 0;
+    overflow: hidden;
+}
+
+.estabelecimento-formulario__cabecalho {
+    padding: 24px 28px 18px;
+
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.estabelecimento-formulario__cabecalho .titulo-formulario {
+    margin: 0;
+    padding: 0;
+
+    letter-spacing: 0;
+
+    border-bottom: 0;
+}
+
+.estabelecimento-formulario__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 24px;
+
+    padding: 22px 28px 8px;
+}
+
+.campo-formulario {
+    min-width: 0;
+}
+
+.campo-formulario .titulo-campo {
+    display: block;
+    margin-bottom: 6px;
+    padding: 0;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.campo-formulario .full-width {
+    width: 100%;
+}
+
 .mensagem-validacao {
     margin-top: -14px;
     margin-bottom: 12px;
     padding-left: 12px;
+
     color: #f44336;
+
     font-size: 12px;
+}
+
+.estabelecimento-formulario__acoes {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+
+    padding: 18px 28px 24px;
+
+    border-top: 1px solid #e2e8f0;
+}
+
+.estabelecimento-formulario__acoes button {
+    min-width: 104px;
+    min-height: 40px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    border-radius: 8px;
+}
+
+.estabelecimento-formulario__acoes button[type='submit'] {
+    color: #ffffff;
+
+    background-color: #08979c;
+    border-color: #08979c;
+}
+
+.estabelecimento-formulario__acoes button[type='submit']:hover {
+    background-color: #087f83;
+    border-color: #087f83;
+}
+
+.estabelecimento-formulario__acoes button[type='submit']:disabled {
+    color: #94a3b8;
+
+    background-color: #e2e8f0;
+    border-color: #e2e8f0;
+}
+
+.estabelecimento-formulario__acoes button[type='button'] {
+    color: #475569;
+
+    background-color: #ffffff;
+    border-color: #cbd5e1;
+}
+
+.estabelecimento-formulario__acoes button[type='button']:hover {
+    color: #1e293b;
+
+    background-color: #f8fafc;
+    border-color: #94a3b8;
+}
+
+@media (max-width: 900px) {
+    .formulario-estabelecimento {
+        padding: 0 12px 24px;
+    }
+
+    .estabelecimento-formulario__cabecalho {
+        padding: 20px 16px 16px;
+    }
+
+    .estabelecimento-formulario__grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+
+        padding: 18px 16px 4px;
+    }
+
+    .estabelecimento-formulario__acoes {
+        align-items: stretch;
+        flex-direction: column;
+
+        padding: 16px;
+    }
+
+    .estabelecimento-formulario__acoes button {
+        width: 100%;
+    }
 }

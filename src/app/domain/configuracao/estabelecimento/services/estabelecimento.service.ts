@@ -13,7 +13,9 @@ import {
 
 import {
     Empresa,
-    Estabelecimento
+    Estabelecimento,
+    TipoDocumentoFiscal,
+    TipoEstabelecimento
 } from '@/interfaces/interfaces';
 
 import {
@@ -28,11 +30,23 @@ export interface Pagina<T> {
 export interface CadastrarEstabelecimento {
     idEmpresa: number;
     nome: string;
+    tipo: TipoEstabelecimento;
+    pais: string;
+    tipoDocumentoFiscal?: TipoDocumentoFiscal | null;
+    documentoFiscal?: string | null;
+    inscricaoEstadual?: string | null;
+    inscricaoMunicipal?: string | null;
 }
 
 export interface AtualizarEstabelecimento {
     id: number;
     nome: string;
+    tipo: TipoEstabelecimento;
+    pais: string;
+    tipoDocumentoFiscal?: TipoDocumentoFiscal | null;
+    documentoFiscal?: string | null;
+    inscricaoEstadual?: string | null;
+    inscricaoMunicipal?: string | null;
 }
 
 @Injectable({

@@ -69,7 +69,7 @@ describe('EmpresaService', () => {
                         tipoDocumentoFiscal: 'CNPJ',
                         documentoFiscal:
                             '10409614000185',
-                        status: 'ATIVO'
+                        status: 'ATIVO' as const
                     }
                 ],
                 totalElements: 1

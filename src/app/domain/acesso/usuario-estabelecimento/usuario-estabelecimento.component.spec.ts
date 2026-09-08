@@ -120,6 +120,8 @@ describe('UsuarioEstabelecimentoComponent', () => {
         idEmpresa: 3,
         empresa: 'Empresa Exemplo',
         nome: 'Estabelecimento Centro',
+        tipo: 'FILIAL',
+        pais: 'BR',
         status: 'ATIVO'
     };
 

@@ -37,8 +37,14 @@ import {
 
 import {
     Empresa,
-    Estabelecimento
+    Estabelecimento,
+    Pais,
+    TipoDocumentoFiscalOpcao
 } from '@/interfaces/interfaces';
+
+import {
+    PaisService
+} from '../pais/services/pais.service';
 
 import {
     EstabelecimentoService
@@ -57,6 +63,9 @@ describe('EstabelecimentoComponent', () => {
 
     let serviceMock:
         jasmine.SpyObj<EstabelecimentoService>;
+
+    let paisServiceMock:
+        jasmine.SpyObj<PaisService>;
 
     let organizacaoProntaSubject:
         BehaviorSubject<OrganizacaoDisponivel | null>;
@@ -97,8 +106,33 @@ describe('EstabelecimentoComponent', () => {
         idEmpresa: 1,
         empresa: 'Empresa Exemplo',
         nome: 'Estabelecimento Exemplo',
+        tipo: 'FILIAL',
+        pais: 'BR',
+        tipoDocumentoFiscal: 'CNPJ',
+        documentoFiscal: '12345678000199',
+        inscricaoEstadual: null,
+        inscricaoMunicipal: null,
         status: 'ATIVO'
     };
+
+    const paises: Pais[] = [
+        {
+            codigo: 'BR',
+            nome: 'Brasil'
+        },
+        {
+            codigo: 'PY',
+            nome: 'Paraguai'
+        }
+    ];
+
+    const tiposDocumentoFiscal:
+        TipoDocumentoFiscalOpcao[] = [
+            {
+                codigo: 'CNPJ',
+                nome: 'CNPJ'
+            }
+        ];
 
     beforeEach(async () => {
         organizacaoProntaSubject =
@@ -147,6 +181,15 @@ describe('EstabelecimentoComponent', () => {
                 ]
             );
 
+        paisServiceMock =
+            jasmine.createSpyObj<PaisService>(
+                'PaisService',
+                [
+                    'listar',
+                    'listarTiposDocumentoFiscal'
+                ]
+            );
+
         serviceMock.listar.and.returnValue(
             of({
                 content: [],
@@ -177,6 +220,16 @@ describe('EstabelecimentoComponent', () => {
             of(void 0)
         );
 
+        paisServiceMock.listar.and.returnValue(
+            of(paises)
+        );
+
+        paisServiceMock
+            .listarTiposDocumentoFiscal
+            .and.returnValue(
+                of(tiposDocumentoFiscal)
+            );
+
         await TestBed
             .configureTestingModule({
                 declarations: [
@@ -189,6 +242,12 @@ describe('EstabelecimentoComponent', () => {
                             EstabelecimentoService,
                         useValue:
                             serviceMock
+                    },
+                    {
+                        provide:
+                            PaisService,
+                        useValue:
+                            paisServiceMock
                     },
                     {
                         provide:
@@ -246,14 +305,21 @@ describe('EstabelecimentoComponent', () => {
                     'Codigo da empresa',
                     'Empresa',
                     'Nome',
+                    'Tipo',
+                    'Pais',
+                    'Tipo documento',
+                    'Documento fiscal',
                     'Status'
                 ]);
         }
     );
 
     it(
-        'deve carregar a lista ao inicializar',
+        'deve carregar paises e lista ao inicializar',
         () => {
+            expect(paisServiceMock.listar)
+                .toHaveBeenCalled();
+
             expect(serviceMock.listar)
                 .toHaveBeenCalledOnceWith(
                     0,
@@ -265,7 +331,7 @@ describe('EstabelecimentoComponent', () => {
     );
 
     it(
-        'deve armazenar os dados da listagem',
+        'deve armazenar dados da listagem',
         () => {
             serviceMock.listar.and.returnValue(
                 of({
@@ -346,7 +412,7 @@ describe('EstabelecimentoComponent', () => {
     );
 
     it(
-        'deve controlar as acoes por permissao',
+        'deve controlar permissoes',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -380,7 +446,7 @@ describe('EstabelecimentoComponent', () => {
     );
 
     it(
-        'deve abrir o formulario de cadastro',
+        'deve abrir formulario de cadastro',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -401,8 +467,15 @@ describe('EstabelecimentoComponent', () => {
                 component.formulario
                     .getRawValue()
             ).toEqual({
+                id: null,
                 idEmpresa: null,
-                nome: ''
+                nome: '',
+                tipo: '',
+                pais: '',
+                tipoDocumentoFiscal: '',
+                documentoFiscal: '',
+                inscricaoEstadual: '',
+                inscricaoMunicipal: ''
             });
 
             expect(serviceMock.listarEmpresas)
@@ -431,7 +504,7 @@ describe('EstabelecimentoComponent', () => {
     );
 
     it(
-        'deve exigir empresa e nome no cadastro',
+        'deve exigir campos obrigatorios no cadastro',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -451,13 +524,25 @@ describe('EstabelecimentoComponent', () => {
                     ?.hasError('required')
             ).toBeTrue();
 
+            expect(
+                component.formulario
+                    .get('tipo')
+                    ?.hasError('required')
+            ).toBeTrue();
+
+            expect(
+                component.formulario
+                    .get('pais')
+                    ?.hasError('required')
+            ).toBeTrue();
+
             expect(component.formulario.invalid)
                 .toBeTrue();
         }
     );
 
     it(
-        'deve limitar o nome a 100 caracteres',
+        'deve limitar campos de texto',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -471,16 +556,52 @@ describe('EstabelecimentoComponent', () => {
                     'A'.repeat(101)
                 );
 
+            component.formulario
+                .get('documentoFiscal')
+                ?.setValue(
+                    '1'.repeat(31)
+                );
+
+            component.formulario
+                .get('inscricaoEstadual')
+                ?.setValue(
+                    '1'.repeat(31)
+                );
+
+            component.formulario
+                .get('inscricaoMunicipal')
+                ?.setValue(
+                    '1'.repeat(31)
+                );
+
             expect(
                 component.formulario
                     .get('nome')
+                    ?.hasError('maxlength')
+            ).toBeTrue();
+
+            expect(
+                component.formulario
+                    .get('documentoFiscal')
+                    ?.hasError('maxlength')
+            ).toBeTrue();
+
+            expect(
+                component.formulario
+                    .get('inscricaoEstadual')
+                    ?.hasError('maxlength')
+            ).toBeTrue();
+
+            expect(
+                component.formulario
+                    .get('inscricaoMunicipal')
                     ?.hasError('maxlength')
             ).toBeTrue();
         }
     );
 
     it(
-        'deve selecionar a empresa',
+        'deve selecionar empresa',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -504,7 +625,7 @@ describe('EstabelecimentoComponent', () => {
     );
 
     it(
-        'deve exibir corretamente o nome da empresa',
+        'deve exibir nome da empresa',
         () => {
             expect(
                 component.exibirEmpresa(
@@ -527,7 +648,7 @@ describe('EstabelecimentoComponent', () => {
     );
 
     it(
-        'deve pesquisar empresas apos a digitacao',
+        'deve pesquisar empresas apos digitacao',
         fakeAsync(() => {
             serviceMock
                 .listarEmpresas
@@ -551,7 +672,7 @@ describe('EstabelecimentoComponent', () => {
     );
 
     it(
-        'deve armazenar as empresas encontradas',
+        'deve armazenar empresas encontradas',
         fakeAsync(() => {
             serviceMock
                 .listarEmpresas
@@ -578,7 +699,65 @@ describe('EstabelecimentoComponent', () => {
     );
 
     it(
-        'deve cadastrar enviando empresa e nome',
+        'deve carregar tipos de documento ao alterar pais',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.returnValue(true);
+
+            component.botaoAdicionar();
+
+            component.formulario
+                .get('pais')
+                ?.setValue('BR');
+
+            expect(
+                paisServiceMock
+                    .listarTiposDocumentoFiscal
+            ).toHaveBeenCalledWith('BR');
+
+            expect(component.tiposDocumentoFiscal)
+                .toEqual(
+                    tiposDocumentoFiscal
+                );
+        }
+    );
+
+    it(
+        'deve limpar tipo e documento fiscal ao alterar pais',
+        () => {
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.returnValue(true);
+
+            component.botaoAdicionar();
+
+            component.formulario.patchValue({
+                pais: 'BR',
+                tipoDocumentoFiscal: 'CNPJ',
+                documentoFiscal: '12345678000199'
+            });
+
+            component.formulario
+                .get('pais')
+                ?.setValue('PY');
+
+            expect(
+                component.formulario
+                    .get('tipoDocumentoFiscal')
+                    ?.value
+            ).toBe('');
+
+            expect(
+                component.formulario
+                    .get('documentoFiscal')
+                    ?.value
+            ).toBe('');
+        }
+    );
+
+    it(
+        'deve cadastrar enviando contrato completo',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -596,7 +775,13 @@ describe('EstabelecimentoComponent', () => {
 
             component.formulario.patchValue({
                 idEmpresa: 1,
-                nome: 'Estabelecimento Exemplo'
+                nome: 'Estabelecimento Exemplo',
+                tipo: 'FILIAL',
+                pais: 'br',
+                tipoDocumentoFiscal: 'CNPJ',
+                documentoFiscal: '12.345.678/0001-99',
+                inscricaoEstadual: '',
+                inscricaoMunicipal: ' 123 '
             });
 
             component.salvar();
@@ -604,7 +789,13 @@ describe('EstabelecimentoComponent', () => {
             expect(serviceMock.cadastrar)
                 .toHaveBeenCalledOnceWith({
                     idEmpresa: 1,
-                    nome: 'Estabelecimento Exemplo'
+                    nome: 'Estabelecimento Exemplo',
+                    tipo: 'FILIAL',
+                    pais: 'BR',
+                    tipoDocumentoFiscal: 'CNPJ',
+                    documentoFiscal: '12.345.678/0001-99',
+                    inscricaoEstadual: null,
+                    inscricaoMunicipal: '123'
                 });
 
             expect(serviceMock.atualizar)
@@ -648,7 +839,9 @@ describe('EstabelecimentoComponent', () => {
 
             component.formulario.patchValue({
                 idEmpresa: 1,
-                nome: 'Estabelecimento Exemplo'
+                nome: 'Estabelecimento Exemplo',
+                tipo: 'FILIAL',
+                pais: 'BR'
             });
 
             autorizacaoServiceMock
@@ -663,7 +856,7 @@ describe('EstabelecimentoComponent', () => {
     );
 
     it(
-        'deve abrir o formulario de edicao',
+        'deve abrir formulario de edicao',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -699,18 +892,20 @@ describe('EstabelecimentoComponent', () => {
                     .getRawValue()
             ).toEqual({
                 id: 10,
-                nome: 'Estabelecimento Exemplo'
+                idEmpresa: 1,
+                nome: 'Estabelecimento Exemplo',
+                tipo: 'FILIAL',
+                pais: 'BR',
+                tipoDocumentoFiscal: 'CNPJ',
+                documentoFiscal: '12345678000199',
+                inscricaoEstadual: '',
+                inscricaoMunicipal: ''
             });
-
-            expect(
-                component.formulario
-                    .contains('idEmpresa')
-            ).toBeFalse();
         }
     );
 
     it(
-        'deve atualizar enviando somente id e nome',
+        'deve atualizar enviando contrato completo',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -726,18 +921,28 @@ describe('EstabelecimentoComponent', () => {
 
             component.botaoEditar(10);
 
-            component.formulario
-                .get('nome')
-                ?.setValue(
-                    'Estabelecimento Atualizado'
-                );
+            component.formulario.patchValue({
+                nome: 'Estabelecimento Atualizado',
+                tipo: 'MATRIZ',
+                pais: 'BR',
+                tipoDocumentoFiscal: '',
+                documentoFiscal: '',
+                inscricaoEstadual: '',
+                inscricaoMunicipal: ''
+            });
 
             component.salvar();
 
             expect(serviceMock.atualizar)
                 .toHaveBeenCalledOnceWith({
                     id: 10,
-                    nome: 'Estabelecimento Atualizado'
+                    nome: 'Estabelecimento Atualizado',
+                    tipo: 'MATRIZ',
+                    pais: 'BR',
+                    tipoDocumentoFiscal: null,
+                    documentoFiscal: null,
+                    inscricaoEstadual: null,
+                    inscricaoMunicipal: null
                 });
 
             expect(serviceMock.cadastrar)
@@ -752,7 +957,7 @@ describe('EstabelecimentoComponent', () => {
     );
 
     it(
-        'deve abrir a visualizacao somente leitura',
+        'deve abrir visualizacao somente leitura',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -777,13 +982,17 @@ describe('EstabelecimentoComponent', () => {
             expect(component.formulario.disabled)
                 .toBeTrue();
 
+            expect(
+                component.empresaPesquisaControl.disabled
+            ).toBeTrue();
+
             expect(component.empresaNome)
                 .toBe('Empresa Exemplo');
         }
     );
 
     it(
-        'deve excluir e recarregar a lista',
+        'deve excluir e recarregar lista',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -828,7 +1037,7 @@ describe('EstabelecimentoComponent', () => {
     );
 
     it(
-        'deve cancelar e retornar para a lista',
+        'deve cancelar e retornar para lista',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -852,11 +1061,14 @@ describe('EstabelecimentoComponent', () => {
 
             expect(component.empresas)
                 .toEqual([]);
+
+            expect(component.tiposDocumentoFiscal)
+                .toEqual([]);
         }
     );
 
     it(
-        'deve recarregar dados ao trocar a organizacao pronta',
+        'deve recarregar dados ao trocar organizacao pronta',
         () => {
             autorizacaoServiceMock
                 .possuiPermissao
@@ -872,11 +1084,20 @@ describe('EstabelecimentoComponent', () => {
                 empresa
             ];
 
+            component.paises = [
+                ...paises
+            ];
+
+            component.tiposDocumentoFiscal = [
+                ...tiposDocumentoFiscal
+            ];
+
             component.totalRegistros = 1;
             component.paginaAtual = 2;
             component.filtro = 'Filial';
 
             serviceMock.listar.calls.reset();
+            paisServiceMock.listar.calls.reset();
 
             organizacaoProntaSubject.next({
                 id: 2,
@@ -898,6 +1119,12 @@ describe('EstabelecimentoComponent', () => {
             expect(component.empresas)
                 .toEqual([]);
 
+            expect(component.paises)
+                .toEqual(paises);
+
+            expect(component.tiposDocumentoFiscal)
+                .toEqual([]);
+
             expect(component.totalRegistros)
                 .toBe(0);
 
@@ -906,6 +1133,9 @@ describe('EstabelecimentoComponent', () => {
 
             expect(component.filtro)
                 .toBe('');
+
+            expect(paisServiceMock.listar)
+                .toHaveBeenCalled();
 
             expect(serviceMock.listar)
                 .toHaveBeenCalledOnceWith(
@@ -957,7 +1187,7 @@ describe('EstabelecimentoComponent', () => {
     );
 
     it(
-        'deve informar erro ao carregar a lista',
+        'deve informar erro ao carregar lista',
         () => {
             serviceMock.listar.and.returnValue(
                 throwError(
@@ -966,6 +1196,25 @@ describe('EstabelecimentoComponent', () => {
             );
 
             component.carregarLista();
+
+            expect(toastrMock.error)
+                .toHaveBeenCalled();
+        }
+    );
+
+    it(
+        'deve informar erro ao carregar paises',
+        () => {
+            paisServiceMock.listar.and.returnValue(
+                throwError(
+                    () => new Error()
+                )
+            );
+
+            component.ngOnInit();
+
+            expect(component.paises)
+                .toEqual([]);
 
             expect(toastrMock.error)
                 .toHaveBeenCalled();
@@ -995,6 +1244,35 @@ describe('EstabelecimentoComponent', () => {
             expect(toastrMock.error)
                 .toHaveBeenCalled();
         })
+    );
+
+    it(
+        'deve informar erro ao carregar tipos de documento',
+        () => {
+            paisServiceMock
+                .listarTiposDocumentoFiscal
+                .and.returnValue(
+                    throwError(
+                        () => new Error()
+                    )
+                );
+
+            autorizacaoServiceMock
+                .possuiPermissao
+                .and.returnValue(true);
+
+            component.botaoAdicionar();
+
+            component.formulario
+                .get('pais')
+                ?.setValue('BR');
+
+            expect(component.tiposDocumentoFiscal)
+                .toEqual([]);
+
+            expect(toastrMock.error)
+                .toHaveBeenCalled();
+        }
     );
 
     it(
@@ -1034,7 +1312,9 @@ describe('EstabelecimentoComponent', () => {
 
             component.formulario.patchValue({
                 idEmpresa: 1,
-                nome: 'Estabelecimento Exemplo'
+                nome: 'Estabelecimento Exemplo',
+                tipo: 'FILIAL',
+                pais: 'BR'
             });
 
             component.salvar();

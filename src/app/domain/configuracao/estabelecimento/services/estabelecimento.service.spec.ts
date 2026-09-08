@@ -65,6 +65,18 @@ describe('EstabelecimentoService', () => {
                             'Empresa Exemplo',
                         nome:
                             'Filial Curitiba',
+                        tipo:
+                            'FILIAL' as const,
+                        pais:
+                            'BR',
+                        tipoDocumentoFiscal:
+                            'CNPJ',
+                        documentoFiscal:
+                            '12345678000199',
+                        inscricaoEstadual:
+                            null,
+                        inscricaoMunicipal:
+                            null,
                         status:
                             'ATIVO' as const
                     }
@@ -261,7 +273,17 @@ describe('EstabelecimentoService', () => {
         () => {
             const dados = {
                 idEmpresa: 1,
-                nome: 'Filial Curitiba'
+                nome: 'Filial Curitiba',
+                tipo: 'FILIAL' as const,
+                pais: 'BR',
+                tipoDocumentoFiscal:
+                    'CNPJ',
+                documentoFiscal:
+                    '12345678000199',
+                inscricaoEstadual:
+                    null,
+                inscricaoMunicipal:
+                    null
             };
 
             const resposta = {
@@ -271,6 +293,18 @@ describe('EstabelecimentoService', () => {
                     'Empresa Exemplo',
                 nome:
                     'Filial Curitiba',
+                tipo:
+                    'FILIAL' as const,
+                pais:
+                    'BR',
+                tipoDocumentoFiscal:
+                    'CNPJ',
+                documentoFiscal:
+                    '12345678000199',
+                inscricaoEstadual:
+                    null,
+                inscricaoMunicipal:
+                    null,
                 status:
                     'ATIVO' as const
             };
@@ -298,11 +332,21 @@ describe('EstabelecimentoService', () => {
     );
 
     it(
-        'deve atualizar somente o nome do estabelecimento',
+        'deve atualizar estabelecimento',
         () => {
             const dados = {
                 id: 2,
-                nome: 'Filial Atualizada'
+                nome: 'Filial Atualizada',
+                tipo: 'FILIAL' as const,
+                pais: 'BR',
+                tipoDocumentoFiscal:
+                    null,
+                documentoFiscal:
+                    null,
+                inscricaoEstadual:
+                    null,
+                inscricaoMunicipal:
+                    null
             };
 
             const resposta = {
@@ -312,6 +356,18 @@ describe('EstabelecimentoService', () => {
                     'Empresa Exemplo',
                 nome:
                     'Filial Atualizada',
+                tipo:
+                    'FILIAL' as const,
+                pais:
+                    'BR',
+                tipoDocumentoFiscal:
+                    null,
+                documentoFiscal:
+                    null,
+                inscricaoEstadual:
+                    null,
+                inscricaoMunicipal:
+                    null,
                 status:
                     'ATIVO' as const
             };
@@ -332,10 +388,7 @@ describe('EstabelecimentoService', () => {
                 .toBe('PUT');
 
             expect(request.request.body)
-                .toEqual({
-                    id: 2,
-                    nome: 'Filial Atualizada'
-                });
+                .toEqual(dados);
 
             expect(
                 request.request.body.idEmpresa
@@ -355,6 +408,18 @@ describe('EstabelecimentoService', () => {
                     'Empresa Exemplo',
                 nome:
                     'Filial Curitiba',
+                tipo:
+                    'FILIAL' as const,
+                pais:
+                    'BR',
+                tipoDocumentoFiscal:
+                    'CNPJ',
+                documentoFiscal:
+                    '12345678000199',
+                inscricaoEstadual:
+                    null,
+                inscricaoMunicipal:
+                    null,
                 status:
                     'ATIVO' as const
             };

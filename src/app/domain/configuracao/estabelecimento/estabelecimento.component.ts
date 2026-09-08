@@ -17,10 +17,14 @@ import {
 } from '@angular/forms';
 
 import {
+    catchError,
     debounceTime,
     distinctUntilChanged,
     filter,
-    skip
+    of,
+    skip,
+    switchMap,
+    tap
 } from 'rxjs';
 
 import {
@@ -41,12 +45,19 @@ import {
 
 import {
     Empresa,
-    Estabelecimento
+    Estabelecimento,
+    Pais,
+    TipoDocumentoFiscalOpcao,
+    TipoEstabelecimento
 } from '@/interfaces/interfaces';
 
 import {
     ItemBreadcrumbPagina
 } from '@components/cabecalho-pagina/cabecalho-pagina.component';
+
+import {
+    PaisService
+} from '../pais/services/pais.service';
 
 import {
     EstabelecimentoService
@@ -67,6 +78,11 @@ export class EstabelecimentoComponent
     private readonly service =
         inject(
             EstabelecimentoService
+        );
+
+    private readonly paisService =
+        inject(
+            PaisService
         );
 
     private readonly autorizacaoService =
@@ -110,6 +126,10 @@ export class EstabelecimentoComponent
         'Codigo da empresa',
         'Empresa',
         'Nome',
+        'Tipo',
+        'Pais',
+        'Tipo documento',
+        'Documento fiscal',
         'Status'
     ];
 
@@ -118,6 +138,30 @@ export class EstabelecimentoComponent
 
     empresas:
         Empresa[] = [];
+
+    paises:
+        Pais[] = [];
+
+    tiposDocumentoFiscal:
+        TipoDocumentoFiscalOpcao[] = [];
+
+    tiposEstabelecimento: {
+        codigo: TipoEstabelecimento;
+        nome: string;
+    }[] = [
+        {
+            codigo: 'MATRIZ',
+            nome: 'Matriz'
+        },
+        {
+            codigo: 'FILIAL',
+            nome: 'Filial'
+        },
+        {
+            codigo: 'UNIDADE',
+            nome: 'Unidade'
+        }
+    ];
 
     totalRegistros = 0;
 
@@ -192,6 +236,7 @@ export class EstabelecimentoComponent
     }
 
     ngOnInit(): void {
+        this.carregarPaises();
         this.configurarPesquisaDeEmpresa();
         this.configurarAtualizacaoPorOrganizacao();
         this.carregarLista();
@@ -267,22 +312,18 @@ export class EstabelecimentoComponent
         this.isVisualizacao = false;
         this.empresaNome = '';
         this.empresas = [];
+        this.tiposDocumentoFiscal = [];
 
         this.formulario =
-            this.builder.group({
-                idEmpresa: [
-                    null,
-                    Validators.required
-                ],
-                nome: [
-                    '',
-                    [
-                        Validators.required,
-                        Validators.maxLength(
-                            100
-                        )
-                    ]
-                ]
+            this.criarFormulario();
+
+        this.configurarTiposDocumentoFiscalPorPais(
+            this.formulario
+        );
+
+        this.empresaPesquisaControl
+            .enable({
+                emitEvent: false
             });
 
         this.empresaPesquisaControl
@@ -335,14 +376,24 @@ export class EstabelecimentoComponent
                 .get('id')
                 ?.value;
 
+        const dados =
+            this.montarDadosFormulario();
+
         if (id) {
             this.service
                 .atualizar({
                     id,
-                    nome:
-                        this.formulario
-                            .get('nome')
-                            ?.value
+                    nome: dados.nome,
+                    tipo: dados.tipo,
+                    pais: dados.pais,
+                    tipoDocumentoFiscal:
+                        dados.tipoDocumentoFiscal,
+                    documentoFiscal:
+                        dados.documentoFiscal,
+                    inscricaoEstadual:
+                        dados.inscricaoEstadual,
+                    inscricaoMunicipal:
+                        dados.inscricaoMunicipal
                 })
                 .subscribe({
                     next: () => {
@@ -362,14 +413,18 @@ export class EstabelecimentoComponent
 
         this.service
             .cadastrar({
-                idEmpresa:
-                    this.formulario
-                        .get('idEmpresa')
-                        ?.value,
-                nome:
-                    this.formulario
-                        .get('nome')
-                        ?.value
+                idEmpresa: dados.idEmpresa,
+                nome: dados.nome,
+                tipo: dados.tipo,
+                pais: dados.pais,
+                tipoDocumentoFiscal:
+                    dados.tipoDocumentoFiscal,
+                documentoFiscal:
+                    dados.documentoFiscal,
+                inscricaoEstadual:
+                    dados.inscricaoEstadual,
+                inscricaoMunicipal:
+                    dados.inscricaoMunicipal
             })
             .subscribe({
                 next: () => {
@@ -442,6 +497,7 @@ export class EstabelecimentoComponent
         this.isVisualizacao = false;
         this.empresaNome = '';
         this.empresas = [];
+        this.tiposDocumentoFiscal = [];
 
         if (this.formulario) {
             this.formulario.reset();
@@ -454,6 +510,127 @@ export class EstabelecimentoComponent
                     emitEvent: false
                 }
             );
+
+        this.empresaPesquisaControl
+            .enable({
+                emitEvent: false
+            });
+    }
+
+    private criarFormulario(
+        dados?: Estabelecimento
+    ): FormGroup {
+        return this.builder.group({
+            id: [
+                dados?.id ?? null
+            ],
+            idEmpresa: [
+                dados?.idEmpresa ?? null,
+                Validators.required
+            ],
+            nome: [
+                dados?.nome ?? '',
+                [
+                    Validators.required,
+                    Validators.maxLength(
+                        100
+                    )
+                ]
+            ],
+            tipo: [
+                dados?.tipo ?? '',
+                Validators.required
+            ],
+            pais: [
+                dados?.pais ?? '',
+                [
+                    Validators.required,
+                    Validators.minLength(2),
+                    Validators.maxLength(2)
+                ]
+            ],
+            tipoDocumentoFiscal: [
+                dados?.tipoDocumentoFiscal ?? ''
+            ],
+            documentoFiscal: [
+                dados?.documentoFiscal ?? '',
+                [
+                    Validators.maxLength(30)
+                ]
+            ],
+            inscricaoEstadual: [
+                dados?.inscricaoEstadual ?? '',
+                [
+                    Validators.maxLength(30)
+                ]
+            ],
+            inscricaoMunicipal: [
+                dados?.inscricaoMunicipal ?? '',
+                [
+                    Validators.maxLength(30)
+                ]
+            ]
+        });
+    }
+
+    private montarDadosFormulario(): {
+        idEmpresa: number;
+        nome: string;
+        tipo: TipoEstabelecimento;
+        pais: string;
+        tipoDocumentoFiscal: string | null;
+        documentoFiscal: string | null;
+        inscricaoEstadual: string | null;
+        inscricaoMunicipal: string | null;
+    } {
+        const tipoDocumentoFiscal =
+            this.normalizarTextoOpcional(
+                this.formulario
+                    .get('tipoDocumentoFiscal')
+                    ?.value
+            );
+
+        const documentoFiscal =
+            this.normalizarTextoOpcional(
+                this.formulario
+                    .get('documentoFiscal')
+                    ?.value
+            );
+
+        return {
+            idEmpresa:
+                this.formulario
+                    .get('idEmpresa')
+                    ?.value,
+            nome:
+                this.formulario
+                    .get('nome')
+                    ?.value,
+            tipo:
+                this.formulario
+                    .get('tipo')
+                    ?.value,
+            pais:
+                this.normalizarPais(
+                    this.formulario
+                        .get('pais')
+                        ?.value
+                ),
+            tipoDocumentoFiscal,
+            documentoFiscal,
+            inscricaoEstadual:
+                this.normalizarTextoOpcional(
+                    this.formulario
+                        .get('inscricaoEstadual')
+                        ?.value
+                ),
+            inscricaoMunicipal:
+                this.normalizarTextoOpcional(
+                    this.formulario
+                        .get('inscricaoMunicipal')
+                        ?.value
+                )
+        };
     }
 
     private configurarAtualizacaoPorOrganizacao(): void {
@@ -483,9 +660,13 @@ export class EstabelecimentoComponent
 
         this.lista = [];
         this.empresas = [];
+        this.paises = [];
+        this.tiposDocumentoFiscal = [];
         this.totalRegistros = 0;
         this.paginaAtual = 0;
         this.filtro = '';
+
+        this.carregarPaises();
     }
 
     private configurarPesquisaDeEmpresa(): void {
@@ -545,6 +726,29 @@ export class EstabelecimentoComponent
             });
     }
 
+    private carregarPaises(): void {
+        this.paisService
+            .listar()
+            .pipe(
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
+            )
+            .subscribe({
+                next: (paises) => {
+                    this.paises =
+                        paises;
+                },
+                error: () => {
+                    this.paises = [];
+
+                    this.toastr.error(
+                        'Nao foi possivel carregar os paises'
+                    );
+                }
+            });
+    }
+
     private carregarFormulario(
         id: number,
         visualizacao: boolean
@@ -562,24 +766,28 @@ export class EstabelecimentoComponent
                         dados.empresa ?? '';
 
                     this.formulario =
-                        this.builder.group({
-                            id: [
-                                dados.id
-                            ],
-                            nome: [
-                                dados.nome,
-                                [
-                                    Validators.required,
-                                    Validators.maxLength(
-                                        100
-                                    )
-                                ]
-                            ]
-                        });
+                        this.criarFormulario(dados);
+
+                    this.empresaPesquisaControl
+                        .setValue(
+                            dados.empresa ?? '',
+                            {
+                                emitEvent: false
+                            }
+                        );
+
+                    this.configurarTiposDocumentoFiscalPorPais(
+                        this.formulario
+                    );
 
                     if (visualizacao) {
                         this.formulario
                             .disable();
+
+                        this.empresaPesquisaControl
+                            .disable({
+                                emitEvent: false
+                            });
                     }
                 },
                 error: () => {
@@ -588,6 +796,172 @@ export class EstabelecimentoComponent
                     );
                 }
             });
+    }
+
+    private configurarTiposDocumentoFiscalPorPais(
+        formulario: FormGroup
+    ): void {
+        const paisControl =
+            formulario.get('pais');
+
+        const tipoDocumentoFiscalControl =
+            formulario.get(
+                'tipoDocumentoFiscal'
+            );
+
+        const documentoFiscalControl =
+            formulario.get(
+                'documentoFiscal'
+            );
+
+        if (
+            !paisControl ||
+            !tipoDocumentoFiscalControl ||
+            !documentoFiscalControl
+        ) {
+            return;
+        }
+
+        this.tiposDocumentoFiscal = [];
+
+        const paisInicial =
+            this.normalizarPais(
+                paisControl.value
+            );
+
+        if (paisInicial) {
+            this.carregarTiposDocumentoFiscal(
+                formulario,
+                paisInicial
+            );
+        }
+
+        paisControl
+            .valueChanges
+            .pipe(
+                tap(() => {
+                    this.tiposDocumentoFiscal = [];
+
+                    tipoDocumentoFiscalControl
+                        .setValue(
+                            '',
+                            {
+                                emitEvent: false
+                            }
+                        );
+
+                    documentoFiscalControl
+                        .setValue(
+                            '',
+                            {
+                                emitEvent: false
+                            }
+                        );
+                }),
+                switchMap((pais) => {
+                    const paisNormalizado =
+                        this.normalizarPais(
+                            pais
+                        );
+
+                    if (!paisNormalizado) {
+                        return of([]);
+                    }
+
+                    return this.paisService
+                        .listarTiposDocumentoFiscal(
+                            paisNormalizado
+                        )
+                        .pipe(
+                            catchError(() => {
+                                this.toastr.error(
+                                    'Nao foi possivel carregar os tipos de documento fiscal'
+                                );
+
+                                return of([]);
+                            })
+                        );
+                }),
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
+            )
+            .subscribe((tiposDocumentoFiscal) => {
+                this.atualizarTiposDocumentoFiscal(
+                    formulario,
+                    tiposDocumentoFiscal
+                );
+            });
+    }
+
+    private carregarTiposDocumentoFiscal(
+        formulario: FormGroup,
+        pais: string
+    ): void {
+        this.paisService
+            .listarTiposDocumentoFiscal(
+                pais
+            )
+            .pipe(
+                catchError(() => {
+                    this.toastr.error(
+                        'Nao foi possivel carregar os tipos de documento fiscal'
+                    );
+
+                    return of([]);
+                }),
+                takeUntilDestroyed(
+                    this.destroyRef
+                )
+            )
+            .subscribe((tiposDocumentoFiscal) => {
+                this.atualizarTiposDocumentoFiscal(
+                    formulario,
+                    tiposDocumentoFiscal
+                );
+            });
+    }
+
+    private atualizarTiposDocumentoFiscal(
+        formulario: FormGroup,
+        tiposDocumentoFiscal:
+            TipoDocumentoFiscalOpcao[]
+    ): void {
+        this.tiposDocumentoFiscal =
+            tiposDocumentoFiscal;
+
+        const tipoDocumentoFiscalControl =
+            formulario.get(
+                'tipoDocumentoFiscal'
+            );
+
+        if (!tipoDocumentoFiscalControl) {
+            return;
+        }
+
+        const tipoDocumentoFiscalAtual =
+            tipoDocumentoFiscalControl
+                .value;
+
+        const tipoDocumentoFiscalValido =
+            tiposDocumentoFiscal.some(
+                (tipoDocumentoFiscal) =>
+                    tipoDocumentoFiscal.codigo ===
+                    tipoDocumentoFiscalAtual
+            );
+
+        if (
+            tipoDocumentoFiscalAtual &&
+            !tipoDocumentoFiscalValido
+        ) {
+            tipoDocumentoFiscalControl
+                .setValue(
+                    '',
+                    {
+                        emitEvent: false
+                    }
+                );
+        }
     }
 
     private finalizarSalvamento(
@@ -599,5 +973,28 @@ export class EstabelecimentoComponent
         this.toastr.success(
             mensagem
         );
+    }
+
+    private normalizarPais(
+        pais: unknown
+    ): string {
+        return typeof pais === 'string'
+            ? pais.trim().toUpperCase()
+            : '';
+    }
+
+    private normalizarTextoOpcional(
+        texto: unknown
+    ): string | null {
+        if (typeof texto !== 'string') {
+            return null;
+        }
+
+        const textoNormalizado =
+            texto.trim();
+
+        return textoNormalizado
+            ? textoNormalizado
+            : null;
     }
 }

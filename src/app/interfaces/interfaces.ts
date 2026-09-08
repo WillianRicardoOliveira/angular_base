@@ -5,6 +5,11 @@ export type Status =
 
 export type TipoDocumentoFiscal = string;
 
+export type TipoEstabelecimento =
+    | 'MATRIZ'
+    | 'FILIAL'
+    | 'UNIDADE';
+
 export interface TipoDocumentoFiscalOpcao {
     codigo: TipoDocumentoFiscal;
     nome: string;
@@ -74,6 +79,12 @@ export interface Estabelecimento {
     idEmpresa: number;
     empresa?: string;
     nome: string;
+    tipo: TipoEstabelecimento;
+    pais: string;
+    tipoDocumentoFiscal?: TipoDocumentoFiscal | null;
+    documentoFiscal?: string | null;
+    inscricaoEstadual?: string | null;
+    inscricaoMunicipal?: string | null;
     status?: Status;
 }
 
